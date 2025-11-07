@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Park Guides</title>
+    <style>
+        :root {
+            --text-dark: #2d332a;
+            --text-light: #f0f0f0;
+            --text-muted: #666;
+            --page-bg: #f8f9f7;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--page-bg);
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* --- Explore Hero Section --- */
+        .explore-hero {
+            text-align: center;
+            padding-bottom: 5rem;
+        }
+        .explore-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+        }
+        .explore-hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .fanned-cards-container {
+            position: relative;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .guide-card {
+            position: absolute;
+            width: 280px;
+            height: 380px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-10px) scale(1.05) !important;
+            z-index: 100 !important;
+        }
+        
+        .guide-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .guide-card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            color: var(--text-light);
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+
+        .guide-card-overlay .type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+        }
+        
+        .guide-card-overlay h3 {
+            margin: 0.5rem 0 2rem 0;
+            font-size: 1.5rem;
+        }
+        
+        .guide-card-overlay .explore-link {
+            font-weight: 600;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        /* Positioning for fanned cards */
+        .card-1 { z-index: 1; transform: translateX(-450px) rotate(-15deg) translateY(50px); }
+        .card-2 { z-index: 2; transform: translateX(-210px) rotate(-8deg) translateY(15px); }
+        .card-3 { z-index: 3; } /* Center card */
+        .card-4 { z-index: 2; transform: translateX(210px) rotate(8deg) translateY(15px); }
+        .card-5 { z-index: 1; transform: translateX(450px) rotate(15deg) translateY(50px); }
+
+        .card-1 .guide-card-overlay { background: linear-gradient(to top, rgba(82, 47, 40, 0.9), transparent); }
+        .card-2 .guide-card-overlay { background: linear-gradient(to top, rgba(38, 59, 36, 0.9), transparent); }
+        .card-3 .guide-card-overlay { background: linear-gradient(to top, rgba(29, 23, 22, 0.9), transparent); }
+        .card-4 .guide-card-overlay { background: linear-gradient(to top, rgba(22, 33, 53, 0.9), transparent); }
+        .card-5 .guide-card-overlay { background: linear-gradient(to top, rgba(32, 64, 50, 0.9), transparent); }
+
+
+        /* --- Info Columns Section --- */
+        .info-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            text-align: center;
+            padding: 8rem 0;
+        }
+        .info-columns h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .info-columns p {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* --- Park List Section --- */
+        .park-guides-section {
+            background-color: #fff;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .guides-header h2 {
+            font-size: 2.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .guides-header h2 u {
+            text-decoration: none;
+            border-bottom: 2px solid var(--text-dark);
+        }
+
+        .guides-filter {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        .guides-filter a {
+            color: var(--text-dark);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .park-list-item {
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .park-list-header {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem 0;
+            cursor: pointer;
+        }
+        .park-list-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+        .park-info h4 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .park-info p {
+            margin: 0;
+            color: var(--text-muted);
+        }
+        .park-list-header .chevron {
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+
+        .park-guides-content {
+            padding: 1rem 0 2rem 0;
+            position: relative;
+        }
+
+        .guides-carousel {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: 300px;
+            gap: 1.5rem;
+            padding-left: 60px; /* Space for park image alignment */
+        }
+        
+        .location-guide-card {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .location-guide-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .location-guide-card-info {
+            padding: 1rem;
+        }
+        .location-guide-card-info h5 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        .location-guide-card-info p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .carousel-arrow {
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <section class="explore-hero container">
+        <h1>Explore 200+ national park guides</h1>
+        <p>Get insider tips, curated trail collections, and more from AllTrails experts.</p>
+        
+        <div class="fanned-cards-container">
+            <article class="guide-card card-1">
+                <img src="https://fullsuitcase.com/wp-content/uploads/2020/05/Best-hikes-in-Zion-National-Park.jpg" alt="Zion National Park">
+                <div class="guide-card-overlay">
+                    <div class="type">Guide</div>
+                    <h3>Top Picks in Zion National Park</h3>
+                    <a href="#" class="explore-link">Explore</a>
+                </div>
+            </article>
+            <article class="guide-card card-2">
+                <img src="https://www.visitmysmokies.com/media/67dd51aff1a2be90810fa16e/original.webp" alt="Great Smoky Mountains">
+                <div class="guide-card-overlay">
+                    <div class="type">Guide</div>
+                    <h3>Backpacking Trips in Great Smoky Mountains National Park</h3>
+                    <a href="#" class="explore-link">Explore</a>
+                </div>
+            </article>
+            <article class="guide-card card-3">
+                <img src="https://www.visittenaya.com/dbcwp/wp-content/uploads/2025/11/visittenaya-card-explore-yosemite-glacier-point-737x581-1.jpg" alt="Yosemite National Park">
+                <div class="guide-card-overlay">
+                    <div class="type">Guide</div>
+                    <h3>Top Picks in Yosemite National Park</h3>
+                    <a href="#" class="explore-link">Explore</a>
+                </div>
+            </article>
+            <article class="guide-card card-4">
+                <img src="https://fullsuitcase.com/wp-content/uploads/2021/06/Acadia-National-Park-itinerary.jpg" alt="Acadia National Park">
+                <div class="guide-card-overlay">
+                    <div class="type">Guide</div>
+                    <h3>Hidden Gems in Acadia National Park</h3>
+                    <a href="#" class="explore-link">Explore</a>
+                </div>
+            </article>
+            <article class="guide-card card-5">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Moraine_Lake_17092005.jpg/500px-Moraine_Lake_17092005.jpg" alt="Banff National Park">
+                <div class="guide-card-overlay">
+                    <div class="type">Guide</div>
+                    <h3>Top Picks in Banff National Park</h3>
+                    <a href="#" class="explore-link">Explore</a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="container info-columns">
+        <div>
+            <h3>Trails we love</h3>
+            <p>From top picks to hidden gems, find your favorite trails with our curated collections.</p>
+        </div>
+        <div>
+            <h3>Insider tips and tricks</h3>
+            <p>Get guidance from AllTrails experts, informed by our community of 90 million trail-goers.</p>
+        </div>
+        <div>
+            <h3>All the details you need</h3>
+            <p>Come prepared with helpful info like fees, reservations, and the best times to visit.</p>
+        </div>
+    </section>
+
+    <section class="park-guides-section">
+        <div class="container">
+            <header class="guides-header">
+                <h2>
+                    Guides to <u>United States</u>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </h2>
+            </header>
+            <p class="guides-filter">
+                63 Parks • 132 Guides &nbsp;&nbsp; Sort by <a href="#">Most popular <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </p>
+
+            <div class="park-list">
+                <article class="park-list-item">
+                    <header class="park-list-header">
+                        <img src="https://www.nps.gov/common/uploads/grid_builder/brca/crop16_9/6DFD997F-B839-970D-358D57C8ABD7D05E.jpeg?width=640&quality=90&mode=crophttps://images.unsplash.com/photo-1596714218816-5649a37c44e9?q=80&w=100" alt="Bryce Canyon">
+                        <div class="park-info">
+                            <h4>Bryce Canyon</h4>
+                            <p>Utah • National Park</p>
+                        </div>
+                        <div class="chevron" style="transform: rotate(180deg);">
+                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    </header>
+                    <div class="park-guides-content">
+                        <div class="carousel-arrow">
+                           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                        <div class="guides-carousel">
+                            <div class="location-guide-card">
+                                <img src="https://www.nps.gov/common/uploads/grid_builder/brca/crop16_9/D0FD7ADE-EB41-C62D-53183D06641F4614.jpeg?width=640&quality=90&mode=crop" alt="Bryce Canyon Top Picks">
+                                <div class="location-guide-card-info">
+                                    <h5>Top Picks in Bryce Canyon National Park</h5>
+                                    <p>8 trails</p>
+                                </div>
+                            </div>
+                            <div class="location-guide-card">
+                                <img src="https://www.nps.gov/common/uploads/grid_builder/brca/crop16_9/6538177B-BA01-0252-D620B05D927C21D2.jpg?width=640&quality=90&mode=crop" alt="Bryce Canyon Hidden Gems">
+                                <div class="location-guide-card-info">
+                                    <h5>Hidden Gems in Bryce Canyon National Park</h5>
+                                    <p>5 trails</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                <article class="park-list-item">
+                     <header class="park-list-header">
+                        <img src="https://www.nps.gov/zion/learn/nature/images/Big-Bend-11222021.jpg?maxwidth=1300&maxheight=1300&autorotate=false&format=webp" alt="Zion">
+                        <div class="park-info">
+                            <h4>Zion</h4>
+                            <p>Utah • National Park</p>
+                        </div>
+                        <div class="chevron">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    </header>
+                </article>
+                <article class="park-list-item">
+                     <header class="park-list-header">
+                        <img src="https://images.seattletimes.com/wp-content/uploads/2024/06/06112024_side_134236.jpg?d=1020x697" alt="Mount Rainier">
+                        <div class="park-info">
+                            <h4>Mount Rainier</h4>
+                            <p>Washington • National Park</p>
+                        </div>
+                        <div class="chevron">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </div>
+                    </header>
+                </article>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
