@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventures Fill Your Soul.</title>
+    <style>
+        /* --- General Styles & Resets --- */
+        :root {
+            --alltrails-green: #a3e635;
+            --dark-background: #20261b;
+            --text-light: #ffffff;
+            --text-dark: #2d332a;
+            --text-muted: #757575;
+            --card-border: #e0e0e0;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f8f8;
+            color: var(--text-dark);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        button {
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        /* --- Header / Navigation --- */
+        .main-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            color: var(--text-light);
+        }
+
+        .logo a {
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        .main-nav a {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .main-nav .dropdown-icon {
+            width: 12px;
+            height: 12px;
+        }
+        
+        .profile-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #ccc;
+            background-image: url('https://i.pravatar.cc/32?u=preyta');
+            background-size: cover;
+            border-radius: 50%;
+            border: 2px solid var(--text-light);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            position: relative;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?q=80&w=2073&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 18px 20px 18px 55px;
+            border-radius: 30px;
+            border: 1px solid transparent;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .hero-curve {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            z-index: 1;
+            line-height: 0;
+        }
+        
+        .carousel-indicators {
+            position: absolute;
+            right: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .carousel-indicators span {
+            display: block;
+            width: 30px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 2px;
+        }
+
+        .carousel-indicators span.active {
+            background-color: var(--text-light);
+        }
+        
+        /* --- Local Favorites Section --- */
+        .favorites-section {
+            padding: 60px 40px;
+            background-color: #fff;
+            position: relative;
+        }
+
+        .favorites-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        .favorites-section h2 u {
+            text-decoration-color: var(--alltrails-green);
+            text-decoration-thickness: 3px;
+            text-underline-offset: 4px;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .trail-card {
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .trail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-image-wrapper {
+            position: relative;
+        }
+        
+        .card-image-wrapper img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .bookmark-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bookmark-btn svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        .card-info {
+            padding: 15px;
+        }
+
+        .card-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .card-info .location {
+            color: var(--text-muted);
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .card-info .details {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        
+        .details .star {
+            color: #f5a623;
+        }
+        
+        .next-button {
+            position: absolute;
+            right: 0px;
+            top: 50%;
+            transform: translateY(20px);
+            width: 48px;
+            height: 48px;
+            background-color: white;
+            border: 1px solid var(--card-border);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* --- Footer --- */
+        .main-footer {
+            background-color: var(--dark-background);
+            color: var(--text-light);
+            padding: 60px 40px 30px;
+            font-size: 0.9rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.5fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .footer-col h4 {
+            font-size: 1rem;
+            margin: 0 0 15px 0;
+            font-weight: 600;
+        }
+
+        .footer-col ul li a {
+            line-height: 2;
+            color: #c7c7c7;
+            transition: color 0.2s;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--text-light);
+        }
+
+        .app-stores {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .app-stores a img {
+            height: 40px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: 1px solid #757575;
+            border-radius: 50%;
+            color: var(--text-light);
+        }
+        
+        .social-links a svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .footer-bottom {
+            padding-top: 30px;
+            border-top: 1px solid #4a4a4a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #c7c7c7;
+        }
+
+        .footer-legal {
+            max-width: 60%;
+        }
+
+        .footer-legal p {
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+        }
+        
+        .footer-legal a {
+            margin-right: 15px;
+        }
+        
+        .language-selector {
+            border: 1px solid #757575;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">Name</div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li>
+                    <a href="#">
+                        <span>Explore</span>
+                        <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </a>
+                </li>
+            </ul>
+             <ul>
+                <li>
+                    <a href="#">
+                        <span>Saved</span>
+                        <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </a>
+                </li>
+            </ul>
+             <ul>
+                <li>
+                    <a href="#">
+                        <span>Shop</span>
+                        <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="profile-icon"></div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Adventures Fill Your</h1>
+                <div class="search-bar">
+                    <!-- <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg> -->
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search by city, park, or trail name">
+                </div>
+            </div>
+            <div class="hero-curve">
+                <svg viewBox="0 0 1440 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1440 25.4168C1200 85.4168 720 85.4168 0 25.4168V85.0001H1440V25.4168Z" fill="#a3e635"/>
+                </svg>
+            </div>
+             <div class="carousel-indicators">
+                <span class="active"></span>
+                <span></span>
+                <span></span>
+            </div>
+        </section>
+
+        <section class="favorites-section">
+            <h2>Local favorites near <u>Hanoi</u></h2>
+            <div class="cards-container">
+                <article class="trail-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://www.asiakingtravel.com/cuploads/files/Ham%20Lon%20Mountain%20summit.jpg" alt="Hàm Lợn South Loop">
+                        <button class="bookmark-btn" aria-label="Save trail">
+                           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z"/></svg>
+                        </button>
+                    </div>
+                    <div class="card-info">
+                        <h3>Hàm Lợn South Loop</h3>
+                        <p class="location">Soc Son, Hanoi, Vietnam</p>
+                        <p class="details"><span class="star">★</span> 4.3 - Moderate - 4.7 km - Est. 1.5–2 hr</p>
+                    </div>
+                </article>
+
+                <article class="trail-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://www.asiakingtravel.com/cuploads/files/Ham%20Lon%20mountain%20at%20sunset.jpg" alt="Hàm Lợn Mountain Fire Road">
+                        <button class="bookmark-btn" aria-label="Save trail">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z"/></svg>
+                        </button>
+                    </div>
+                    <div class="card-info">
+                        <h3>Ham Lon Mountain Fire Road</h3>
+                        <p class="location">Soc Son, Hanoi, Vietnam</p>
+                        <p class="details"><span class="star">★</span> 4.2 - Moderate - 10.5 km - Est. 3–3.5 hr</p>
+                    </div>
+                </article>
+
+                <article class="trail-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://www.asiakingtravel.com/cuploads/files/Hanoi/Hoan-Kiem-Lake/Thap-Rua.jpg" alt="Hoàn Kiếm Lake Loop">
+                         <button class="bookmark-btn" aria-label="Save trail">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z"/></svg>
+                        </button>
+                    </div>
+                    <div class="card-info">
+                        <h3>Hoàn Kiếm Lake Loop</h3>
+                        <p class="location">Quận Hoàn Kiếm, Hanoi, Vietnam</p>
+                        <p class="details"><span class="star">★</span> 4.4 - Easy - 1.6 km - Est. 0.5–1 hr</p>
+                    </div>
+                </article>
+
+                <article class="trail-card">
+                    <div class="card-image-wrapper">
+                        <img src="https://www.asiakingtravel.com/cuploads/files/Keo%20Ca%20Lake%20near%20Ham%20Lon%20mountain.jpg" alt="Hàm Lợn Peak">
+                         <button class="bookmark-btn" aria-label="Save trail">
+                           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 3H7C5.89543 3 5 3.89543 5 5V21L12 18L19 21V5C19 3.89543 18.1046 3 17 3Z"/></svg>
+                        </button>
+                    </div>
+                    <div class="card-info">
+                        <h3>Hàm Lợn Peak</h3>
+                        <p class="location">Soc Son, Hanoi, Vietnam</p>
+                        <p class="details"><span class="star">★</span> 4.6 - Moderate - 3.4 km - Est. 2–2.5 hr</p>
+                    </div>
+                </article>
+            </div>
+            <button class="next-button" aria-label="Next trails">&rarr;</button>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="#">Countries</a></li>
+                    <li><a href="#">Regions</a></li>
+                    <li><a href="#">Cities</a></li>
+                    <li><a href="#">Parks</a></li>
+                    <li><a href="#">Trails</a></li>
+                    <li><a href="#">Points of Interest</a></li>
+                    <li><a href="#">Trail Features</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Gift membership</a></li>
+                    <li><a href="#">AllTrails Gear</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>An app for the outdoors</h4>
+                <div class="app-stores">
+                    <a href="#"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store"></a>
+                    <a href="#"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play"></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Connect with us</h4>
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664-4.771 4.919-4.919C8.416 2.175 8.796 2.163 12 2.163m0-2.163C8.74 0 8.333.011 7.053.069 2.59.245.245 2.59.069 7.053.011 8.333 0 8.74 0 12s.011 3.667.069 4.947c.176 4.46 2.522 6.707 7.004 6.983C8.333 23.988 8.74 24 12 24s3.667-.011 4.947-.069c4.46-.276 6.706-2.522 6.983-7.004.058-1.28.069-1.687.069-4.947s-.011-3.667-.069-4.947C21.755 2.59 19.41.245 14.947.069 13.667.011 13.26 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.88 1.44 1.44 0 000-2.88z"/></svg></a>
+                    <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.323-1.325z"/></svg></a>
+                    <a href="#" aria-label="X"><svg viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.931L18.901 1.153zm-1.61 19.718h2.554L6.881 2.562H4.11L17.29 20.87z"/></svg></a>
+                    <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z"/></svg></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-legal">
+                <p>&copy; 2010-2025 AllTrails, LLC</p>
+                <p>ALLTRAILS® and the AllTrails Mountain Design are registered trademarks of AllTrails, LLC in the United States as well as certain other jurisdictions. FIND YOUR OUTSIDE™ is a trademark of AllTrails, LLC.</p>
+                <a href="#">Privacy Policy</a> &bull; <a href="#">Terms</a> &bull; <a href="#">Cookie Policy</a> &bull; <a href="#">Manage Cookies</a>
+            </div>
+            <div class="language-selector">
+                <span>English (US)</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
