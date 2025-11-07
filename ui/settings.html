@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <style>
+        :root {
+            --border-color: #e0e0e0;
+            --text-color: #333;
+            --label-color: #555;
+            --background-color: #ffffff;
+            --page-background: #f9f9f9;
+            --tag-background: #f0f0f0;
+            --facebook-blue: #1877f2;
+            --garmin-blue: #00a5d9;
+            --apple-black: #000000;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--page-background);
+            color: var(--text-color);
+            margin: 0;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background-color: var(--background-color);
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        
+        .main-content {
+            border-right: 1px solid var(--border-color);
+            padding-right: 3rem;
+        }
+
+        /* --- Header --- */
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .profile-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 700;
+        }
+        .view-profile-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .view-profile-btn:hover {
+            background-color: var(--tag-background);
+        }
+
+        /* --- Form Elements --- */
+        .form-group {
+            margin-bottom: 1.75rem;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--label-color);
+            font-size: 0.9rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .form-row > div {
+            flex: 1;
+        }
+
+        input[type="text"], input[type="email"], select, .input-group {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+        .input-group span {
+            padding: 0 0.5rem;
+        }
+        .input-group input {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 0;
+        }
+
+        .form-note {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            background-color: #f0ead6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .profile-pic svg {
+            width: 50px;
+            height: 50px;
+            fill: #3a4a38;
+        }
+
+        /* --- Favorite Activities --- */
+        .activities-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .activity-tag {
+            background-color: var(--tag-background);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        /* --- Radio Buttons --- */
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: normal;
+        }
+        input[type="radio"] {
+            accent-color: var(--text-color);
+        }
+
+        /* --- Birthday Fields --- */
+        .birthday-group {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        /* --- Sidebar --- */
+        .sidebar-section {
+            margin-bottom: 2.5rem;
+        }
+        .sidebar-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0 0 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #777;
+        }
+        .sidebar-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-section ul li {
+            margin-bottom: 1rem;
+        }
+        .sidebar-link {
+            text-decoration: none;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .sidebar-link span {
+            text-decoration: underline;
+        }
+        .sidebar-link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        .social-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        .facebook-btn {
+            background-color: var(--facebook-blue);
+            color: white;
+        }
+        .apple-btn {
+            background-color: var(--apple-black);
+            color: white;
+        }
+        .garmin-btn {
+            background-color: var(--garmin-blue);
+            color: white;
+        }
+
+        .connection-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .connection-status .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+        .connection-status .status svg {
+            width: 20px;
+            height: 20px;
+            fill: #34c759;
+        }
+        .connection-status a {
+            color: var(--text-color);
+            text-decoration: underline;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <main class="main-content">
+            <header class="profile-header">
+                <h1>Edit profile</h1>
+                <button class="view-profile-btn">View profile</button>
+            </header>
+
+            <div class="profile-pic">
+                <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h80c8.8 0 16-7.2 16-16V288c0-8.8-7.2-16-16-16h-48v-48h48c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16h-80c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16h48v48h-48c-8.8 0-16 7.2-16 16v32c0 8.8 7.2 16 16 16z"/></svg>
+            </div>
+
+            <form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first-name">First name</label>
+                        <input type="text" id="first-name" value="Preyta">
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last name</label>
+                        <input type="text" id="last-name" value="Anna">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" value="annapreyta1998@gmail.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone number</label>
+                    <div class="input-group">
+                        <span>🇺🇸</span>
+                        <input type="text" id="phone" value="(201) 555-0123">
+                    </div>
+                     <p class="form-note">We'll only use your phone number if you opt into SMS updates from a live share contact.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="about-me">About me</label>
+                    <textarea id="about-me" placeholder="About me"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Favorite activities</label>
+                    <div class="activities-grid">
+                        <span class="activity-tag">Backpacking</span> <span class="activity-tag">Bike touring</span> <span class="activity-tag">Birding</span> <span class="activity-tag">Camping</span> <span class="activity-tag">Cross-country skiing</span> <span class="activity-tag">Fishing</span> <span class="activity-tag">Hiking</span> <span class="activity-tag">Horseback riding</span> <span class="activity-tag">Mountain biking</span> <span class="activity-tag">Off-road driving</span> <span class="activity-tag">Paddle sports</span> <span class="activity-tag">Road biking</span> <span class="activity-tag">Rock climbing</span> <span class="activity-tag">Running</span> <span class="activity-tag">Scenic driving</span> <span class="activity-tag">Skiing</span> <span class="activity-tag">Snowshoeing</span> <span class="activity-tag">Via ferrata</span> <span class="activity-tag">Walking</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Member location: Ho Chi Minh City, Vietnam</label>
+                    <div class="input-group">
+                         <span style="color: #999;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input type="text" id="location" placeholder="Change member location">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Units</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="units"> Imperial</label>
+                            <label><input type="radio" name="units" checked> Metric</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Activity time preference</label>
+                         <div class="radio-group">
+                            <label><input type="radio" name="preference"> Speed</label>
+                            <label><input type="radio" name="preference" checked> Pace</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Calorie counter info</label>
+                    <div class="form-row">
+                        <div>
+                            <label for="height" style="font-size: 0.8rem; font-weight: normal;">Height</label>
+                            <select id="height"><option>unspecified</option></select>
+                        </div>
+                        <div>
+                             <label for="weight" style="font-size: 0.8rem; font-weight: normal;">Weight</label>
+                            <select id="weight"><option>unspecified</option></select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="birthday-month">Birthday</label>
+                    <div class="birthday-group">
+                        <select id="birthday-month"><option>Month</option></select>
+                        <input type="text" placeholder="DD">
+                        <input type="text" placeholder="YYYY">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="language">Marketing language</label>
+                    <select id="language"><option>English (US)</option></select>
+                </div>
+            </form>
+        </main>
+
+        <aside class="sidebar">
+            <section class="sidebar-section">
+                <h3>Contribute</h3>
+                <a href="#" class="sidebar-link">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2"/><path d="M12 8V16" stroke="currentColor" stroke-width="2"/><path d="M8 12H16" stroke="currentColor" stroke-width="2"/></svg>
+                    <span>Add new trail</span>
+                </a>
+            </section>
+            
+            <section class="sidebar-section">
+                <h3>Facebook</h3>
+                <button class="social-btn facebook-btn">
+                     <svg fill="white" viewBox="0 0 24 24"><path d="M22.675 0h-21.35C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.732 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/></svg>
+                    Facebook settings
+                </button>
+            </section>
+            
+            <section class="sidebar-section">
+                <h3>Google</h3>
+                <div class="connection-status">
+                    <div class="status">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Connected
+                    </div>
+                    <a href="#">Unlink</a>
+                </div>
+            </section>
+            
+            <section class="sidebar-section">
+                <h3>Apple</h3>
+                <button class="social-btn apple-btn">
+                    <svg fill="white" viewBox="0 0 24 24"><path d="M17.6 12.16c0-2.3 1.94-3.52 2.05-3.58-.04-.06-1.5-2.08-3.72-2.14-1.81-.04-3.38.99-4.24.99-.86 0-2.05-1.03-3.3-1-1.45.03-2.72.78-3.46 2.01-1.48 2.44-.38 6.08 1.05 8.04.72.98 1.55 2.11 2.65 2.08 1.08-.03 1.5-.68 2.85-.68 1.34 0 1.7.68 2.9.65 1.13-.03 1.83-1.02 2.53-2.01.8-1.15 1.18-2.28 1.2-2.35zM15.1 4.1c.7-.85 1.11-2.03.95-3.14-.98.05-2.14.65-2.88 1.5-.66.75-1.17 1.95-1.01 3.05.98-.02 2.19-.64 2.94-1.41z"/></svg>
+                    Connect with Apple
+                </button>
+            </section>
+            
+            <section class="sidebar-section">
+                <h3>Garmin</h3>
+                <button class="social-btn garmin-btn">
+                    <svg fill="white" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 14.8c-2.646 0-4.8-2.154-4.8-4.8s2.154-4.8 4.8-4.8 4.8 2.154 4.8 4.8-2.154 4.8-4.8 4.8z"/></svg>
+                    Connect with Garmin
+                </button>
+            </section>
+            
+            <section class="sidebar-section">
+                <h3>Account settings</h3>
+                <ul>
+                    <li><a href="#" class="sidebar-link">
+                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.26 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" fill="currentColor"/></svg>
+                        <span>Email preferences</span></a></li>
+                    <li><a href="#" class="sidebar-link">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+                        <span>Push notifications</span></a></li>
+                    <li><a href="#" class="sidebar-link">
+                         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z"/></svg>
+                        <span>Privacy settings</span></a></li>
+                    <li><a href="#" class="sidebar-link">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                        <span>Delete account</span></a></li>
+                </ul>
+            </section>
+        </aside>
+    </div>
+
+</body>
+</html>
