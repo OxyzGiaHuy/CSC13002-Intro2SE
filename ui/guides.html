@@ -242,6 +242,69 @@
             justify-content: center;
             cursor: pointer;
         }
+        /* --- Dropdown Styles --- */
+        
+        /* 1. The container for our dropdown */
+        .sort-by-dropdown {
+            position: relative; /* This makes it the positioning parent for the menu */
+            display: inline-block; /* Allows it to sit within the line of text */
+        }
+        
+        /* 2. The button that triggers the dropdown */
+        .sort-by-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-family: inherit; /* Use the same font as the paragraph */
+            font-size: inherit;
+            color: #0066cc; /* Link-like color */
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .sort-by-button:hover {
+            text-decoration: underline;
+        }
+
+        /* 3. The dropdown menu (hidden by default) */
+        .sort-by-dropdown .dropdown-menu {
+            display: none; /* Hide the menu initially */
+            position: absolute; /* Position it relative to the .sort-by-dropdown container */
+            right: 0; /* Align the menu to the right edge of the button */
+            top: 100%; /* Position it right below the button */
+            margin-top: 8px; /* Add a small gap */
+            background-color: white;
+            min-width: 180px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            z-index: 10;
+            list-style: none;
+            padding: 6px;
+            margin-left: 0; /* Reset default list margin */
+        }
+
+        /* 4. Show the menu when the user hovers over the container */
+        .sort-by-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* 5. Styling for the items inside the menu */
+        .dropdown-menu li a {
+            display: block;
+            padding: 10px 15px;
+            color: #2d332a;
+            font-weight: 500;
+            border-radius: 6px;
+            white-space: nowrap; /* Prevent text from wrapping */
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu li a:hover {
+            background-color: #f5f5f5;
+            color: #000;
+        }
 
     </style>
 </head>
@@ -319,7 +382,24 @@
                 </h2>
             </header>
             <p class="guides-filter">
-                63 Parks • 132 Guides &nbsp;&nbsp; Sort by <a href="#">Most popular <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+                63 Parks • 132 Guides &nbsp;&nbsp; 
+                <div class="sort-filter">
+                    <span>Sort by</span>             
+                    <!-- START: Dropdown HTML -->
+                    <div class="sort-by-dropdown">
+                        <button class="sort-by-button">
+                            <span>Most popular</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Most popular</a></li>
+                            <li><a href="#">Most recent</a></li>
+                            <li><a href="#">Alphabetical</a></li>
+                            <li><a href="#">Highest rated</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- END: Dropdown HTML -->
             </p>
 
             <div class="park-list">
