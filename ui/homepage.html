@@ -64,6 +64,11 @@
             gap: 25px;
         }
 
+        /* Set position relative for the dropdown container */
+        .main-nav > ul > li {
+            position: relative;
+        }
+
         .main-nav a {
             display: flex;
             align-items: center;
@@ -86,49 +91,128 @@
             border: 2px solid var(--text-light);
         }
 
+        /* --- Dropdown Menu Styles --- */
+        .dropdown-menu {
+            position: absolute;
+            top: 150%; /* Position below the nav item */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            color: var(--text-dark);
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            width: 280px;
+            z-index: 100;
+            display: none; /* Hide by default */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, top 0.2s ease-in-out;
+        }
+
+        /* Show the dropdown on hover */
+        .main-nav > ul > li:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            top: 120%; /* Animate into final position */
+        }
+        
+        .dropdown-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .dropdown-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            gap: 16px; /* Space between icon and text */
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #f0f1f0;
+        }
+        
+        .dropdown-menu .icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f1f0;
+            border-radius: 8px;
+        }
+
+        .dropdown-menu .icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-dark);
+        }
+
+
         /* --- Hero Section --- */
         .hero {
             position: relative;
             height: 450px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-image: url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?q=80&w=2073&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
             color: var(--text-light);
             text-align: center;
+            overflow: hidden; /* This is crucial to hide the other images */
+        }
+
+        .carousel-images {
+            /* This container holds all images and slides horizontally */
+            display: flex;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%; /* 100% width for each of the 4 images */
+            height: 100%;
+            transition: transform 0.8s ease-in-out; /* Animation for sliding */
+        }
+
+        .carousel-images img {
+            /* Each image takes up a quarter of the container's width */
+            width: 25%;
+            height: 100%;
+            object-fit: cover; /* Ensures images cover the area without distortion */
         }
 
         .hero::after {
+            /* This creates the dark overlay on top of the images */
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1; /* Place it above images but below content */
         }
 
         .hero-content {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Perfectly centers the content */
+            z-index: 2; /* Ensure content is on top of the overlay */
+            width: 90%;
+            max-width: 600px;
         }
 
         .hero h1 {
             font-size: 4rem;
             font-weight: 700;
             margin: 0 0 20px 0;
+            color: white;
         }
 
         .search-bar {
             position: relative;
-            width: 100%;
-            max-width: 600px;
         }
 
         .search-bar .search-icon {
@@ -136,8 +220,7 @@
             left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
+            font-size: 1.2rem;
             color: var(--text-muted);
         }
         
@@ -148,6 +231,7 @@
             border: 1px solid transparent;
             font-size: 1rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-sizing: border-box; /* Ensures padding doesn't affect final width */
         }
 
         .search-bar input::placeholder {
@@ -159,7 +243,7 @@
             bottom: -1px;
             left: 0;
             width: 100%;
-            z-index: 1;
+            z-index: 2;
             line-height: 0;
         }
         
@@ -170,6 +254,7 @@
             transform: translateY(-50%);
             z-index: 2;
             display: flex;
+            flex-direction: column; /* Stack them vertically */
             gap: 10px;
         }
         
@@ -179,6 +264,8 @@
             height: 4px;
             background-color: rgba(255, 255, 255, 0.5);
             border-radius: 2px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
         .carousel-indicators span.active {
@@ -396,7 +483,7 @@
 <body>
 
     <header class="main-header">
-        <div class="logo">Name</div>
+        <div class="logo">AllTrails</div>
         </div>
         <nav class="main-nav">
             <ul>
@@ -405,6 +492,36 @@
                         <span>Explore</span>
                         <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                     </a>
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu">
+                    <ul>
+                        <li>
+                        <a href="#">
+                            <div class="icon">📍<i class="fa-solid fa-location-dot"></i></div>
+                            <span>Nearby trails</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="#">
+                            <div class="icon">✏<i class="fa-solid fa-route"></i></div>
+                            <span>Build custom route</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="#">
+                            <div class="icon">👥<i class="fa-solid fa-users"></i></div>
+                            <span>Community</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="guides.html" aria-label="National park guides">
+                            <div class="icon">📖<i class="fa-solid fa-mountain-sun"></i></div>
+                            <span>National park guides</span>
+                        </a>
+                        </li>
+                    </ul>
+                    </div>
+
                 </li>
             </ul>
              <ul>
@@ -413,6 +530,29 @@
                         <span>Saved</span>
                         <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                     </a>
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu">
+                    <ul>
+                        <li>
+                        <a href="#">
+                            <div class="icon">🔖<i class="fa-solid fa-location-dot"></i></div>
+                            <span>Favourites</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="#">
+                            <div class="icon">✏<i class="fa-solid fa-route"></i></div>
+                            <span>Custom routes & maps</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="#">
+                            <div class="icon">📝<i class="fa-solid fa-users"></i></div>
+                            <span>Lists</span>
+                        </a>
+                        </li>
+                    </ul>
+                    </div>
                 </li>
             </ul>
              <ul>
@@ -429,23 +569,32 @@
 
     <main>
         <section class="hero">
+            <div class="carousel-images">
+                <img src="https://images.pexels.com/photos/1867601/pexels-photo-1867601.jpeg" alt="Mountain Adventure">
+                <img src="https://images.pexels.com/photos/210243/pexels-photo-210243.jpeg" alt="Forest Trail">
+                <img src="https://images.pexels.com/photos/417074/pexels-photo-417074.jpeg" alt="Lake View">
+                <img src="https://images.pexels.com/photos/6136295/pexels-photo-6136295.jpeg" alt="Ocean Cliff">
+            </div>
+
             <div class="hero-content">
-                <h1>Adventures Fill Your</h1>
+                <h1>Adventures Fill Your Soul.</h1>
                 <div class="search-bar">
-                    <!-- <svg class="search-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg> -->
                     <span class="search-icon">🔍</span>
                     <input type="text" placeholder="Search by city, park, or trail name">
                 </div>
             </div>
+
             <div class="hero-curve">
                 <svg viewBox="0 0 1440 86" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M1440 25.4168C1200 85.4168 720 85.4168 0 25.4168V85.0001H1440V25.4168Z" fill="#a3e635"/>
+                    <path d="M1440 25.4168C1200 85.4168 720 85.4168 0 25.4168V85.0001H1440V25.4168Z" fill="#D9CFC7"/> <!-- Changed fill to white to match your next section -->
                 </svg>
             </div>
-             <div class="carousel-indicators">
-                <span class="active"></span>
-                <span></span>
-                <span></span>
+
+            <div class="carousel-indicators">
+                <span class="active" data-index="0"></span>
+                <span data-index="1"></span>
+                <span data-index="2"></span>
+                <span data-index="3"></span>
             </div>
         </section>
 
@@ -564,6 +713,56 @@
             </div>
         </div>
     </footer>
+      </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselImages = document.querySelector('.carousel-images');
+            const indicators = document.querySelectorAll('.carousel-indicators span');
+            const totalImages = indicators.length;
+            let currentIndex = 0;
+            let intervalId;
+
+            // Function to update the carousel position and active indicator
+            function updateCarousel(index) {
+                // Move the image strip
+                carouselImages.style.transform = `translateX(-${index * (100 / totalImages)}%)`;
+
+                // Update the active indicator
+                indicators.forEach(indicator => indicator.classList.remove('active'));
+                indicators[index].classList.add('active');
+                
+                currentIndex = index;
+            }
+
+            // Function to start the automatic slide show
+            function startCarousel() {
+                intervalId = setInterval(() => {
+                    let nextIndex = (currentIndex + 1) % totalImages;
+                    updateCarousel(nextIndex);
+                }, 5000); // Change image every 5 seconds
+            }
+            
+            // Function to reset the timer
+            function resetCarouselTimer() {
+                clearInterval(intervalId);
+                startCarousel();
+            }
+
+            // Add click event listeners to indicators
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', () => {
+                    const index = parseInt(indicator.getAttribute('data-index'));
+                    updateCarousel(index);
+                    resetCarouselTimer(); // Reset timer on manual navigation
+                });
+            });
+
+            // Start the carousel on page load
+            startCarousel();
+        });
+    </script>
+
 
 </body>
 </html>
