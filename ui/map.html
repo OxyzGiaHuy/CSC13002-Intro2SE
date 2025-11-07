@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllTrails - Running Trails</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow: hidden;
+        }
+
+        .header {
+            background: white;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #7cb342, #558b2f);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 24px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .nav-item {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .login-btn {
+            background: #2d2d2d;
+            color: white;
+            border-radius: 24px;
+            padding: 10px 24px;
+        }
+
+        .main-container {
+            display: flex;
+            height: calc(100vh - 64px);
+        }
+
+        .sidebar {
+            width: 400px;
+            background: white;
+            overflow-y: auto;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .sidebar-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapse-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 16px 24px;
+            background: #fafafa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #d0d0d0;
+            background: white;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .filter-btn.active {
+            background: #2d2d2d;
+            color: white;
+            border-color: #2d2d2d;
+        }
+
+        .results-header {
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .trail-card {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .trail-card:hover {
+            background: #fafafa;
+        }
+
+        .trail-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .trail-carousel {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .carousel-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .carousel-btn.prev { left: 12px; }
+        .carousel-btn.next { right: 12px; }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+        }
+
+        .dot.active {
+            background: white;
+        }
+
+        .bookmark-btn {
+            position: absolute;
+            top: 28px;
+            right: 36px;
+            background: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .trail-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .trail-location {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .trail-stats {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .star {
+            color: #ffa000;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .map-btn {
+            background: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">▲</div>
+            <span>AllTrails</span>
+        </div>
+        <div class="search-bar">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Search">
+        </div>
+        <div class="nav-menu">
+            <button class="nav-item">Explore ▾</button>
+            <button class="nav-item">Saved ▾</button>
+            <button class="nav-item">Shop ▾</button>
+            <button class="nav-item login-btn">Log in</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    Explore trails
+                    <button class="collapse-btn">›</button>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-btn">Distance away ▾</button>
+                <button class="filter-btn active">Running ✕</button>
+                <button class="filter-btn">Difficulty ▾</button>
+                <button class="filter-btn">Length ▾</button>
+                <button class="filter-btn">≡ All filters (1)</button>
+            </div>
+
+            <div class="results-header">
+                <span>2 trails</span>
+                <select style="border: none; background: transparent; cursor: pointer;">
+                    <option>⇅ Best match</option>
+                </select>
+            </div>
+
+            <div class="trail-card">
+                <div class="trail-carousel">
+                    <img src="https://res.cloudinary.com/gorealtravel/image/upload/f_auto,q_auto/,f_auto,q_50/v1567518487/production/marketing/city/5d6e1558a0c45b00080a50b5/city_main_image/Saigon_header_1.webp" alt="Saigon City Loop" class="carousel-image">
+                    <button class="carousel-btn prev">‹</button>
+                    <button class="carousel-btn next">›</button>
+                    <div class="carousel-dots">
+                        <div class="dot active"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+                <button class="bookmark-btn">🔖</button>
+                <div class="trail-title">Saigon City Loop</div>
+                <div class="trail-location">Ho Chi Minh City, Vietnam</div>
+                <div class="trail-stats">
+                    <div class="rating">
+                        <span class="star">★</span>
+                        <span>4.2</span>
+                    </div>
+                    <span>•</span>
+                    <span>Moderate</span>
+                    <span>•</span>
+                    <span>6.8 km</span>
+                    <span>•</span>
+                    <span>Est. 1.5–2 hr</span>
+                </div>
+            </div>
+
+            <div class="trail-card">
+                <div class="trail-carousel">
+                    <img src="https://lh4.googleusercontent.com/K0vRPykIk9ORxcv2xm2pJ5TyZNmmIe981PjNYPNcVROiGOBUsXKI-t2hsqFiUBCHn7LlZdKaxXiKcbwsQfj0UxubquHy-kpTtelVRBlNHfvSKvNaAcd11meWvA468r5y4hwiHjpiY89zwwR0kvB030U" alt="Park Trail" class="carousel-image">
+                    <button class="carousel-btn prev">‹</button>
+                    <button class="carousel-btn next">›</button>
+                    <div class="carousel-dots">
+                        <div class="dot active"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+                <button class="bookmark-btn">🔖</button>
+                <div class="trail-title">Tao Dan Park Loop</div>
+                <div class="trail-location">Ho Chi Minh City, Vietnam</div>
+                <div class="trail-stats">
+                    <div class="rating">
+                        <span class="star">★</span>
+                        <span>4.5</span>
+                    </div>
+                    <span>•</span>
+                    <span>Easy</span>
+                    <span>•</span>
+                    <span>2.4 km</span>
+                    <span>•</span>
+                    <span>Est. 30 min</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div id="map"></div>
+            <div class="map-controls">
+                <button class="map-btn">🗺️</button>
+                <button class="map-btn">3D</button>
+                <button class="map-btn">+</button>
+                <button class="map-btn">−</button>
+                <button class="map-btn">⌖</button>
+                <button class="map-btn">📍</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        // Initialize the map centered on Ho Chi Minh City
+        const map = L.map('map').setView([10.8231, 106.6297], 12);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add trail markers
+        const trails = [
+            { name: 'Saigon City Loop', lat: 10.7769, lng: 106.7009 },
+            { name: 'Tao Dan Park Loop', lat: 10.7825, lng: 106.6925 }
+        ];
+
+        trails.forEach(trail => {
+            L.marker([trail.lat, trail.lng])
+                .addTo(map)
+                .bindPopup(`<b>${trail.name}</b>`);
+        });
+
+        // Add trail paths (example routes)
+        const cityLoop = [
+            [10.7769, 106.7009],
+            [10.7800, 106.7050],
+            [10.7750, 106.7100],
+            [10.7700, 106.7050],
+            [10.7769, 106.7009]
+        ];
+
+        L.polyline(cityLoop, {
+            color: '#4285f4',
+            weight: 3,
+            opacity: 0.7
+        }).addTo(map);
+
+        // Filter button functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    this.classList.add('active');
+                } else if (this.textContent.includes('✕')) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Trail card click
+        document.querySelectorAll('.trail-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('bookmark-btn') && 
+                    !e.target.closest('.bookmark-btn') &&
+                    !e.target.closest('.carousel-btn')) {
+                    console.log('Trail clicked');
+                }
+            });
+        });
+
+        // Bookmark functionality
+        document.querySelectorAll('.bookmark-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.textContent = this.textContent === '🔖' ? '📌' : '🔖';
+            });
+        });
+
+        // Carousel functionality
+        document.querySelectorAll('.carousel-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                console.log('Carousel:', this.classList.contains('prev') ? 'Previous' : 'Next');
+            });
+        });
+    </script>
+</body>
+</html>
