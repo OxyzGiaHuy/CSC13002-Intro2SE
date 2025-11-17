@@ -1,0 +1,7 @@
+{
+  "name": "TrailsExplorer",
+  "description": "An intelligent trekking management system that helps users discover, plan, and experience their adventures. Features an AI-powered planning assistant to create personalized itineraries.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
