@@ -116,7 +116,10 @@ Các tài liệu liên quan đến môn học được lưu trữ trong thư m�
 
 ## 👥 Nhóm phát triển
 
-- **Owner**: [OxyzGiaHuy](https://github.com/OxyzGiaHuy)
+- **Owner**: [OxyzGiaHuy (Thái Gia Huy)](https://github.com/OxyzGiaHuy)
+- **Member**: [Andra Crista (ACTrinh)](https://github.com/ACTrinh)
+- **Member**: [Kimtri12](https://github.com/Kimtri12)
+- **Member**: [Đỗ Trọng Huy (TrongHuy315)](https://github.com/TrongHuy315)
 
 ## 📄 License
 
