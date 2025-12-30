@@ -1,7 +1,7 @@
 
 
 import { GoogleGenAI, Type } from '@google/genai';
-import type { ItineraryPlan } from './types';
+import type { ItineraryPlan } from '../src/types';
 
 export const generateTrekkingPlan = async (
   location: string,
@@ -9,12 +9,18 @@ export const generateTrekkingPlan = async (
   difficulty: string,
   interests: string
 ): Promise<ItineraryPlan | null> => {
-  if (!process.env.API_KEY) {
+  // Get API key from process.env (defined in vite.config.ts)
+  // User should set GEMINI_API_KEY in .env file in the trailsexplorer directory
+  const apiKey = (process.env as any).API_KEY || (process.env as any).GEMINI_API_KEY;
+  
+  if (!apiKey || apiKey === '') {
     console.error("API_KEY is not set in environment variables.");
+    console.error("Please create a .env file in the trailsexplorer directory with: GEMINI_API_KEY=your_api_key");
+    console.error("Or set VITE_GEMINI_API_KEY=your_api_key for direct access");
     // FIX: Removed alert per API key guidelines. The application must not ask the user for the key.
     return null;
   }
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
   
   const prompt = `
     You are an expert trekking and travel planner for "TrailsExplorer".
@@ -102,12 +108,18 @@ export const generateChecklist = async (
   duration: number,
   difficulty: string
 ): Promise<string[] | null> => {
-  if (!process.env.API_KEY) {
+  // Get API key from process.env (defined in vite.config.ts)
+  // User should set GEMINI_API_KEY in .env file in the trailsexplorer directory
+  const apiKey = (process.env as any).API_KEY || (process.env as any).GEMINI_API_KEY;
+  
+  if (!apiKey || apiKey === '') {
     console.error("API_KEY is not set in environment variables.");
+    console.error("Please create a .env file in the trailsexplorer directory with: GEMINI_API_KEY=your_api_key");
+    console.error("Or set VITE_GEMINI_API_KEY=your_api_key for direct access");
     // FIX: Removed alert per API key guidelines. The application must not ask the user for the key.
     return null;
   }
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = `Generate a comprehensive packing checklist for a ${duration}-day trekking trip to ${location} in Vietnam, with a ${difficulty} difficulty level. Focus on essential gear, clothing, first-aid, and personal items. Do not include quantities.`;
 
   try {

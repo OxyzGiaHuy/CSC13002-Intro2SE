@@ -1,6 +1,6 @@
 
 import React from 'react';
-import type { Trail, User, GuidebookArticle, MarketplaceItem, CommunityChallenge, SocialPost, WeatherForecast, VoiceLog, Group, GroupMember, ChatMessage } from './types';
+import type { Trail, User, GuidebookArticle, MarketplaceItem, CommunityChallenge, SocialPost, WeatherForecast, VoiceLog, Group, GroupMember, ChatMessage } from '../types/index';
 
 export const MOCK_TRAILS: Trail[] = [
   {
