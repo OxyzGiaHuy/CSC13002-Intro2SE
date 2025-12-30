@@ -36,22 +36,43 @@ CSC13002-Intro2SE/
 │   ├── requirements/              # Tài liệu yêu cầu phần mềm
 │   ├── analysis_and_design/       # Phân tích và thiết kế
 │   ├── management/                # Quản lý dự án
+│   ├── guides/                    # Hướng dẫn cài đặt và sử dụng
 │   └── test/                      # Tài liệu kiểm thử
 ├── pa/                            # Project Assignments
-│   ├── 1-Template0.pdf            # Template 0
-│   ├── 1-Template1.pdf            # Template 1
-│   └── ...
-├── src/                           # Source code
+├── src/
 │   └── trailsexplorer/            # Ứng dụng TrailsExplorer
+│       ├── index.html             # HTML entry point
 │       ├── App.tsx                # Component chính
-│       ├── constants.tsx          # Constants và mock data
-│       ├── types.ts               # TypeScript type definitions
-│       ├── services/              # Services
-│       │   └── geminiService.ts   # Google Gemini AI service
+│       ├── vite.config.ts         # Cấu hình Vite
+│       ├── tsconfig.json          # Cấu hình TypeScript
 │       ├── package.json           # Dependencies
-│       └── ...
-├── LICENSE                        # MIT License
-└── README.md                      # File này
+│       ├── .env                   # Environment variables (không commit)
+│       ├── .gitignore
+│       ├── src/                   # Source code
+│       │   ├── index.tsx          # React entry point
+│       │   ├── App.tsx            # Main App component
+│       │   ├── components/        # React components
+│       │   │   ├── common/        # Common components (TrailCard)
+│       │   │   └── layout/        # Layout components (Header)
+│       │   ├── context/           # React Context (AuthContext)
+│       │   ├── pages/             # Page components
+│       │   │   ├── Home.tsx
+│       │   │   ├── Discover.tsx
+│       │   │   ├── Planner.tsx
+│       │   │   ├── Community.tsx
+│       │   │   ├── Profile.tsx
+│       │   │   └── TrailDetail.tsx
+│       │   ├── services/          # API & AI services
+│       │   │   ├── geminiService.ts   # Google Gemini AI service
+│       │   │   └── trailService.ts    # Trail data service
+│       │   ├── types/             # TypeScript type definitions
+│       │   ├── data/              # Constants & static data
+│       │   └── layouts/           # Layout templates
+│       ├── assets/                # Static assets
+│       └── services/              # Shared services
+│           └── geminiService.ts
+├── LICENSE
+└── README.md
 ```
 
 ## 🚀 Cài đặt và Chạy ứng dụng
@@ -59,8 +80,8 @@ CSC13002-Intro2SE/
 ### Yêu cầu
 
 - Node.js (phiên bản 16 trở lên)
-- npm hoặc yarn
-- Google Gemini API Key
+- npm, pnpm hoặc yarn
+- Google Gemini API Key (lấy miễn phí tại: https://ai.google.dev/)
 
 ### Các bước cài đặt
 
@@ -76,31 +97,59 @@ CSC13002-Intro2SE/
    ```
 
 3. **Cài đặt dependencies**
+   
+   **Khuyến nghị: Sử dụng pnpm**
    ```bash
-   npm install
+   pnpm install
    ```
 
 4. **Cấu hình API Key**
    
-   Tạo file `.env.local` trong thư mục `src/trailsexplorer/` và thêm API key của bạn:
+   Tạo file `.env` trong thư mục `src/trailsexplorer/` và thêm API key của bạn:
    ```
    VITE_GEMINI_API_KEY=your_gemini_api_key_here
    ```
    
-   Lấy API key miễn phí tại: https://ai.google.dev/
+   > **Lưu ý**: File `.env` sẽ bị ignore khi commit lên Git. Không nên hardcode API key vào code.
 
 5. **Chạy ứng dụng**
+   
    ```bash
+   pnpm dev
+   # hoặc
    npm run dev
    ```
 
 6. **Mở trình duyệt**
    
-   Truy cập: `http://localhost:5173`
+   Ứng dụng sẽ chạy tại: `http://localhost:3000`
+
+### Khắc phục lỗi
+
+Nếu gặp lỗi khi cài đặt dependencies:
+
+**Trên Windows:**
+```bash
+# Xóa node_modules và cài lại
+Remove-Item -Recurse -Force node_modules
+npm cache clean --force
+npm install --legacy-peer-deps
+```
+
+**Hoặc chạy script khắc phục:**
+```bash
+.\fix-npm-install.ps1
+```
+
+Xem chi tiết tại: [docs/guides/huong_dan_cai_dat.md](docs/guides/huong_dan_cai_dat.md)
 
 ### Build cho Production
 
 ```bash
+pnpm build
+pnpm preview
+
+# hoặc npm
 npm run build
 npm run preview
 ```
