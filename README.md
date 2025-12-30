@@ -112,6 +112,7 @@ Các tài liệu liên quan đến môn học được lưu trữ trong thư m�
 - **Requirements**: Tài liệu yêu cầu phần mềm, use cases, user stories
 - **Analysis & Design**: Sơ đồ phân tích, thiết kế kiến trúc, class diagram, sequence diagram
 - **Management**: Kế hoạch quản lý dự án, phân công công việc, timeline
+- **Guides**: Hướng dẫn sử dụng và phát triển (cài đặt, thêm logo, v.v.) - Xem [docs/guides/](docs/guides/)
 - **Test**: Kế hoạch kiểm thử, test cases, báo cáo kiểm thử
 
 ## 👥 Nhóm phát triển
