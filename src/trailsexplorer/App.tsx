@@ -10,6 +10,8 @@ import {
 } from './constants';
 import { generateTrekkingPlan, generateChecklist } from './services/geminiService';
 import type { Trail, ItineraryPlan, ChecklistItem, User, Group, ChatMessage } from './types';
+import Logo from './components/Logo';
+import logoImage from './assets/logo.png';
 
 // Declare Leaflet global for TypeScript
 declare var L: any;
@@ -92,9 +94,8 @@ const Header: React.FC<{ setView: (view: View) => void, currentView: View, onLog
         <header className="bg-cream shadow-md sticky top-0 z-50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    <div className="flex items-center cursor-pointer" onClick={() => setView('home')}>
-                        <MountainIcon className="h-8 w-8 text-sage-green" />
-                        <h1 className="ml-2 text-2xl font-display text-forest-green">TrailsExplorer</h1>
+                    <div className="cursor-pointer" onClick={() => setView('home')}>
+                        <Logo imageSrc={logoImage} size="md" showText={true} />
                     </div>
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-4">
@@ -725,8 +726,7 @@ const Login: React.FC<{ onLogin: (email: string) => void, setAuthView: (view: Au
     return (
         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
              <div className="flex items-center justify-center mb-6">
-                <MountainIcon className="h-10 w-10 text-sage-green" />
-                <h1 className="ml-2 text-3xl font-display text-forest-green">TrailsExplorer</h1>
+                <Logo imageSrc={logoImage} size="lg" showText={true} />
             </div>
             <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Welcome Back</h2>
             {error && <p className="bg-red-100 text-red-700 p-2 rounded-md mb-4 text-center">{error}</p>}
@@ -762,8 +762,7 @@ const Register: React.FC<{ onRegister: (name: string) => void, setAuthView: (vie
     return (
          <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
              <div className="flex items-center justify-center mb-6">
-                <MountainIcon className="h-10 w-10 text-sage-green" />
-                <h1 className="ml-2 text-3xl font-display text-forest-green">TrailsExplorer</h1>
+                <Logo imageSrc={logoImage} size="lg" showText={true} />
             </div>
             <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Create Your Account</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
