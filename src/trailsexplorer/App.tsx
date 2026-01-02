@@ -23,6 +23,9 @@ import type { View, AuthView } from './src/types/view';
 // --- IMPORT COMPONENTS & PAGES ---
 import TrailCard from './src/components/common/TrailCard';
 import Header from './src/components/layout/Header';
+import LoginPage from './src/pages/Login';
+import RegisterPage from './src/pages/Register';
+import { useAuth } from './src/context/AuthContext';
 import Home from './src/pages/Home';
 import Discover from './src/pages/Discover';
 import TrailDetail from './src/pages/TrailDetail';
@@ -293,9 +296,12 @@ const App: React.FC = () => {
     const [view, setView] = useState<View>('home');
     const [trails, setTrails] = useState<Trail[]>([]);
     const [isLoadingTrails, setIsLoadingTrails] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [authView, setAuthView] = useState<AuthView>('login');
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const { user, isAuthenticated, login, register, logout } = useAuth();
+
+    useEffect(() => {
+        console.log('[App] auth change', { user, isAuthenticated });
+    }, [user, isAuthenticated]);
 
     // Load trails using service layer
     useEffect(() => {
@@ -313,20 +319,19 @@ const App: React.FC = () => {
         loadTrails();
     }, []);
 
+    // wrappers so Login/Register pages (which expect callbacks) work
     const handleLogin = (email: string) => {
-        setCurrentUser(MOCK_USER);
-        setIsAuthenticated(true);
+        login(email);
+        setView('home');
     };
 
     const handleRegister = (name: string) => {
-        const newUser: User = { ...MOCK_USER, name: name, tripHistory: [], totalKm: 0 };
-        setCurrentUser(newUser);
-        setIsAuthenticated(true);
+        register(name);
+        setView('home');
     };
     
     const handleLogout = () => {
-        setIsAuthenticated(false);
-        setCurrentUser(null);
+        logout();
         setView('home');
     };
 
@@ -384,13 +389,13 @@ const App: React.FC = () => {
             case 'community':
                 return <Community setView={setView} />;
             case 'group':
-                if (currentUser) {
-                    return <GroupView group={MOCK_GROUP} currentUser={currentUser} onBack={() => setView('community')} />;
+                if (user) {
+                    return <GroupView group={MOCK_GROUP} currentUser={user} onBack={() => setView('community')} />;
                 }
                 return null;
             case 'profile':
-                 if (currentUser) {
-                    return <Profile user={currentUser} onSelectTrail={handleSelectTrail} trails={trails} />;
+                 if (user) {
+                    return <Profile user={user} onSelectTrail={handleSelectTrail} trails={trails} />;
                 }
                 return null;
             default:
@@ -403,8 +408,8 @@ const App: React.FC = () => {
              <div className="min-h-screen bg-cream flex items-center justify-center p-4" style={{ backgroundImage: "url('https://picsum.photos/seed/authbg/1600/1200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
                  <div className="absolute inset-0 bg-black bg-opacity-30"></div>
                 {authView === 'login' 
-                    ? <Login onLogin={handleLogin} setAuthView={setAuthView} /> 
-                    : <Register onRegister={handleRegister} setAuthView={setAuthView} />
+                    ? <LoginPage setAuthView={setAuthView} /> 
+                    : <RegisterPage setAuthView={setAuthView} />
                 }
             </div>
         )
@@ -412,7 +417,7 @@ const App: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-cream">
-            <Header setView={setView} currentView={view} onLogout={handleLogout} />
+            <Header setView={setView} currentView={view} onLogout={handleLogout} userName={user?.name} />
             <main>{renderContent()}</main>
             <footer className="bg-forest-green text-cream mt-8 py-4">
                 <div className="container mx-auto text-center text-sm">

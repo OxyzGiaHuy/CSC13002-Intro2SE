@@ -34,6 +34,9 @@ export interface User {
     difficulty: ('Easy' | 'Medium' | 'Hard')[];
     scenery: string[];
   }
+  // optional runtime properties
+  role?: 'admin' | 'user';
+  email?: string;
 }
 
 export interface GuidebookArticle {
