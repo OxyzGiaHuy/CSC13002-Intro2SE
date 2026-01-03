@@ -5,7 +5,7 @@ import { generateTrekkingPlan, generateChecklist } from '../../services/geminiSe
 const Planner: React.FC = () => {
     const [location, setLocation] = useState('Tà Năng - Phan Dũng');
     const [duration, setDuration] = useState(3);
-    const [difficulty, setDifficulty] = useState('Medium');
+    const [difficulty, setDifficulty] = useState('Moderate');
     const [interests, setInterests] = useState('beautiful grasslands, pine forests, and challenging climbs');
     const [plan, setPlan] = useState<ItineraryPlan | null>(null);
     const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
@@ -77,7 +77,7 @@ const Planner: React.FC = () => {
                             <label className="block text-sm font-medium text-gray-700">Difficulty</label>
                             <select value={difficulty} onChange={e => setDifficulty(e.target.value)} className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm">
                                 <option>Easy</option>
-                                <option>Medium</option>
+                                <option>Moderate</option>
                                 <option>Hard</option>
                             </select>
                         </div>

@@ -22,7 +22,11 @@ import type { View, AuthView } from './src/types/view';
 
 // --- IMPORT COMPONENTS & PAGES ---
 import TrailCard from './src/components/common/TrailCard';
+import MapView from './src/components/common/MapView'; // Refactored MapView
 import Header from './src/components/layout/Header';
+import AdminLayout from './src/layouts/AdminLayout'; // Admin Layout
+import Dashboard from './src/pages/admin/Dashboard'; // Admin Dashboard
+import Users from './src/pages/admin/Users'; // Admin Users
 import LoginPage from './src/pages/Login';
 import RegisterPage from './src/pages/Register';
 import { useAuth } from './src/context/AuthContext';
@@ -33,53 +37,7 @@ import Planner from './src/pages/Planner';
 import Community from './src/pages/Community';
 import Profile from './src/pages/Profile';
 
-// --- OTHER COMPONENTS (MapView, GroupView, Login, Register) ---
-const MapView: React.FC<{ trailId: number, onBack: () => void, trails: Trail[] }> = ({ trailId, onBack, trails }) => {
-    const trail = trails.find(t => t.id === trailId);
-    const mapContainerRef = useRef<HTMLDivElement>(null);
-    const mapRef = useRef<any>(null);
-
-    useEffect(() => {
-        if (trail && mapContainerRef.current && !mapRef.current) {
-            const map = L.map(mapContainerRef.current).setView([trail.lat, trail.lng], 13);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            L.marker([trail.lat, trail.lng]).addTo(map)
-                .bindPopup(`<b>${trail.name}</b>`)
-                .openPopup();
-            
-            mapRef.current = map;
-        }
-        
-        return () => {
-            if (mapRef.current) {
-                mapRef.current.remove();
-                mapRef.current = null;
-            }
-        };
-    }, [trail]);
-
-    if (!trail) return <div className="p-8 text-center">Trail map not found.</div>;
-
-    return (
-        <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-            <button onClick={onBack} className="flex items-center gap-2 text-sage-green mb-4 hover:underline">
-                <ArrowLeftIcon className="w-5 h-5" /> Back to Trail Details
-            </button>
-            <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-                 <div className="p-4 border-b">
-                    <h2 className="text-2xl font-display text-forest-green">Map of {trail.name}</h2>
-                    <p className="text-gray-600">{trail.location}</p>
-                </div>
-                <div ref={mapContainerRef} style={{ height: '600px', width: '100%' }} />
-            </div>
-        </div>
-    );
-};
-
+// --- OTHER COMPONENTS (GroupView) ---
 const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void }> = ({ group, currentUser, onBack }) => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<any>(null);
@@ -216,11 +174,11 @@ const Login: React.FC<{ onLogin: (email: string) => void, setAuthView: (view: Au
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock validation
-        if (email === 'giahuy@trailsexplorer.com' && password === 'password123') {
+        // Mock validation: Allow default user OR any admin email
+        if ((email === 'giahuy@trailsexplorer.com' && password === 'password123') || email.toLowerCase().includes('admin')) {
             onLogin(email);
         } else {
-            setError('Invalid email or password.');
+            setError('Invalid email or password. For admin, use an email containing "admin".');
         }
     };
 
@@ -298,10 +256,32 @@ const App: React.FC = () => {
     const [isLoadingTrails, setIsLoadingTrails] = useState(true);
     const [authView, setAuthView] = useState<AuthView>('login');
     const { user, isAuthenticated, login, register, logout } = useAuth();
+    const prevAuth = useRef(isAuthenticated);
 
     useEffect(() => {
         console.log('[App] auth change', { user, isAuthenticated });
+        
+        // Detect login event (transition from false to true)
+        if (!prevAuth.current && isAuthenticated) {
+            console.log('User just logged in. Role:', user?.role);
+            if (user?.role === 'admin') {
+                console.log('Redirecting to Admin Dashboard');
+                setView('admin_dashboard');
+            } else {
+                setView('home');
+            }
+        }
+        prevAuth.current = isAuthenticated;
     }, [user, isAuthenticated]);
+
+    // Route Guard for Admin Views
+    useEffect(() => {
+        // Only redirect if user is loaded and not admin
+        if ((view === 'admin_dashboard' || view === 'admin_users') && user && user.role !== 'admin') {
+            console.log('Redirecting to home: User is not admin', user);
+            setView('home');
+        }
+    }, [view, user]);
 
     // Load trails using service layer
     useEffect(() => {
@@ -322,7 +302,7 @@ const App: React.FC = () => {
     // wrappers so Login/Register pages (which expect callbacks) work
     const handleLogin = (email: string) => {
         login(email);
-        setView('home');
+        // View redirection is now handled by the useEffect above
     };
 
     const handleRegister = (name: string) => {
@@ -398,6 +378,10 @@ const App: React.FC = () => {
                     return <Profile user={user} onSelectTrail={handleSelectTrail} trails={trails} />;
                 }
                 return null;
+            case 'admin_dashboard':
+                return <Dashboard />;
+            case 'admin_users':
+                return <Users />;
             default:
                 return <Home setView={setView} trails={trails} onSelectTrail={handleSelectTrail} onToggleFavorite={handleToggleFavorite} />;
         }
@@ -408,16 +392,35 @@ const App: React.FC = () => {
              <div className="min-h-screen bg-cream flex items-center justify-center p-4" style={{ backgroundImage: "url('https://picsum.photos/seed/authbg/1600/1200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
                  <div className="absolute inset-0 bg-black bg-opacity-30"></div>
                 {authView === 'login' 
-                    ? <LoginPage setAuthView={setAuthView} /> 
-                    : <RegisterPage setAuthView={setAuthView} />
+                    ? <LoginPage setAuthView={setAuthView} onLogin={handleLogin} /> 
+                    : <RegisterPage setAuthView={setAuthView} onRegister={handleRegister} />
                 }
             </div>
         )
     }
 
+    // Check if current view is an admin view
+    const isAdminView = view === 'admin_dashboard' || view === 'admin_users';
+    const isUserAdmin = user?.role === 'admin';
+
+    console.log('App Render:', { view, isAdminView, userRole: user?.role, isAuthenticated });
+
+    if (isAdminView) {
+        if (isUserAdmin) {
+            return (
+                <AdminLayout currentView={view} onNavigate={setView}>
+                    {renderContent()}
+                </AdminLayout>
+            );
+        }
+        // If admin view but not admin user (and user exists), the useEffect will redirect.
+        // While waiting, we can return null or a loader to prevent flashing the wrong layout.
+        if (user) return <div className="flex items-center justify-center h-screen">Redirecting...</div>;
+    }
+
     return (
         <div className="min-h-screen bg-cream">
-            <Header setView={setView} currentView={view} onLogout={handleLogout} userName={user?.name} />
+            <Header setView={setView} currentView={view} onLogout={handleLogout} userName={user?.name} userRole={user?.role} />
             <main>{renderContent()}</main>
             <footer className="bg-forest-green text-cream mt-8 py-4">
                 <div className="container mx-auto text-center text-sm">

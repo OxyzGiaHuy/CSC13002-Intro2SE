@@ -3,7 +3,7 @@ export interface Trail {
   id: number;
   name: string;
   location: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: 'Easy' | 'Moderate' | 'Hard';
   length_km: number;
   duration_hr: number;
   rating: number;
@@ -31,7 +31,7 @@ export interface User {
   avgTimeHr: number;
   tripHistory: Trail[];
   preferences: {
-    difficulty: ('Easy' | 'Medium' | 'Hard')[];
+    difficulty: ('Easy' | 'Moderate' | 'Hard')[];
     scenery: string[];
   }
 }

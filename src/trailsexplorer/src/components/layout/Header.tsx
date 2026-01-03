@@ -9,9 +9,10 @@ export interface HeaderProps {
   currentView: View;
   onLogout: () => void;
     userName?: string | null;
+    userRole?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout, userName }) => {
+const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout, userName, userRole }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navItems: { name: string, view: View }[] = [
         { name: 'Home', view: 'home' },
@@ -20,6 +21,10 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout, userNam
         { name: 'Community', view: 'community' },
         { name: 'Profile', view: 'profile' },
     ];
+
+    if (userRole === 'admin') {
+        navItems.push({ name: 'Dashboard', view: 'admin_dashboard' });
+    }
 
     const NavLink: React.FC<{ view: View, name: string }> = ({ view, name }) => {
         let isActive = false;

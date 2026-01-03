@@ -55,7 +55,7 @@ export const searchTrails = async (searchTerm: string): Promise<Trail[]> => {
  * @param difficulty - The difficulty level
  * @returns Promise that resolves to an array of filtered trails
  */
-export const filterTrailsByDifficulty = async (difficulty: 'Easy' | 'Medium' | 'Hard'): Promise<Trail[]> => {
+export const filterTrailsByDifficulty = async (difficulty: 'Easy' | 'Moderate' | 'Hard'): Promise<Trail[]> => {
     return new Promise((resolve) => {
         setTimeout(() => {
             const filtered = MOCK_TRAILS.filter(trail => trail.difficulty === difficulty);

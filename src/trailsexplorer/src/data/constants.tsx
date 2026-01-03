@@ -44,7 +44,7 @@ export const MOCK_TRAILS: Trail[] = [
     id: 3,
     name: "Langbiang Mountain",
     location: "Đà Lạt, Lâm Đồng",
-    difficulty: "Medium",
+    difficulty: "Moderate",
     length_km: 8,
     duration_hr: 5,
     rating: 4.6,
@@ -86,7 +86,7 @@ export const MOCK_USER: User = {
   avgTimeHr: 8.5,
   tripHistory: MOCK_TRAILS.slice(0, 2),
   preferences: {
-    difficulty: ['Hard', 'Medium'],
+    difficulty: ['Hard', 'Moderate'],
     scenery: ['Mountains', 'Forest', 'Grasslands']
   }
 };

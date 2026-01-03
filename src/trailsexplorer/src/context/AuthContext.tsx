@@ -33,7 +33,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const login = (email: string) => {
         // Mock login logic: if email contains "admin", set role to admin
-        const resolvedRole: 'admin' | 'user' = email.includes('admin') ? 'admin' : 'user';
+        const normalizedEmail = email.toLowerCase();
+        const resolvedRole: 'admin' | 'user' = normalizedEmail.includes('admin') ? 'admin' : 'user';
         setRole(resolvedRole);
         const userData: User = { ...MOCK_USER, name: email.split('@')[0], email, role: resolvedRole };
         console.log('[Auth] login:', email, resolvedRole);
