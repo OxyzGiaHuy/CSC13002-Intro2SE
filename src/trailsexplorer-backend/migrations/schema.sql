@@ -1,10 +1,3 @@
--- ============================================================
--- TRAILSEXPLORER DATABASE - COMPLETE SCHEMA
--- Version: 1.0
--- Description: Complete database schema for trekking platform
--- Last Updated: 2024
--- ============================================================
-
 -- 1. KÍCH HOẠT EXTENSIONS
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
