@@ -1,66 +1,52 @@
 import type { Trail } from '../types/index';
-import { MOCK_TRAILS } from '../data/constants';
 
-/**
- * Service layer for trail-related operations
- * Simulates API calls with delays
- */
+const API_BASE = '/api/trails';
 
-/**
- * Fetches all trails from the backend
- * @returns Promise that resolves to an array of trails
- */
 export const getTrails = async (): Promise<Trail[]> => {
-    // Simulate network delay
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve([...MOCK_TRAILS]);
-        }, 500);
-    });
+    try {
+        const res = await fetch(`${API_BASE}`);
+        if (!res.ok) throw new Error(`Failed to fetch trails: ${res.status}`);
+        const data = await res.json();
+        return data as Trail[];
+    } catch (err) {
+        console.error('[trailService] getTrails error', err);
+        throw err;
+    }
 };
 
-/**
- * Fetches a single trail by ID
- * @param id - The trail ID
- * @returns Promise that resolves to a trail or null if not found
- */
 export const getTrailById = async (id: number): Promise<Trail | null> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const trail = MOCK_TRAILS.find(t => t.id === id);
-            resolve(trail || null);
-        }, 300);
-    });
+    try {
+        const res = await fetch(`${API_BASE}/${id}`);
+        if (res.status === 404) return null;
+        if (!res.ok) throw new Error(`Failed to fetch trail ${id}: ${res.status}`);
+        const data = await res.json();
+        return data as Trail;
+    } catch (err) {
+        console.error('[trailService] getTrailById error', err);
+        throw err;
+    }
 };
 
-/**
- * Searches trails by name
- * @param searchTerm - The search term
- * @returns Promise that resolves to an array of matching trails
- */
 export const searchTrails = async (searchTerm: string): Promise<Trail[]> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const filtered = MOCK_TRAILS.filter(trail =>
-                trail.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                trail.location.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            resolve(filtered);
-        }, 300);
-    });
+    try {
+        const q = encodeURIComponent(searchTerm || '');
+        const res = await fetch(`${API_BASE}?search=${q}`);
+        if (!res.ok) throw new Error(`Search failed: ${res.status}`);
+        return (await res.json()) as Trail[];
+    } catch (err) {
+        console.error('[trailService] searchTrails error', err);
+        throw err;
+    }
 };
 
-/**
- * Filters trails by difficulty
- * @param difficulty - The difficulty level
- * @returns Promise that resolves to an array of filtered trails
- */
 export const filterTrailsByDifficulty = async (difficulty: 'Easy' | 'Medium' | 'Hard'): Promise<Trail[]> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const filtered = MOCK_TRAILS.filter(trail => trail.difficulty === difficulty);
-            resolve(filtered);
-        }, 300);
-    });
+    try {
+        const res = await fetch(`${API_BASE}?difficulty=${encodeURIComponent(difficulty)}`);
+        if (!res.ok) throw new Error(`Filter failed: ${res.status}`);
+        return (await res.json()) as Trail[];
+    } catch (err) {
+        console.error('[trailService] filterTrailsByDifficulty error', err);
+        throw err;
+    }
 };
 

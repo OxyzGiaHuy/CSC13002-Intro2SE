@@ -1,0 +1,39 @@
+/* Simple animation utilities for compatibility with React 19 (no framer-motion)
+   - .page-animate : fade + slight lift on mount
+   - .item-animate : small stagger-friendly fade/slide
+   - .btn-press  : subtle active press scaling
+*/
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-animate {
+  animation: fadeInUp 280ms ease both;
+}
+
+.item-animate {
+  animation: fadeInUp 220ms ease both;
+}
+
+.btn-press {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.btn-press:active {
+  transform: scale(0.97);
+}
+
+@keyframes modalScaleIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-content-animate {
+  animation: modalScaleIn 220ms cubic-bezier(.2,.9,.2,1) both;
+}
+
+/* Image previews */
+img[alt="preview"], img[alt="sell preview"], img[alt="post"] {
+  border-radius: 0.5rem;
+}

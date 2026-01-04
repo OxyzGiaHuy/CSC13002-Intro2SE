@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { User, Trail } from '../types/index';
 import { HeartIcon } from '../data/constants';
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +16,29 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails }) => {
     const [form, setForm] = useState({ name: user.name, avatarUrl: user.avatarUrl });
     const [groups, setGroups] = useState<string[]>([]);
     const [newGroup, setNewGroup] = useState('');
+
+    // sync form whenever the passed `user` changes (so saved profile updates reflect here)
+    useEffect(() => {
+        setForm({ name: user.name, avatarUrl: user.avatarUrl });
+    }, [user.name, user.avatarUrl]);
+
+    // persist groups per-user so they survive refresh
+    const groupsKey = `user_groups_${user.email || 'default'}`;
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem(groupsKey);
+            if (raw) setGroups(JSON.parse(raw));
+        } catch (e) {
+            // ignore
+        }
+    }, [groupsKey]);
+    useEffect(() => {
+        try {
+            localStorage.setItem(groupsKey, JSON.stringify(groups));
+        } catch (e) {
+            // ignore
+        }
+    }, [groups, groupsKey]);
     return (
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -29,7 +52,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails }) => {
                             </div>
                         ) : (
                             <>
-                                <h2 className="text-3xl font-display text-forest-green">{user.name}</h2>
+                                <h2 className="text-3xl font-display text-forest-green">{form.name}</h2>
                                 <p className="text-gray-600">Passionate Trekker</p>
                             </>
                         )}
@@ -101,10 +124,21 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails }) => {
                     <h3 className="text-xl font-bold font-display text-forest-green mb-4">Groups</h3>
                     <div className="flex gap-2 mb-4">
                         <input value={newGroup} onChange={e => setNewGroup(e.target.value)} placeholder="Group name" className="p-2 border rounded flex-grow" />
-                        <button onClick={() => { if (newGroup.trim()) { setGroups(g => [newGroup.trim(), ...g]); setNewGroup(''); } }} className="px-3 py-2 bg-sage-green text-white rounded">Create Group</button>
+                        <button onClick={() => {
+                            const name = newGroup.trim();
+                            if (!name) return;
+                            setGroups(prev => {
+                                const updated = [name, ...prev];
+                                try { localStorage.setItem(groupsKey, JSON.stringify(updated)); } catch {}
+                                return updated;
+                            });
+                            setNewGroup('');
+                        }} className="px-3 py-2 bg-sage-green text-white rounded">Create Group</button>
                     </div>
                     <ul className="space-y-2">
-                        {groups.map((g, i) => <li key={i} className="bg-gray-50 p-2 rounded">{g}</li>)}
+                        {groups.map((g, i) => (
+                            <li key={i} className="bg-gray-50 p-2 rounded item-animate">{g}</li>
+                        ))}
                     </ul>
                 </div>
             </div>

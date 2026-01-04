@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+// lightweight CSS animations used instead of framer-motion for React 19 compatibility
 import { GoogleGenAI, Type } from '@google/genai';
 import {
     MOCK_TRAILS, MOCK_USER, MOCK_GUIDEBOOK_ARTICLES, MOCK_MARKETPLACE_ITEMS,
@@ -293,7 +294,16 @@ const Register: React.FC<{ onRegister: (name: string) => void, setAuthView: (vie
 // --- MAIN APP COMPONENT ---
 
 const App: React.FC = () => {
-    const [view, setView] = useState<View>('home');
+    const VIEW_KEY = 'trails_explorer_view';
+    const [view, setView] = useState<View>(() => {
+        try {
+            const raw = localStorage.getItem(VIEW_KEY);
+            if (!raw) return 'home' as View;
+            return JSON.parse(raw) as View;
+        } catch (e) {
+            return 'home' as View;
+        }
+    });
     const [trails, setTrails] = useState<Trail[]>([]);
     const [isLoadingTrails, setIsLoadingTrails] = useState(true);
     const [authView, setAuthView] = useState<AuthView>('login');
@@ -302,6 +312,15 @@ const App: React.FC = () => {
     useEffect(() => {
         console.log('[App] auth change', { user, isAuthenticated });
     }, [user, isAuthenticated]);
+
+    // persist current view so F5 restores where user was
+    useEffect(() => {
+        try {
+            localStorage.setItem(VIEW_KEY, JSON.stringify(view));
+        } catch (e) {
+            // ignore
+        }
+    }, [view]);
 
     // Load trails using service layer
     useEffect(() => {
@@ -418,7 +437,11 @@ const App: React.FC = () => {
     return (
         <div className="min-h-screen bg-cream">
             <Header setView={setView} currentView={view} onLogout={handleLogout} userName={user?.name} />
-            <main>{renderContent()}</main>
+            <main>
+                <div key={typeof view === 'string' ? view : JSON.stringify(view)} className="page-animate">
+                    {renderContent()}
+                </div>
+            </main>
             <footer className="bg-forest-green text-cream mt-8 py-4">
                 <div className="container mx-auto text-center text-sm">
                     <p>&copy; {new Date().getFullYear()} TrailsExplorer. Adventure Awaits.</p>
