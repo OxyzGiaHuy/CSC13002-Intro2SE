@@ -3,7 +3,7 @@ export interface Trail {
   id: number;
   name: string;
   location: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: 'Easy' | 'Moderate' | 'Hard';
   length_km: number;
   duration_hr: number;
   rating: number;
@@ -24,6 +24,7 @@ export interface Review {
 }
 
 export interface User {
+  id?: string; // Added for admin management
   name: string;
   avatarUrl: string;
   totalKm: number;
@@ -31,9 +32,13 @@ export interface User {
   avgTimeHr: number;
   tripHistory: Trail[];
   preferences: {
-    difficulty: ('Easy' | 'Medium' | 'Hard')[];
+    difficulty: ('Easy' | 'Moderate' | 'Hard')[];
     scenery: string[];
   }
+  // optional runtime properties
+  role?: 'admin' | 'user';
+  email?: string;
+  status?: 'active' | 'inactive'; // Added for admin management
 }
 
 export interface GuidebookArticle {

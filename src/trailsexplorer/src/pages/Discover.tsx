@@ -32,7 +32,7 @@ const Discover: React.FC<DiscoverProps> = ({ trails, onSelectTrail, onToggleFavo
                 >
                     <option value="all">All Difficulties</option>
                     <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
+                    <option value="moderate">Moderate</option>
                     <option value="hard">Hard</option>
                 </select>
             </div>

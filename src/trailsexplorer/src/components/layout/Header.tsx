@@ -8,9 +8,11 @@ export interface HeaderProps {
   setView: (view: View) => void;
   currentView: View;
   onLogout: () => void;
+    userName?: string | null;
+    userRole?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout }) => {
+const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout, userName, userRole }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navItems: { name: string, view: View }[] = [
         { name: 'Home', view: 'home' },
@@ -19,6 +21,10 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout }) => {
         { name: 'Community', view: 'community' },
         { name: 'Profile', view: 'profile' },
     ];
+
+    if (userRole === 'admin') {
+        navItems.push({ name: 'Dashboard', view: 'admin_dashboard' });
+    }
 
     const NavLink: React.FC<{ view: View, name: string }> = ({ view, name }) => {
         let isActive = false;
@@ -53,13 +59,18 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout }) => {
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-4">
                             {navItems.map(item => <NavLink key={item.name} {...item} />)}
-                             <button onClick={onLogout} className="px-3 py-2 rounded-md text-sm font-medium text-forest-green hover:text-sage-green">
-                                Logout
-                            </button>
+                            {userName ? (
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm font-medium text-forest-green">{userName}</span>
+                                    <button onClick={onLogout} className="px-3 py-2 rounded-md text-sm font-medium text-forest-green hover:text-sage-green">Logout</button>
+                                </div>
+                            ) : (
+                                <button onClick={onLogout} className="px-3 py-2 rounded-md text-sm font-medium text-forest-green hover:text-sage-green">Logout</button>
+                            )}
                         </div>
                     </div>
                     <div className="md:hidden flex items-center">
-                         <button onClick={onLogout} className="p-2 rounded-md text-forest-green hover:text-sage-green focus:outline-none">
+                                                <button onClick={onLogout} className="p-2 rounded-md text-forest-green hover:text-sage-green focus:outline-none">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
                             </svg>

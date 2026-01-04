@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { User, Trail } from '../types/index';
 import { HeartIcon } from '../data/constants';
+import { useAuth } from '../context/AuthContext';
 
 export interface ProfileProps {
   user: User;
@@ -10,14 +11,38 @@ export interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails }) => {
     const favoriteTrails = trails.filter(t => t.isFavorited);
+    const auth = useAuth();
+    const [isEditing, setIsEditing] = useState(false);
+    const [form, setForm] = useState({ name: user.name, avatarUrl: user.avatarUrl });
+    const [groups, setGroups] = useState<string[]>([]);
+    const [newGroup, setNewGroup] = useState('');
     return (
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">
             <div className="bg-white rounded-lg shadow-lg p-6">
                 <div className="flex flex-col sm:flex-row items-center gap-6 mb-6 pb-6 border-b">
-                    <img src={user.avatarUrl} alt={user.name} className="w-24 h-24 rounded-full shadow-md" />
+                    <img src={form.avatarUrl} alt={form.name} className="w-24 h-24 rounded-full shadow-md" />
                     <div>
-                        <h2 className="text-3xl font-display text-forest-green">{user.name}</h2>
-                        <p className="text-gray-600">Passionate Trekker</p>
+                        {isEditing ? (
+                            <div className="space-y-2">
+                                <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="p-2 border rounded" />
+                                <input value={form.avatarUrl} onChange={e => setForm(f => ({ ...f, avatarUrl: e.target.value }))} className="p-2 border rounded" />
+                            </div>
+                        ) : (
+                            <>
+                                <h2 className="text-3xl font-display text-forest-green">{user.name}</h2>
+                                <p className="text-gray-600">Passionate Trekker</p>
+                            </>
+                        )}
+                    </div>
+                    <div className="ml-auto">
+                        {isEditing ? (
+                            <div className="flex gap-2">
+                                <button onClick={() => { auth.updateProfile({ name: form.name, avatarUrl: form.avatarUrl }); setIsEditing(false); }} className="px-3 py-2 bg-sage-green text-white rounded">Save</button>
+                                <button onClick={() => { setIsEditing(false); setForm({ name: user.name, avatarUrl: user.avatarUrl }); }} className="px-3 py-2">Cancel</button>
+                            </div>
+                        ) : (
+                            <button onClick={() => setIsEditing(true)} className="px-3 py-2 bg-gray-100 rounded">Edit Profile</button>
+                        )}
                     </div>
                 </div>
 
@@ -71,6 +96,16 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails }) => {
                             )) : <p className="text-gray-500">You haven't favorited any trails yet.</p>}
                         </div>
                     </div>
+                </div>
+                <div className="mt-6 bg-white rounded-lg shadow-lg p-6">
+                    <h3 className="text-xl font-bold font-display text-forest-green mb-4">Groups</h3>
+                    <div className="flex gap-2 mb-4">
+                        <input value={newGroup} onChange={e => setNewGroup(e.target.value)} placeholder="Group name" className="p-2 border rounded flex-grow" />
+                        <button onClick={() => { if (newGroup.trim()) { setGroups(g => [newGroup.trim(), ...g]); setNewGroup(''); } }} className="px-3 py-2 bg-sage-green text-white rounded">Create Group</button>
+                    </div>
+                    <ul className="space-y-2">
+                        {groups.map((g, i) => <li key={i} className="bg-gray-50 p-2 rounded">{g}</li>)}
+                    </ul>
                 </div>
             </div>
         </div>
