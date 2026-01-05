@@ -4,7 +4,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 2. ĐỊNH NGHĨA CÁC KIỂU DỮ LIỆU ENUM
 CREATE TYPE user_role AS ENUM ('ADMIN', 'USER', 'MODERATOR');
-CREATE TYPE difficulty_level AS ENUM ('EASY', 'MODERATE', 'HARD', 'EXTREME');
+CREATE TYPE difficulty_level AS ENUM ('EASY', 'MODERATE', 'HARD');
 CREATE TYPE trip_status AS ENUM ('PLANNING', 'PLANNED', 'ONGOING', 'COMPLETED', 'CANCELLED');
 CREATE TYPE item_status AS ENUM ('DRAFT', 'AVAILABLE', 'RESERVED', 'SOLD', 'HIDDEN');
 CREATE TYPE poi_type AS ENUM ('CAMPING', 'WATER_SOURCE', 'VIEWPOINT', 'DANGER', 'CHECKPOINT', 'RESTROOM', 'FOOD', 'LODGING');
@@ -103,12 +103,21 @@ CREATE TABLE user_follows (
     CONSTRAINT no_self_follow CHECK (follower_id != followed_id)
 );
 
+-- Bảng danh mục cung đường (Feature #X)
+CREATE TABLE trail_categories (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL, -- e.g., 'Beginner', 'Intermediate', 'Expert'
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- ==========================================
 -- B. CUNG ĐƯỜNG & BẢN ĐỒ (TRAILS & MAPS)
 -- ==========================================
 
 CREATE TABLE trails (
     trail_id SERIAL PRIMARY KEY,
+    category_id INT REFERENCES trail_categories(category_id) ON DELETE SET NULL,
     name VARCHAR(200) NOT NULL,
     description TEXT,
     short_description VARCHAR(500),

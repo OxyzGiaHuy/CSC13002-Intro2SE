@@ -9,6 +9,15 @@
 SET session_replication_role = 'replica';
 
 -- ==========================================
+-- 0. DỮ LIỆU DANH MỤC (TRAIL CATEGORIES)
+-- ==========================================
+
+INSERT INTO trail_categories (category_id, name, description) VALUES
+(1, 'Easy', 'Cung đường dễ, phù hợp cho người mới bắt đầu và gia đình'),
+(2, 'Moderate', 'Cung đường có độ khó trung bình, yêu cầu thể lực ổn định'),
+(3, 'Hard', 'Cung đường khó, đòi hỏi kỹ năng và kinh nghiệm leo núi chuyên nghiệp');
+
+-- ==========================================
 -- 1. DỮ LIỆU NGƯỜI DÙNG (10 users)
 -- ==========================================
 
@@ -52,14 +61,14 @@ INSERT INTO user_follows (follower_id, followed_id) VALUES
 (6, 10), (8, 10);
 
 -- ==========================================
--- 3. CUNG ĐƯỜNG (TRAILS) - 15 trails
+-- 3. CUNG ĐƯỜNG (TRAILS) - 20 trails
 -- ==========================================
 
-INSERT INTO trails (trail_id, name, description, short_description, difficulty, length_km, estimated_duration_hours, 
+INSERT INTO trails (trail_id, category_id, name, description, short_description, difficulty, length_km, estimated_duration_hours, 
                     elevation_gain, max_altitude, min_altitude, location_region, location_province, 
                     location_district, location_coordinates, path_geometry, start_point, end_point, 
                     best_season, avg_rating, total_reviews, is_verified, created_by, tags) VALUES
-(1, 'Đỉnh Fansipan - Nóc nhà Đông Dương', 
+(1, 3, 'Đỉnh Fansipan - Nóc nhà Đông Dương', 
  'Hành trình chinh phục đỉnh Fansipan cao 3.147m, điểm cao nhất Đông Dương. Cung đường đẹp với rừng nguyên sinh và cảnh quan hùng vĩ.',
  'Chinh phục đỉnh Fansipan 3.147m', 'HARD', 12.5, 12, 1900, 3147, 1247,
  'Tây Bắc', 'Lào Cai', 'Sa Pa', 
@@ -70,7 +79,7 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Tháng 10 - Tháng 4', 4.8, 245, TRUE, 2,
  '["mountain", "summit", "challenging", "fansipan"]'::jsonb),
 
-(2, 'Thung Lũng Tình Yêu - Đà Lạt',
+(2, 1, 'Thung Lũng Tình Yêu - Đà Lạt',
  'Cung đường trekking nhẹ nhàng qua thung lũng hoa và rừng thông tại Đà Lạt, phù hợp cho người mới bắt đầu.',
  'Trekking nhẹ nhàng ở Đà Lạt', 'EASY', 5.2, 3, 150, 1500, 1350,
  'Tây Nguyên', 'Lâm Đồng', 'Đà Lạt',
@@ -81,7 +90,7 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Quanh năm', 4.2, 178, TRUE, 3,
  '["valley", "flowers", "pine-forest", "dalat"]'::jsonb),
 
-(3, 'Vườn Quốc Gia Cúc Phương',
+(3, 2, 'Vườn Quốc Gia Cúc Phương',
  'Khám phá rừng nhiệt đới nguyên sinh với hệ động thực vật phong phú, có cây chò ngàn năm tuổi.',
  'Rừng nguyên sinh Cúc Phương', 'MODERATE', 18.0, 8, 650, 636, -10,
  'Đồng Bằng Sông Hồng', 'Ninh Bình', 'Nho Quan',
@@ -92,7 +101,7 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Tháng 12 - Tháng 5', 4.5, 312, TRUE, 1,
  '["national-park", "rainforest", "wildlife", "cuc-phuong"]'::jsonb),
 
-(4, 'Bạch Mã - Đường Mòn Ngũ Hành',
+(4, 3, 'Bạch Mã - Đường Mòn Ngũ Hành',
  'Cung đường leo núi Bạch Mã với đỉnh cao 1.450m, nổi tiếng với cảnh quan đẹp và khí hậu mát mẻ.',
  'Leo núi Bạch Mã', 'HARD', 16.8, 10, 1200, 1450, 250,
  'Miền Trung', 'Thừa Thiên Huế', 'Phú Lộc',
@@ -103,7 +112,7 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Tháng 3 - Tháng 8', 4.6, 189, TRUE, 7,
  '["mountain", "cloud-forest", "bach-ma"]'::jsonb),
 
-(5, 'Đảo Cát Bà - Vườn Quốc Gia',
+(5, 2, 'Đảo Cát Bà - Vườn Quốc Gia',
  'Trekking qua rừng nhiệt đới và leo lên đỉnh Ngự Lâm để ngắm toàn cảnh vịnh Lan Hạ.',
  'Trekking đảo Cát Bà', 'MODERATE', 10.5, 6, 420, 331, 0,
  'Đồng Bằng Sông Hồng', 'Hải Phòng', 'Cát Hải',
@@ -114,9 +123,9 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Tháng 9 - Tháng 4', 4.3, 154, TRUE, 10,
  '["island", "national-park", "sea-view", "cat-ba"]'::jsonb),
 
-(6, 'Núi Chúa - Ninh Thuận',
+(6, 3, 'Núi Chúa - Ninh Thuận',
  'Hành trình qua sa mạc hóa duy nhất Việt Nam, kết thúc tại bãi biển hoang sơ.',
- 'Sa mạc Ninh Thuận', 'EXTREME', 25.0, 14, 1100, 1040, 0,
+ 'Sa mạc Ninh Thuận', 'HARD', 25.0, 14, 1100, 1040, 0,
  'Nam Trung Bộ', 'Ninh Thuận', 'Ninh Hải',
  ST_SetSRID(ST_MakePoint(109.2175, 11.7008), 4326),
  ST_GeomFromText('LINESTRING(109.217 11.700, 109.220 11.702, 109.223 11.704)', 4326),
@@ -125,7 +134,7 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Tháng 1 - Tháng 6', 4.7, 87, TRUE, 4,
  '["desert", "mountain", "beach", "chua-mountain"]'::jsonb),
 
-(7, 'Pù Luông - Thanh Hóa',
+(7, 2, 'Pù Luông - Thanh Hóa',
  'Khám phá bản làng dân tộc và ruộng bậc thang tuyệt đẹp tại khu bảo tồn thiên nhiên Pù Luông.',
  'Ruộng bậc thang Pù Luông', 'MODERATE', 15.3, 7, 800, 1700, 900,
  'Bắc Trung Bộ', 'Thanh Hóa', 'Bá Thước',
@@ -136,7 +145,7 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Tháng 5 - Tháng 10', 4.4, 132, TRUE, 8,
  '["rice-terrace", "village", "nature-reserve", "pu-luong"]'::jsonb),
 
-(8, 'Tà Năng - Phan Dũng',
+(8, 3, 'Tà Năng - Phan Dũng',
  'Cung đường trekking đẹp nhất Việt Nam, qua đồi cỏ xanh mướt và rừng thông.',
  'Cung đường trekking đẹp nhất', 'HARD', 55.0, 3, 1800, 1100, 200,
  'Đông Nam Bộ', 'Bình Thuận', 'Tánh Linh',
@@ -147,7 +156,7 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Tháng 8 - Tháng 11', 4.9, 267, TRUE, 2,
  '["grassland", "pine-forest", "scenic", "ta-nang"]'::jsonb),
 
-(9, 'Đèo Hải Vân',
+(9, 1, 'Đèo Hải Vân',
  'Đi bộ dọc theo đèo Hải Vân - "Thiên hạ đệ nhất hùng quan", ngắm cảnh biển và núi non hùng vĩ.',
  'Đèo Hải Vân hùng vĩ', 'EASY', 8.0, 4, 500, 496, 0,
  'Miền Trung', 'Thừa Thiên Huế/Đà Nẵng', 'Phú Lộc/Hòa Vang',
@@ -158,7 +167,7 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Tháng 3 - Tháng 9', 4.1, 198, TRUE, 9,
  '["mountain-pass", "sea-view", "historic", "hai-van"]'::jsonb),
 
-(10, 'Vịnh Hạ Long - Hang Sửng Sốt',
+(10, 1, 'Vịnh Hạ Long - Hang Sửng Sốt',
  'Trekking lên đỉnh núi Đầu Gỗ để ngắm toàn cảnh vịnh Hạ Long và tham quan hang động.',
  'Vịnh Hạ Long từ trên cao', 'EASY', 3.5, 2, 150, 168, 0,
  'Đông Bắc Bộ', 'Quảng Ninh', 'Vân Đồn',
@@ -169,46 +178,71 @@ INSERT INTO trails (trail_id, name, description, short_description, difficulty, 
  'Quanh năm', 4.6, 423, TRUE, 6,
  '["halong-bay", "cave", "sea-view", "unesco"]'::jsonb);
 
- INSERT INTO trails (
-    trail_id, name, description, short_description, difficulty, length_km, estimated_duration_hours, 
+INSERT INTO trails (
+    trail_id, category_id, name, description, short_description, difficulty, length_km, estimated_duration_hours, 
     elevation_gain, max_altitude, min_altitude, location_region, location_province, 
     location_district, location_coordinates, start_point, end_point, 
     best_season, avg_rating, total_reviews, is_verified, created_by
 ) VALUES 
-(11, 'Núi Lang Bian - Đà Lạt', 'Chinh phục đỉnh núi lửa đã tắt cao 2.167m', 'Núi lửa Đà Lạt', 'MODERATE', 7.5, 5, 
+(11, 2, 'Núi Lang Bian - Đà Lạt', 'Chinh phục đỉnh núi lửa đã tắt cao 2.167m', 'Núi lửa Đà Lạt', 'MODERATE', 7.5, 5, 
  800, 2167, 1367, 'Tây Nguyên', 'Lâm Đồng', 'Lạc Dương', 
  ST_SetSRID(ST_MakePoint(108.4333, 12.0500), 4326), -- Center
  ST_SetSRID(ST_MakePoint(108.4333, 12.0500), 4326), -- Start Point (Giả lập)
  ST_SetSRID(ST_MakePoint(108.4380, 12.0550), 4326), -- End Point (Giả lập)
  'Tháng 11 - Tháng 4', 4.3, 145, TRUE, 3),
 
-(12, 'Đèo Ô Quy Hồ - Lai Châu', 'Đi bộ trên một trong tứ đại đỉnh đèo Việt Nam', 'Cổng trời Tây Bắc', 'HARD', 20.0, 10, 
+(12, 3, 'Đèo Ô Quy Hồ - Lai Châu', 'Đi bộ trên một trong tứ đại đỉnh đèo Việt Nam', 'Cổng trời Tây Bắc', 'HARD', 20.0, 10, 
  1500, 2000, 500, 'Tây Bắc', 'Lai Châu', 'Tam Đường', 
  ST_SetSRID(ST_MakePoint(103.6667, 22.4167), 4326), 
  ST_SetSRID(ST_MakePoint(103.6667, 22.4167), 4326),
  ST_SetSRID(ST_MakePoint(103.6800, 22.4200), 4326),
  'Tháng 9 - Tháng 3', 4.7, 98, TRUE, 7),
 
-(13, 'Rừng Trà Sư - An Giang', 'Đi bộ qua rừng tràm ngập nước và ngắm chim', 'Rừng tràm ngập nước', 'EASY', 4.2, 2.5, 
+(13, 1, 'Rừng Trà Sư - An Giang', 'Đi bộ qua rừng tràm ngập nước và ngắm chim', 'Rừng tràm ngập nước', 'EASY', 4.2, 2.5, 
  50, 100, 0, 'Đồng Bằng Sông Cửu Long', 'An Giang', 'Tịnh Biên', 
  ST_SetSRID(ST_MakePoint(105.0833, 10.4167), 4326), 
  ST_SetSRID(ST_MakePoint(105.0833, 10.4167), 4326),
  ST_SetSRID(ST_MakePoint(105.0880, 10.4200), 4326),
  'Tháng 9 - Tháng 11', 4.0, 167, TRUE, 6),
 
-(14, 'Núi Bà Đen - Tây Ninh', 'Leo núi cao nhất Nam Bộ với cảnh quan tôn giáo độc đáo', 'Núi thiêng Nam Bộ', 'MODERATE', 6.8, 4, 
+(14, 2, 'Núi Bà Đen - Tây Ninh', 'Leo núi cao nhất Nam Bộ với cảnh quan tôn giáo độc đáo', 'Núi thiêng Nam Bộ', 'MODERATE', 6.8, 4, 
  600, 996, 96, 'Đông Nam Bộ', 'Tây Ninh', 'Tây Ninh', 
  ST_SetSRID(ST_MakePoint(106.2000, 11.3667), 4326), 
  ST_SetSRID(ST_MakePoint(106.2000, 11.3667), 4326),
  ST_SetSRID(ST_MakePoint(106.2050, 11.3700), 4326),
  'Tháng 12 - Tháng 5', 4.2, 234, TRUE, 4),
 
-(15, 'Vườn Quốc Gia Bái Tử Long', 'Khám phá đảo đá vôi và hang động tại vịnh Bái Tử Long', 'Vịnh Bái Tử Long', 'EASY', 5.5, 3, 
+(15, 1, 'Vườn Quốc Gia Bái Tử Long', 'Khám phá đảo đá vôi và hang động tại vịnh Bái Tử Long', 'Vịnh Bái Tử Long', 'EASY', 5.5, 3, 
  200, 250, 0, 'Đông Bắc Bộ', 'Quảng Ninh', 'Vân Đồn', 
  ST_SetSRID(ST_MakePoint(107.4167, 21.0833), 4326), 
  ST_SetSRID(ST_MakePoint(107.4167, 21.0833), 4326),
  ST_SetSRID(ST_MakePoint(107.4200, 21.0900), 4326),
- 'Tháng 10 - Tháng 4', 4.4, 112, TRUE, 10);
+ 'Tháng 10 - Tháng 4', 4.4, 112, TRUE, 10),
+
+(16, 2, 'Bidoup - Núi Bà National Park', 'Chinh phục đỉnh Bidoup cao 2.287m', 'Đỉnh Bidoup', 'MODERATE', 25.0, 12, 
+ 1000, 2287, 1287, 'Tây Nguyên', 'Lâm Đồng', 'Lạc Dương', 
+ ST_SetSRID(ST_MakePoint(108.5, 12.1), 4326), ST_SetSRID(ST_MakePoint(108.5, 12.1), 4326), ST_SetSRID(ST_MakePoint(108.51, 12.11), 4326),
+ 'Tháng 12 - Tháng 4', 4.5, 56, TRUE, 3),
+
+(17, 3, 'Núi Tây Côn Lĩnh - Hà Giang', 'Chinh phục nóc nhà Đông Bắc với độ cao 2.427m', 'Tây Côn Lĩnh', 'HARD', 30.0, 18, 
+ 1800, 2427, 627, 'Tây Bắc', 'Hà Giang', 'Hoàng Su Phì', 
+ ST_SetSRID(ST_MakePoint(104.8, 22.7), 4326), ST_SetSRID(ST_MakePoint(104.8, 22.7), 4326), ST_SetSRID(ST_MakePoint(104.81, 22.71), 4326),
+ 'Tháng 9 - Tháng 4', 4.6, 34, TRUE, 7),
+
+(18, 2, 'Cổng Trời Quản Bạ', 'Check-in cổng trời và ngắm núi đôi Quản Bạ', 'Quản Bạ', 'MODERATE', 5.0, 3, 
+ 300, 1000, 700, 'Tây Bắc', 'Hà Giang', 'Quản Bạ', 
+ ST_SetSRID(ST_MakePoint(104.9, 23.0), 4326), ST_SetSRID(ST_MakePoint(104.9, 23.0), 4326), ST_SetSRID(ST_MakePoint(104.91, 23.01), 4326),
+ 'Quanh năm', 4.4, 89, TRUE, 9),
+
+(19, 1, 'Hồ Ba Bể - Trekking ven hồ', 'Đi bộ quanh hồ Ba Bể và tham quan bản làng', 'Hồ Ba Bể', 'EASY', 12.0, 5, 
+ 150, 200, 50, 'Đông Bắc Bộ', 'Bắc Kạn', 'Ba Bể', 
+ ST_SetSRID(ST_MakePoint(105.6, 22.4), 4326), ST_SetSRID(ST_MakePoint(105.6, 22.4), 4326), ST_SetSRID(ST_MakePoint(105.61, 22.41), 4326),
+ 'Tháng 10 - Tháng 5', 4.2, 112, TRUE, 2),
+
+(20, 2, 'Núi Dinh - Bà Rịa Vũng Tàu', 'Cung đường trekking gần Sài Gòn với nhiều suối và chùa', 'Núi Dinh', 'MODERATE', 10.0, 6, 
+ 400, 500, 100, 'Đông Nam Bộ', 'Bà Rịa - Vũng Tàu', 'Tân Thành', 
+ ST_SetSRID(ST_MakePoint(107.1, 10.5), 4326), ST_SetSRID(ST_MakePoint(107.1, 10.5), 4326), ST_SetSRID(ST_MakePoint(107.11, 10.51), 4326),
+ 'Tháng 11 - Tháng 5', 4.1, 178, TRUE, 4);
 
 -- ==========================================
 -- 4. POINTS OF INTEREST (POIs) - 30 POIs

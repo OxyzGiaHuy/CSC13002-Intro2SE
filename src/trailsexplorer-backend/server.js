@@ -7,17 +7,17 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 dotenv.config();
 
 // Load cấu hình DB (để kích hoạt code kiểm tra kết nối trong db.js)
-require('./config/db'); 
+require('./config/db');
 
 // Load cấu hình CORS
-const corsOptions = require('./config/corsOptions'); 
+const corsOptions = require('./config/corsOptions');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // 2. Implement Middleware
 // Sử dụng corsOptions đã config thay vì cors() mặc định
-app.use(cors(corsOptions)); 
+app.use(cors(corsOptions));
 
 // Body Parser
 app.use(express.json());
@@ -31,9 +31,9 @@ app.get('/', (req, res) => {
 
 // Endpoint kiểm tra sức khỏe hệ thống
 app.get('/api/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'OK', 
-        message: 'Server is healthy and ready to rock!' 
+    res.status(200).json({
+        status: 'OK',
+        message: 'Server is healthy and ready to rock!'
     });
 });
 
@@ -41,6 +41,27 @@ app.get('/api/health', (req, res) => {
 app.get('/api/test-error', (req, res) => {
     res.status(400);
     throw new Error('Đây là lỗi thử nghiệm từ TrailsExplorer!');
+});
+
+// Import DB để test data
+const db = require('./config/db');
+
+// Route test DB data (Lấy 5 users và 5 trails mẫu)
+app.get('/api/test-db', async (req, res, next) => {
+    try {
+        const users = await db.query('SELECT user_id, username, email, role FROM users LIMIT 5');
+        const trails = await db.query('SELECT trail_id, name, location_province FROM trails LIMIT 5');
+
+        res.json({
+            message: 'Kết nối Database thành công! Dưới đây là dữ liệu mẫu:',
+            user_count: users.rowCount,
+            users: users.rows,
+            trail_count: trails.rowCount,
+            trails: trails.rows
+        });
+    } catch (error) {
+        next(error);
+    }
 });
 
 // 4. Implement Error Middleware (Phải đặt SAU các routes)
