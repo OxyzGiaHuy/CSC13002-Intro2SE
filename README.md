@@ -10,119 +10,64 @@ Repository này chứa tài liệu và source code cho môn học **CSC13002 - N
 
 **TrailsExplorer** là một ứng dụng web hiện đại giúp người dùng khám phá và lên kế hoạch cho các chuyến đi leo núi, trekking.
 
-### ✨ Tính năng chính
+### Tính năng chính
 
-- 🏔️ **Khám phá đường mòn**: Tìm kiếm và khám phá các tuyến đường leo núi
-- 🤖 **AI Planner**: Lên kế hoạch trekking tự động với Google Gemini AI
-- 📝 **Checklist thông minh**: Tạo danh sách đồ dùng cần thiết
-- 🗺️ **Bản đồ tương tác**: Xem chi tiết tuyến đường trên bản đồ
-- 👥 **Cộng đồng**: Kết nối với những người yêu thích leo núi
-- ⭐ **Yêu thích**: Lưu trữ các tuyến đường yêu thích
-- 📊 **Thống kê cá nhân**: Theo dõi thành tích và hoạt động
+- **Khám phá đường mòn**: Tìm kiếm và khám phá các tuyến đường leo núi.
+- **AI Planner**: Lên kế hoạch trekking tự động với Google Gemini AI.
+- **Checklist thông minh**: Tạo danh sách đồ dùng cần thiết.
+- **Bản đồ tương tác**: Xem chi tiết tuyến đường trên bản đồ.
+- **Cộng đồng**: Kết nối với những người yêu thích leo núi.
+- **Yêu thích & Thống kê**: Lưu trữ các tuyến đường và theo dõi thành tích cá nhân.
 
-### 🛠️ Công nghệ sử dụng
+### Công nghệ sử dụng
 
-- **Frontend**: React 19.2, TypeScript
-- **Build Tool**: Vite 6.2
-- **AI Integration**: Google Generative AI (Gemini)
-- **Maps**: Leaflet
-- **Styling**: Tailwind CSS (custom configuration)
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS, Leaflet.
+- **Backend**: Node.js, Express, PostgreSQL, PostGIS.
+- **AI Integration**: Google Generative AI (Gemini).
 
 ## 📁 Cấu trúc thư mục
 
 ```
 CSC13002-Intro2SE/
 ├── docs/                          # Tài liệu dự án
-│   ├── requirements/              # Tài liệu yêu cầu phần mềm
-│   ├── analysis_and_design/       # Phân tích và thiết kế
-│   ├── management/                # Quản lý dự án
 │   ├── guides/                    # Hướng dẫn cài đặt và sử dụng
-│   └── test/                      # Tài liệu kiểm thử
-├── pa/                            # Project Assignments
+│   └── ...                        # Tài liệu yêu cầu, thiết kế, kiểm thử
 ├── src/
-│   └── trailsexplorer/            # Ứng dụng TrailsExplorer
-│       ├── index.html             # HTML entry point
-│       ├── App.tsx                # Component chính
-│       ├── vite.config.ts         # Cấu hình Vite
-│       ├── tsconfig.json          # Cấu hình TypeScript
-│       ├── package.json           # Dependencies
-│       ├── .env                   # Environment variables (không commit)
-│       ├── .gitignore
-│       ├── src/                   # Source code
-│       │   ├── index.tsx          # React entry point
-│       │   ├── App.tsx            # Main App component
-│       │   ├── components/        # React components
-│       │   │   ├── common/        # Common components (TrailCard)
-│       │   │   └── layout/        # Layout components (Header)
-│       │   ├── context/           # React Context (AuthContext)
-│       │   ├── pages/             # Page components
-│       │   │   ├── Home.tsx
-│       │   │   ├── Discover.tsx
-│       │   │   ├── Planner.tsx
-│       │   │   ├── Community.tsx
-│       │   │   ├── Profile.tsx
-│       │   │   └── TrailDetail.tsx
-│       │   ├── services/          # API & AI services
-│       │   │   ├── geminiService.ts   # Google Gemini AI service
-│       │   │   └── trailService.ts    # Trail data service
-│       │   ├── types/             # TypeScript type definitions
-│       │   ├── data/              # Constants & static data
-│       │   └── layouts/           # Layout templates
-│       ├── assets/                # Static assets
-│       └── services/              # Shared services
-│           └── geminiService.ts
-├── LICENSE
-└── README.md
+│   ├── trailsexplorer/            # Frontend Web App
+│   └── trailsexplorer-backend/    # Backend API Server
+└── ...
 ```
 
 ## 🚀 Cài đặt và Chạy ứng dụng
 
-### Yêu cầu
+### Yêu cầu hệ thống
 
-- Node.js (phiên bản 16 trở lên)
-- npm, pnpm hoặc yarn
-- Google Gemini API Key (lấy miễn phí tại: https://ai.google.dev/)
+- Node.js (v18+)
+- PostgreSQL & PostGIS (cho Backend)
+- Google Gemini API Key
 
-### Các bước cài đặt
+### 1. Chạy Frontend (Web App)
 
-1. **Clone repository**
-   ```bash
-   git clone https://github.com/OxyzGiaHuy/CSC13002-Intro2SE.git
-   cd CSC13002-Intro2SE
-   ```
+```bash
+cd src/trailsexplorer
+pnpm install
+pnpm dev
+```
+*Truy cập: `http://localhost:3000`*
 
-2. **Di chuyển vào thư mục ứng dụng**
-   ```bash
-   cd src/trailsexplorer
-   ```
+### 2. Chạy Backend (API Server)
 
-3. **Cài đặt dependencies**
-   
-   **Khuyến nghị: Sử dụng pnpm**
-   ```bash
-   pnpm install
-   ```
+```bash
+cd src/trailsexplorer-backend
+pnpm install
+pnpm run db:seed    # Khởi tạo và nạp dữ liệu mẫu
+pnpm dev             # Chạy server development
+```
+*Truy cập: `http://localhost:5000`*
 
-4. **Cấu hình API Key**
-   
-   Tạo file `.env` trong thư mục `src/trailsexplorer/` và thêm API key của bạn:
-   ```
-   VITE_GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-   
-   > **Lưu ý**: File `.env` sẽ bị ignore khi commit lên Git. Không nên hardcode API key vào code.
-
-5. **Chạy ứng dụng**
-   
-   ```bash
-   pnpm dev
-   # hoặc
-   npm run dev
-   ```
-
-6. **Mở trình duyệt**
-   
-   Ứng dụng sẽ chạy tại: `http://localhost:3000`
+> **Xem hướng dẫn chi tiết:** 
+> - [Hướng dẫn Frontend](docs/guides/huong_dan_cai_dat.md)
+> - [Hướng dẫn Backend & Database](docs/guides/backend-guide.md)
 
 ### Khắc phục lỗi
 
