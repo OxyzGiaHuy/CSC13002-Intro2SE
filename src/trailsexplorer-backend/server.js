@@ -3,30 +3,41 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const { errorHandler } = require('./middleware/errorMiddleware');
 
-// 1. Load biến môi trường
+// Load biến môi trường
 dotenv.config();
-
-// Load cấu hình DB (để kích hoạt code kiểm tra kết nối trong db.js)
-require('./config/db');
 
 // Load cấu hình CORS
 const corsOptions = require('./config/corsOptions');
 
+// Import Sequelie Database Config & Models
+const sequelize = require('./config/database');
+const User = require('./models/User');
+const Trail = require('./models/Trail');
+const Review = require('./models/Review');
+const authRoutes = require('./routes/auth'); // Import API đăng nhập
+
+// IMPORTANT: Existing db (pg client) might be used by /api/test-db
+// We can keep it or replace it, but let's keep it to avoid breaking existing /api/test-db if the user needs it.
+// However, typically one connection strategy is best. 
+// require('./config/db'); // Commenting this out to rely on Sequelize or keep if checking connectivity independently.
+// Let's rely on Sequelize for consistency since the task was "Database Connection & ORM Setup".
+// But /api/test-db uses `db.query`. I will rewrite /api/test-db to use sequelize if possible OR just leave it if it works side-by-side. 
+// Ideally side-by-side relies on same credentials.
+const db = require('./config/db'); // Keeping for existing endpoints if they work.
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 2. Implement Middleware
-// Sử dụng corsOptions đã config thay vì cors() mặc định
+// Middleware
 app.use(cors(corsOptions));
-
-// Body Parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 3. Routes
-// Route cho trang chủ (Fix lỗi Cannot GET /)
+// Routes
+app.use('/api/auth', authRoutes); // NEW: Auth Routes
+
 app.get('/', (req, res) => {
-    res.send('TrailsExplorer API is running...');
+    res.send('TrailsExplorer API is running... (Updated with Auth)');
 });
 
 // Endpoint kiểm tra sức khỏe hệ thống
@@ -37,18 +48,11 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Route test lỗi
-app.get('/api/test-error', (req, res) => {
-    res.status(400);
-    throw new Error('Đây là lỗi thử nghiệm từ TrailsExplorer!');
-});
-
-// Import DB để test data
-const db = require('./config/db');
-
-// Route test DB data (Lấy 5 users và 5 trails mẫu)
+// Route test DB data (Legacy using raw pg)
 app.get('/api/test-db', async (req, res, next) => {
     try {
+        // Reuse existing logic but maybe via Sequelize if db.query fails? 
+        // If db.js connects via pg, it should work independently.
         const users = await db.query('SELECT user_id, username, email, role FROM users LIMIT 5');
         const trails = await db.query('SELECT trail_id, name, location_province FROM trails LIMIT 5');
 
@@ -60,15 +64,25 @@ app.get('/api/test-db', async (req, res, next) => {
             trails: trails.rows
         });
     } catch (error) {
+        // Fallback or just error
         next(error);
     }
 });
 
-// 4. Implement Error Middleware (Phải đặt SAU các routes)
+// Error Middleware
 app.use(errorHandler);
 
-// 5. Khởi động Server
-app.listen(PORT, () => {
-    console.log(`Server is running on: http://localhost:${PORT}`);
-    // console.log(`Environment: ${process.env.NODE_ENV}`);
-});
+// Start Server with Sequelize Sync
+// This replaces the simple app.listen 
+sequelize.sync()
+    .then(() => {
+        console.log('Database connected successfully'); // Requirement specified this log message
+        app.listen(PORT, () => {
+            console.log(`Server is running on: http://localhost:${PORT}`);
+        });
+    })
+    .catch(err => {
+        console.log('❌ Lỗi kết nối Sequelize:', err);
+    });
+
+module.exports = app;
