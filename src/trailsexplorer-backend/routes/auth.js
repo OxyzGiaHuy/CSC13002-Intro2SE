@@ -29,4 +29,10 @@ router.post('/login', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Đăng xuất
+router.post('/logout', (req, res) => {
+    // Client should clear the token from storage
+    res.json({ message: "Logout thành công" });
+});
+
 module.exports = router;

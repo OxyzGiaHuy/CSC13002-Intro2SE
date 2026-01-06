@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/database');
-const User = require('./models/User'); // Import model để tự tạo bảng
+const User = require('./models/User');
+const Trail = require('./models/Trail');
+const Review = require('./models/Review');
 const authRoutes = require('./routes/auth'); // Import API đăng nhập
 
 const app = express();
@@ -20,7 +22,7 @@ const PORT = process.env.PORT || 5000;
 // Kết nối Database & Chạy Server
 sequelize.sync()
     .then(() => {
-        console.log('✅ ĐÃ KẾT NỐI DATABASE THÀNH CÔNG!');
+        console.log('Database connected successfully');
         app.listen(PORT, () => {
             console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
         });
