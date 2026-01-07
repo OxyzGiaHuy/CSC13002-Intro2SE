@@ -14,15 +14,14 @@ const sequelize = require('./config/database');
 const User = require('./models/User');
 const Trail = require('./models/Trail');
 const Review = require('./models/Review');
-const authRoutes = require('./routes/auth'); // Import API đăng nhập
+const CommunityPost = require('./models/CommunityPost');
+const Favorite = require('./models/Favorite');
+const authRoutes = require('./routes/auth');
+const trailRoutes = require('./routes/trails');
+const communityRoutes = require('./routes/community');
+const userRoutes = require('./routes/user');
 
 // IMPORTANT: Existing db (pg client) might be used by /api/test-db
-// We can keep it or replace it, but let's keep it to avoid breaking existing /api/test-db if the user needs it.
-// However, typically one connection strategy is best. 
-// require('./config/db'); // Commenting this out to rely on Sequelize or keep if checking connectivity independently.
-// Let's rely on Sequelize for consistency since the task was "Database Connection & ORM Setup".
-// But /api/test-db uses `db.query`. I will rewrite /api/test-db to use sequelize if possible OR just leave it if it works side-by-side. 
-// Ideally side-by-side relies on same credentials.
 const db = require('./config/db'); // Keeping for existing endpoints if they work.
 
 const app = express();
@@ -34,7 +33,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', authRoutes); // NEW: Auth Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/trails', trailRoutes);
+app.use('/api/community', communityRoutes);
+app.use('/api/user', userRoutes);
 
 app.get('/', (req, res) => {
     res.send('TrailsExplorer API is running... (Updated with Auth)');
