@@ -11,7 +11,10 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({ username, email, password: hashedPassword });
         res.status(201).json(newUser);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) {
+        console.error("Register Error:", err);
+        res.status(500).json({ error: err.message, details: err.errors });
+    }
 });
 
 // Đăng nhập
