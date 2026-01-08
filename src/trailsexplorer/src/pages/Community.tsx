@@ -6,7 +6,7 @@ import type { SocialPost, MarketplaceItem } from '../types/index';
 // Community now supports posting, marketplace, and cart
 
 export interface CommunityProps {
-  setView: (view: View) => void;
+    setView: (view: View) => void;
 }
 
 export const Community: React.FC<CommunityProps> = ({ setView }) => {
@@ -62,8 +62,8 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
 
     return (
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-             <h2 className="text-3xl font-display text-forest-green mb-6 text-center">Community Hub</h2>
-             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <h2 className="text-3xl font-display text-forest-green mb-6 text-center">Community Hub</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2">
                     <div className="bg-white p-4 rounded-lg shadow-md mb-6">
                         <textarea value={newPostText} onChange={e => setNewPostText(e.target.value)} placeholder="What's on your mind?" className="w-full p-3 border rounded-md" />
@@ -97,19 +97,19 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
                             {marketItems.map(item => (
                                 <div key={item.id} className="bg-white p-4 rounded-lg shadow-md flex items-center">
                                     <img src={item.imageUrl} alt={item.name} className="w-16 h-16 rounded-md object-cover mr-4" />
-                                    <div>
-                                        <p className="font-semibold">{item.name}</p>
-                                        <p className="text-sm text-gray-500">{item.seller} • {item.condition}</p>
+                                    <div className="flex-1 min-w-0 mr-4">
+                                        <p className="font-semibold truncate">{item.name}</p>
+                                        <p className="text-sm text-gray-500 truncate">{item.seller} • {item.condition}</p>
                                         <p className="text-sm text-earth-brown font-bold">{item.price.toLocaleString()} VND</p>
                                     </div>
-                                    <button onClick={() => handleAddToCart(item)} className="ml-auto px-3 py-2 bg-sage-green text-white rounded-md">Add to Cart</button>
+                                    <button onClick={() => handleAddToCart(item)} className="ml-auto px-4 py-2 bg-sage-green text-white rounded-md whitespace-nowrap flex-shrink-0 hover:bg-forest-green transition-colors font-medium text-sm">Add to Cart</button>
                                 </div>
                             ))}
                         </div>
                     </div>
                     <div>
                         <h3 className="text-xl font-bold font-display text-forest-green mb-4">My Trekking Groups</h3>
-                         <div onClick={() => setView('group')} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                        <div onClick={() => setView('group')} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
                             <p className="font-bold text-lg text-sage-green">{MOCK_GROUP.name}</p>
                             <p className="text-sm text-gray-600 mb-2">on {MOCK_GROUP.trailName}</p>
                             <div className="flex -space-x-2 overflow-hidden">
@@ -117,7 +117,7 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
                                     <img key={member.id} className="inline-block h-8 w-8 rounded-full ring-2 ring-white" src={member.avatarUrl} alt={member.name} />
                                 ))}
                             </div>
-                         </div>
+                        </div>
                     </div>
                     <div>
                         <h3 className="text-xl font-bold font-display text-forest-green mb-4">Community Challenges</h3>
@@ -135,7 +135,7 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
                         </div>
                     </div>
                 </div>
-             </div>
+            </div>
 
             {/* Sell Modal */}
             {showSellModal && (
