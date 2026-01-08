@@ -5,14 +5,20 @@ import { HeartIcon } from '../../data/constants';
 import fallbackImg from '../../../assets/logo.png';
 
 export interface TrailCardProps {
-  trail: Trail;
-  onSelect: (id: number) => void;
-  onToggleFavorite: (id: number) => void;
+    trail: Trail;
+    onSelect: (id: number) => void;
+    onToggleFavorite: (id: number) => void;
 }
 
 const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite }) => {
     return (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 flex flex-col h-full group">
+        <div
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(trail.id); }}
+            onClick={() => onSelect(trail.id)}
+            className="bg-white rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 flex flex-col h-full group focus:outline-none focus:ring-2 focus:ring-sage-green cursor-pointer"
+        >
             <div className="relative">
                 <img
                     src={trail.imageUrl || fallbackImg}
@@ -38,14 +44,14 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                     <HeartIcon className="w-6 h-6 text-red-500" filled={trail.isFavorited} />
                 </button>
             </div>
-            <div className="p-4 flex flex-col flex-grow">
-                <div className="flex flex-col min-h-14">
-                    <h3 title={trail.name} className="text-xl font-bold font-display text-forest-green leading-tight mb-1 truncate">{trail.name}</h3>
-                    <p className="text-sm text-gray-500 mb-3 break-words">{trail.location}</p>
-                </div>
-
-                <div className="mt-2 mb-4 flex items-center justify-between text-sm gap-4 h-8">
-                    <span className={`px-3 py-1 rounded-full text-white text-xs ${trail.difficulty === 'Easy' ? 'bg-green-500' : trail.difficulty === 'Moderate' ? 'bg-yellow-500' : 'bg-red-500'}`}>
+            <div className="p-4">
+                <h3 className="text-xl font-bold font-display text-forest-green">{trail.name}</h3>
+                <p className="text-sm text-gray-500 mb-2">{trail.location}</p>
+                <div className="flex items-center justify-between text-sm">
+                        <span className={`px-2 py-1 rounded-full text-white ${trail.difficulty === 'Easy' ? 'bg-sage-green' :
+                            (trail.difficulty === 'Moderate') ? 'bg-yellow-500' :
+                            'bg-red-500'
+                        }`}>
                         {trail.difficulty}
                     </span>
                     <span className="font-semibold text-earth-brown text-sm flex-none">{trail.rating} ★</span>

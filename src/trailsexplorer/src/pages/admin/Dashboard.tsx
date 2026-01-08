@@ -64,7 +64,8 @@ interface PopularTrail {
 
 const Dashboard: React.FC = () => {
     // Stats with trekking theme
-    const stats = [
+    // Stats with trekking theme
+    const [stats, setStats] = React.useState([
         {
             title: 'Active Trekkers',
             value: '1,234',
@@ -76,7 +77,7 @@ const Dashboard: React.FC = () => {
         },
         {
             title: 'Total Trails',
-            value: '56',
+            value: 'Loading...',
             icon: <Mountain className="w-6 h-6" />,
             color: 'text-sage-green',
             bgColor: 'bg-green-500',
@@ -101,7 +102,30 @@ const Dashboard: React.FC = () => {
             trend: '-18%',
             trendDirection: 'down' as const
         },
-    ];
+    ]);
+
+    React.useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                // Fetch Trails Count
+                const trailRes = await fetch('http://localhost:5000/api/trails?limit=1');
+                const trailData = await trailRes.json();
+
+                if (trailData && trailData.total !== undefined) {
+                    setStats(prev => prev.map(s =>
+                        s.title === 'Total Trails' ? { ...s, value: trailData.total } : s
+                    ));
+                }
+            } catch (err) {
+                console.error("Failed to fetch dashboard stats", err);
+                // Keep default/mock values on error
+                setStats(prev => prev.map(s =>
+                    s.title === 'Total Trails' ? { ...s, value: '56' } : s
+                ));
+            }
+        };
+        fetchStats();
+    }, []);
 
     // Recent activities specific to trekking
     const recentActivities: ActivityItem[] = [

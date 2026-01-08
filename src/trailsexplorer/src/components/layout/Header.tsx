@@ -42,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, userRole }) => {
 
         return (
             <button onClick={() => { setView(view); setIsMenuOpen(false); }}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive ? 'text-sage-green font-bold' : 'text-forest-green hover:text-sage-green'}`}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${isActive ? 'bg-forest-green text-white shadow-md shadow-green-100' : 'text-gray-600 hover:bg-green-50 hover:text-forest-green'}`}
             >
                 {name}
             </button>
@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, userRole }) => {
     };
 
     return (
-        <header className="bg-cream shadow-md sticky top-0 z-50">
+        <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 transition-all duration-300">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="cursor-pointer" onClick={() => setView('home')}>
