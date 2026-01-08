@@ -10,25 +10,29 @@ const LoginPage: React.FC<{ setAuthView: (v: AuthView) => void }> = ({ setAuthVi
     const [error, setError] = useState('');
     const auth = useAuth();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
         if (!email) {
             setError('Please enter email');
             return;
         }
-        // Mock validation: accept any password
-        auth.login(email);
+        try {
+            await auth.login(email, password);
+        } catch (err: any) {
+            setError(err.message || 'Login failed');
+        }
     };
 
     return (
         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
-             <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center justify-center mb-6">
                 <Logo imageSrc={logoImage} size="lg" showText={true} />
             </div>
             <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Welcome Back</h2>
             {error && <p className="bg-red-100 text-red-700 p-2 rounded-md mb-4 text-center">{error}</p>}
             <form onSubmit={handleSubmit} className="space-y-6">
-                 <div>
+                <div>
                     <label className="block text-sm font-medium text-gray-700">Email Address</label>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
                 </div>

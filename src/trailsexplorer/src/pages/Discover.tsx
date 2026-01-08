@@ -4,11 +4,12 @@ import TrailCard from '../components/common/TrailCard';
 import { getTrails } from '../services/trailService';
 
 export interface DiscoverProps {
-  onSelectTrail: (id: number) => void;
-  onToggleFavorite: (id: number) => void;
+    onSelectTrail: (id: number) => void;
+    onToggleFavorite: (id: number) => void;
+    initialTrails?: Trail[]; // renamed to avoid shadowing the local state
 }
 
-const Discover: React.FC<DiscoverProps> = ({ onSelectTrail, onToggleFavorite }) => {
+const Discover: React.FC<DiscoverProps> = ({ onSelectTrail, onToggleFavorite, initialTrails }) => {
     const [trails, setTrails] = useState<Trail[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
@@ -19,8 +20,28 @@ const Discover: React.FC<DiscoverProps> = ({ onSelectTrail, onToggleFavorite }) 
         setIsLoading(true);
         setError(null);
         try {
-            const data = await getTrails();
-            setTrails(data);
+            if (trails && trails.length) {
+                // parent App already provides normalized trails — use directly
+                setTrails(trails);
+            } else {
+                const data = await getTrails();
+                // normalize backend rows into frontend-friendly shape
+                const normalized = Array.isArray(data) ? data.map((t: any, i: number) => ({
+                    id: t.id ?? t.trail_id ?? (t as any)?._id ?? i,
+                    name: t.name,
+                    description: t.description,
+                    short_description: t.short_description,
+                    difficulty: (function(d:any){ if(!d) return 'Unknown'; const m = String(d).toLowerCase(); if(m==='easy' || m==='easier' || m==='1') return 'Easy'; if(m.includes('moder')) return 'Moderate'; if(m.includes('hard')) return 'Hard'; return d; })(t.difficulty || t.category_id),
+                    length_km: parseFloat(t.length_km) || parseFloat(t.length || 0) || 0,
+                    duration_hr: t.duration_hr ?? t.estimated_duration_hours ?? t.duration ?? null,
+                    rating: parseFloat(t.rating ?? t.avg_rating ?? 0) || 0,
+                    location: [t.location_region, t.location_province, t.location_district].filter(Boolean).join(', '),
+                    imageUrl: t.imageUrl ?? t.image_url ?? t.cover_image_url ?? null,
+                    scenery: t.scenery || t.features || t.tags || [],
+                    reviews: t.reviews || []
+                })) : [];
+                setTrails(normalized as Trail[]);
+            }
         } catch (err: any) {
             setError(err?.message || 'Failed to load trails');
             setTrails([]);
@@ -28,7 +49,7 @@ const Discover: React.FC<DiscoverProps> = ({ onSelectTrail, onToggleFavorite }) 
         setIsLoading(false);
     };
 
-    useEffect(() => { load(); }, []);
+    useEffect(() => { load(); }, [initialTrails]);
 
     const filteredTrails = trails
         .filter(trail => trail.name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -50,7 +71,7 @@ const Discover: React.FC<DiscoverProps> = ({ onSelectTrail, onToggleFavorite }) 
                 >
                     <option value="all">All Difficulties</option>
                     <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
+                    <option value="moderate">Moderate</option>
                     <option value="hard">Hard</option>
                 </select>
             </div>
@@ -64,10 +85,14 @@ const Discover: React.FC<DiscoverProps> = ({ onSelectTrail, onToggleFavorite }) 
             )}
 
             {!isLoading && !error && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {filteredTrails.map(trail => (
-                        <TrailCard key={trail.id} trail={trail} onSelect={() => onSelectTrail(trail.id)} onToggleFavorite={onToggleFavorite} />
-                    ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 items-stretch">
+                    {Array.isArray(filteredTrails) && filteredTrails.map((trail, idx) => {
+                        const key = (trail as any)?.id ?? (trail as any)?._id ?? idx;
+                        if (!((trail as any)?.id)) console.warn('[Discover] trail missing id, using index as key', trail);
+                        return (
+                            <TrailCard key={key} trail={trail} onSelect={onSelectTrail} onToggleFavorite={onToggleFavorite} />
+                        );
+                    })}
                 </div>
             )}
         </div>

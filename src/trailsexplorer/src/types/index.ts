@@ -3,7 +3,7 @@ export interface Trail {
   id: number;
   name: string;
   location: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
+  difficulty: 'Easy' | 'Moderate' | 'Hard';
   length_km: number;
   duration_hr: number;
   rating: number;
@@ -12,8 +12,8 @@ export interface Trail {
   imageUrl: string;
   reviews: Review[];
   isFavorited?: boolean; // Added for favorite feature
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
 }
 
 export interface Review {
@@ -24,6 +24,7 @@ export interface Review {
 }
 
 export interface User {
+  id?: string; // Added for admin management
   name: string;
   avatarUrl: string;
   totalKm: number;
@@ -31,12 +32,13 @@ export interface User {
   avgTimeHr: number;
   tripHistory: Trail[];
   preferences: {
-    difficulty: ('Easy' | 'Medium' | 'Hard')[];
+    difficulty: ('Easy' | 'Moderate' | 'Hard')[];
     scenery: string[];
   }
   // optional runtime properties
   role?: 'admin' | 'user';
   email?: string;
+  status?: 'active' | 'inactive'; // Added for admin management
 }
 
 export interface GuidebookArticle {
@@ -62,7 +64,12 @@ export interface ItineraryDay {
 }
 
 export interface ItineraryPlan {
+  id?: number;
+  location?: string;
+  duration?: number;
+  createdAt?: string;
   plan: ItineraryDay[];
+  checklist?: string[]; // Added for unified AI response
 }
 
 export interface ChecklistItem {
@@ -100,17 +107,17 @@ export interface SocialPost {
 
 // Added for Weather Feature
 export interface WeatherForecast {
-    day: string;
-    temp_c: number;
-    condition: 'Sunny' | 'Cloudy' | 'Rainy' | 'Stormy';
+  day: string;
+  temp_c: number;
+  condition: 'Sunny' | 'Cloudy' | 'Rainy' | 'Stormy';
 }
 
 // Added for Voice Log Feature
 export interface VoiceLog {
-    id: number;
-    timestamp: string;
-    location: string;
-    transcript_preview: string;
+  id: number;
+  timestamp: string;
+  location: string;
+  transcript_preview: string;
 }
 
 // --- GROUP FEATURE TYPES ---

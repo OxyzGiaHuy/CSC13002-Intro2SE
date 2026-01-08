@@ -23,7 +23,11 @@ import type { View, AuthView } from './src/types/view';
 
 // --- IMPORT COMPONENTS & PAGES ---
 import TrailCard from './src/components/common/TrailCard';
+import MapView from './src/components/common/MapView'; // Refactored MapView
 import Header from './src/components/layout/Header';
+import AdminLayout from './src/layouts/AdminLayout'; // Admin Layout
+import Dashboard from './src/pages/admin/Dashboard'; // Admin Dashboard
+import Users from './src/pages/admin/Users'; // Admin Users
 import LoginPage from './src/pages/Login';
 import RegisterPage from './src/pages/Register';
 import { useAuth } from './src/context/AuthContext';
@@ -34,53 +38,7 @@ import Planner from './src/pages/Planner';
 import Community from './src/pages/Community';
 import Profile from './src/pages/Profile';
 
-// --- OTHER COMPONENTS (MapView, GroupView, Login, Register) ---
-const MapView: React.FC<{ trailId: number, onBack: () => void, trails: Trail[] }> = ({ trailId, onBack, trails }) => {
-    const trail = trails.find(t => t.id === trailId);
-    const mapContainerRef = useRef<HTMLDivElement>(null);
-    const mapRef = useRef<any>(null);
-
-    useEffect(() => {
-        if (trail && mapContainerRef.current && !mapRef.current) {
-            const map = L.map(mapContainerRef.current).setView([trail.lat, trail.lng], 13);
-            
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            L.marker([trail.lat, trail.lng]).addTo(map)
-                .bindPopup(`<b>${trail.name}</b>`)
-                .openPopup();
-            
-            mapRef.current = map;
-        }
-        
-        return () => {
-            if (mapRef.current) {
-                mapRef.current.remove();
-                mapRef.current = null;
-            }
-        };
-    }, [trail]);
-
-    if (!trail) return <div className="p-8 text-center">Trail map not found.</div>;
-
-    return (
-        <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-            <button onClick={onBack} className="flex items-center gap-2 text-sage-green mb-4 hover:underline">
-                <ArrowLeftIcon className="w-5 h-5" /> Back to Trail Details
-            </button>
-            <div className="bg-white rounded-lg shadow-xl overflow-hidden">
-                 <div className="p-4 border-b">
-                    <h2 className="text-2xl font-display text-forest-green">Map of {trail.name}</h2>
-                    <p className="text-gray-600">{trail.location}</p>
-                </div>
-                <div ref={mapContainerRef} style={{ height: '600px', width: '100%' }} />
-            </div>
-        </div>
-    );
-};
-
+// --- OTHER COMPONENTS (GroupView) ---
 const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void }> = ({ group, currentUser, onBack }) => {
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const mapRef = useRef<any>(null);
@@ -111,7 +69,7 @@ const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void 
             }
         };
     }, [group.members]);
-    
+
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [chatMessages]);
@@ -209,86 +167,7 @@ const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void 
     );
 };
 
-// --- AUTHENTICATION COMPONENTS ---
-const Login: React.FC<{ onLogin: (email: string) => void, setAuthView: (view: AuthView) => void }> = ({ onLogin, setAuthView }) => {
-    const [email, setEmail] = useState('giahuy@trailsexplorer.com');
-    const [password, setPassword] = useState('password123');
-    const [error, setError] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Mock validation
-        if (email === 'giahuy@trailsexplorer.com' && password === 'password123') {
-            onLogin(email);
-        } else {
-            setError('Invalid email or password.');
-        }
-    };
-
-    return (
-        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
-             <div className="flex items-center justify-center mb-6">
-                <Logo imageSrc={logoImage} size="lg" showText={true} />
-            </div>
-            <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Welcome Back</h2>
-            {error && <p className="bg-red-100 text-red-700 p-2 rounded-md mb-4 text-center">{error}</p>}
-            <form onSubmit={handleSubmit} className="space-y-6">
-                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                <button type="submit" className="w-full bg-sage-green text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors">Login</button>
-            </form>
-            <p className="mt-6 text-center text-sm text-gray-600">
-                Don't have an account?{' '}
-                <button onClick={() => setAuthView('register')} className="font-medium text-sage-green hover:underline">Sign up</button>
-            </p>
-        </div>
-    );
-};
-
-const Register: React.FC<{ onRegister: (name: string) => void, setAuthView: (view: AuthView) => void }> = ({ onRegister, setAuthView }) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onRegister(name || 'New Trekker');
-    };
-
-    return (
-         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
-             <div className="flex items-center justify-center mb-6">
-                <Logo imageSrc={logoImage} size="lg" showText={true} />
-            </div>
-            <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Create Your Account</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                <button type="submit" className="w-full bg-sage-green text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors">Create Account</button>
-            </form>
-            <p className="mt-6 text-center text-sm text-gray-600">
-                Already have an account?{' '}
-                <button onClick={() => setAuthView('login')} className="font-medium text-sage-green hover:underline">Log in</button>
-            </p>
-        </div>
-    );
-};
 
 
 // --- MAIN APP COMPONENT ---
@@ -307,10 +186,23 @@ const App: React.FC = () => {
     const [trails, setTrails] = useState<Trail[]>([]);
     const [isLoadingTrails, setIsLoadingTrails] = useState(true);
     const [authView, setAuthView] = useState<AuthView>('login');
-    const { user, isAuthenticated, login, register, logout } = useAuth();
+    const { user, isAuthenticated, logout } = useAuth();
+    const prevAuth = useRef(isAuthenticated);
 
     useEffect(() => {
         console.log('[App] auth change', { user, isAuthenticated });
+
+        // Detect login event (transition from false to true)
+        if (!prevAuth.current && isAuthenticated) {
+            console.log('User just logged in. Role:', user?.role);
+            if (user?.role === 'admin') {
+                console.log('Redirecting to Admin Dashboard');
+                setView('admin_dashboard');
+            } else {
+                setView('home');
+            }
+        }
+        prevAuth.current = isAuthenticated;
     }, [user, isAuthenticated]);
 
     // persist current view so F5 restores where user was
@@ -328,7 +220,63 @@ const App: React.FC = () => {
             setIsLoadingTrails(true);
             try {
                 const loadedTrails = await getTrails();
-                setTrails(loadedTrails);
+                // normalize backend rows into frontend-friendly shape
+                const extractLatLng = (obj: any) => {
+                    if (!obj) return { lat: null, lng: null };
+                    // GeoJSON style
+                    if (obj.coordinates && Array.isArray(obj.coordinates)) {
+                        const [lng, lat] = obj.coordinates;
+                        return { lat: Number(lat) || null, lng: Number(lng) || null };
+                    }
+                    // WKT POINT string: POINT(lng lat)
+                    if (typeof obj === 'string' && obj.startsWith('POINT')) {
+                        const inside = obj.replace(/POINT\(|\)/g, '').trim();
+                        const parts = inside.split(/\s+/);
+                        if (parts.length >= 2) {
+                            const lng = Number(parts[0]);
+                            const lat = Number(parts[1]);
+                            return { lat: isFinite(lat) ? lat : null, lng: isFinite(lng) ? lng : null };
+                        }
+                    }
+                    // object with lat/lng or x/y
+                    if (typeof obj === 'object') {
+                        if (obj.lat !== undefined && obj.lng !== undefined) return { lat: Number(obj.lat) || null, lng: Number(obj.lng) || null };
+                        if (obj.y !== undefined && obj.x !== undefined) return { lat: Number(obj.y) || null, lng: Number(obj.x) || null };
+                        if (obj.latitude !== undefined && obj.longitude !== undefined) return { lat: Number(obj.latitude) || null, lng: Number(obj.longitude) || null };
+                    }
+                    return { lat: null, lng: null };
+                };
+
+                const normalized = Array.isArray(loadedTrails) ? loadedTrails.map((t: any, i: number) => ({
+                    id: t.id ?? t.trail_id ?? (t as any)?._id ?? i,
+                    name: t.name,
+                    description: t.description,
+                    short_description: t.short_description,
+                    difficulty: (function(d:any){ if(!d) return 'Unknown'; const m = String(d).toLowerCase(); if(m==='easy' || m==='easier' || m==='1') return 'Easy'; if(m.includes('moder')) return 'Moderate'; if(m.includes('hard')) return 'Hard'; return d; })(t.difficulty || t.category_id),
+                    length_km: parseFloat(t.length_km) || parseFloat(t.length || 0) || 0,
+                    duration_hr: t.duration_hr ?? t.estimated_duration_hours ?? t.duration ?? null,
+                    rating: parseFloat(t.rating ?? t.avg_rating ?? 0) || 0,
+                    location: [t.location_region, t.location_province, t.location_district].filter(Boolean).join(', '),
+                    imageUrl: t.imageUrl ?? t.image_url ?? t.cover_image_url ?? null,
+                    scenery: t.scenery || t.features || t.tags || [],
+                    reviews: t.reviews || []
+                })).map((nt: any, idx: number) => {
+                    // second pass to attach lat/lng using original loadedTrails data
+                    const original = Array.isArray(loadedTrails) ? loadedTrails[idx] : null;
+                    let lat = null, lng = null;
+                    if (original) {
+                        const fromStart = extractLatLng(original.start_point || original.startPoint || original.location_coordinates || original.location_coordinates_geojson);
+                        if (fromStart.lat !== null && fromStart.lng !== null) {
+                            lat = fromStart.lat; lng = fromStart.lng;
+                        } else {
+                            // try fields directly
+                            lat = original.lat ?? original.latitude ?? null;
+                            lng = original.lng ?? original.longitude ?? original.lon ?? original.long ?? null;
+                        }
+                    }
+                    return { ...nt, lat: lat, lng: lng };
+                }) : [];
+                setTrails(normalized as Trail[]);
             } catch (error) {
                 console.error('Failed to load trails:', error);
                 setTrails([]);
@@ -339,22 +287,10 @@ const App: React.FC = () => {
     }, []);
 
     // wrappers so Login/Register pages (which expect callbacks) work
-    const handleLogin = (email: string) => {
-        login(email);
-        setView('home');
-    };
+    // Handlers removed as logic is now handled in components via useAuth context directly.
 
-    const handleRegister = (name: string) => {
-        register(name);
-        setView('home');
-    };
-    
-    const handleLogout = () => {
-        logout();
-        setView('home');
-    };
 
-    const handleSelectTrail = (id: number) => {
+    const handleSelectTrail = React.useCallback((id: number) => {
         let fromView: 'home' | 'discover' | 'profile' = 'discover'; // default
         if (typeof view === 'string') {
             if (view === 'home' || view === 'profile') {
@@ -362,23 +298,23 @@ const App: React.FC = () => {
             }
         }
         setView({ view: 'trailDetail', id, from: fromView });
-    };
-    
-    const handleSelectMap = (trailId: number) => {
+    }, [view]);
+
+    const handleSelectMap = React.useCallback((trailId: number) => {
         if (typeof view === 'object' && view.view === 'trailDetail') {
             setView({ view: 'mapView', id: trailId, fromTrailDetail: view });
         }
-    };
+    }, [view]);
 
-    const handleToggleFavorite = (id: number) => {
+    const handleToggleFavorite = React.useCallback((id: number) => {
         setTrails(prevTrails =>
             prevTrails.map(trail =>
-                trail.id === id ? { ...trail, isFavorited: !trail.isFavorited } : trail
+                (trail as any).id === id ? { ...trail, isFavorited: !(trail as any).isFavorited } : trail
             )
         );
-    };
+    }, []);
 
-    const handleBack = () => {
+    const handleBack = React.useCallback(() => {
         if (typeof view === 'object') {
             if (view.view === 'trailDetail') {
                 setView(view.from);
@@ -386,14 +322,14 @@ const App: React.FC = () => {
                 setView(view.fromTrailDetail);
             }
         }
-    }
+    }, [view]);
 
     const renderContent = () => {
         if (typeof view === 'object') {
             if (view.view === 'trailDetail') {
                 return <TrailDetail trailId={view.id} onBack={handleBack} trails={trails} onToggleFavorite={handleToggleFavorite} onSelectMap={handleSelectMap} />;
             }
-             if (view.view === 'mapView') {
+            if (view.view === 'mapView') {
                 return <MapView trailId={view.id} onBack={handleBack} trails={trails} />;
             }
         }
@@ -402,7 +338,7 @@ const App: React.FC = () => {
             case 'home':
                 return <Home setView={setView} trails={trails} onSelectTrail={handleSelectTrail} onToggleFavorite={handleToggleFavorite} />;
             case 'discover':
-                return <Discover trails={trails} onSelectTrail={handleSelectTrail} onToggleFavorite={handleToggleFavorite} />;
+                return <Discover initialTrails={trails} onSelectTrail={handleSelectTrail} onToggleFavorite={handleToggleFavorite} />;
             case 'planner':
                 return <Planner />;
             case 'community':
@@ -413,10 +349,14 @@ const App: React.FC = () => {
                 }
                 return null;
             case 'profile':
-                 if (user) {
+                if (user) {
                     return <Profile user={user} onSelectTrail={handleSelectTrail} trails={trails} />;
                 }
                 return null;
+            case 'admin_dashboard':
+                return <Dashboard />;
+            case 'admin_users':
+                return <Users />;
             default:
                 return <Home setView={setView} trails={trails} onSelectTrail={handleSelectTrail} onToggleFavorite={handleToggleFavorite} />;
         }
@@ -424,15 +364,43 @@ const App: React.FC = () => {
 
     if (!isAuthenticated) {
         return (
-             <div className="min-h-screen bg-cream flex items-center justify-center p-4" style={{ backgroundImage: "url('https://picsum.photos/seed/authbg/1600/1200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                 <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-                {authView === 'login' 
-                    ? <LoginPage setAuthView={setAuthView} /> 
+            <div className="min-h-screen bg-cream flex items-center justify-center p-4" style={{ backgroundImage: "url('https://picsum.photos/seed/authbg/1600/1200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+                {authView === 'login'
+                    ? <LoginPage setAuthView={setAuthView} />
                     : <RegisterPage setAuthView={setAuthView} />
                 }
             </div>
         )
     }
+
+    // Check if current view is an admin view
+    const isAdminView = view === 'admin_dashboard' || view === 'admin_users';
+    const isUserAdmin = user?.role === 'admin';
+
+    console.log('App Render:', { view, isAdminView, userRole: user?.role, isAuthenticated });
+
+    if (isAdminView) {
+        if (isUserAdmin) {
+            return (
+                <AdminLayout currentView={view} onNavigate={setView}>
+                    {renderContent()}
+                </AdminLayout>
+            );
+        }
+        // If admin view but not admin user (and user exists), the useEffect will redirect.
+        // While waiting, we can return null or a loader to prevent flashing the wrong layout.
+        if (user) return <div className="flex items-center justify-center h-screen">Redirecting...</div>;
+    }
+
+    const handleLogout = React.useCallback(() => {
+        try {
+            logout();
+            setView('home');
+        } catch (e) {
+            console.error('Logout failed', e);
+        }
+    }, [logout]);
 
     return (
         <div className="min-h-screen bg-cream">

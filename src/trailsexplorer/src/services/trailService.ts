@@ -1,13 +1,13 @@
 import type { Trail } from '../types/index';
-
-const API_BASE = '/api/trails';
+import { apiCall } from './api';
 
 export const getTrails = async (): Promise<Trail[]> => {
     try {
-        const res = await fetch(`${API_BASE}`);
-        if (!res.ok) throw new Error(`Failed to fetch trails: ${res.status}`);
-        const data = await res.json();
-        return data as Trail[];
+        const res = await apiCall('GET', '/api/trails');
+        // backend returns paginated object { total, page, pages, data }
+        if (Array.isArray(res)) return res as Trail[];
+        if (res && Array.isArray(res.data)) return res.data as Trail[];
+        return [];
     } catch (err) {
         console.error('[trailService] getTrails error', err);
         throw err;
@@ -16,12 +16,10 @@ export const getTrails = async (): Promise<Trail[]> => {
 
 export const getTrailById = async (id: number): Promise<Trail | null> => {
     try {
-        const res = await fetch(`${API_BASE}/${id}`);
-        if (res.status === 404) return null;
-        if (!res.ok) throw new Error(`Failed to fetch trail ${id}: ${res.status}`);
-        const data = await res.json();
+        const data = await apiCall('GET', `/api/trails/${id}`);
         return data as Trail;
-    } catch (err) {
+    } catch (err: any) {
+        if (err?.message?.includes('Not Found') || err?.message?.includes('404')) return null;
         console.error('[trailService] getTrailById error', err);
         throw err;
     }
@@ -30,9 +28,9 @@ export const getTrailById = async (id: number): Promise<Trail | null> => {
 export const searchTrails = async (searchTerm: string): Promise<Trail[]> => {
     try {
         const q = encodeURIComponent(searchTerm || '');
-        const res = await fetch(`${API_BASE}?search=${q}`);
-        if (!res.ok) throw new Error(`Search failed: ${res.status}`);
-        return (await res.json()) as Trail[];
+        // backend exposes a dedicated search endpoint
+        const data = await apiCall('GET', `/api/trails/search?q=${q}`);
+        return Array.isArray(data) ? (data as Trail[]) : [];
     } catch (err) {
         console.error('[trailService] searchTrails error', err);
         throw err;
@@ -41,9 +39,10 @@ export const searchTrails = async (searchTerm: string): Promise<Trail[]> => {
 
 export const filterTrailsByDifficulty = async (difficulty: 'Easy' | 'Medium' | 'Hard'): Promise<Trail[]> => {
     try {
-        const res = await fetch(`${API_BASE}?difficulty=${encodeURIComponent(difficulty)}`);
-        if (!res.ok) throw new Error(`Filter failed: ${res.status}`);
-        return (await res.json()) as Trail[];
+        const res = await apiCall('GET', `/api/trails?difficulty=${encodeURIComponent(difficulty)}`);
+        if (Array.isArray(res)) return res as Trail[];
+        if (res && Array.isArray(res.data)) return res.data as Trail[];
+        return [];
     } catch (err) {
         console.error('[trailService] filterTrailsByDifficulty error', err);
         throw err;
