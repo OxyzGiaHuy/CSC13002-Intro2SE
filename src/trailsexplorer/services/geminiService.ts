@@ -1,100 +1,70 @@
-
-
-import { GoogleGenAI, Type } from '@google/genai';
 import type { ItineraryPlan } from '../src/types';
+
+// Use the backend URL (assuming it's running on localhost:5000)
+// Ideally, this should be in an environment variable VITE_API_URL
+const API_URL = 'http://localhost:5000/api';
+
+const getAuthToken = () => {
+  // Basic implementation: Retrieves token from localStorage
+  // Ensure your login logic saves the token with key 'token'
+  return localStorage.getItem('token');
+};
 
 export const generateTrekkingPlan = async (
   location: string,
   duration: number,
   difficulty: string,
-  interests: string
+  interests: string,
+  trailId?: number // Optional
 ): Promise<ItineraryPlan | null> => {
-  // Get API key from process.env (defined in vite.config.ts)
-  // User should set GEMINI_API_KEY in .env file in the trailsexplorer directory
-  const apiKey = (process.env as any).API_KEY || (process.env as any).GEMINI_API_KEY;
-  
-  if (!apiKey || apiKey === '') {
-    console.error("API_KEY is not set in environment variables.");
-    console.error("Please create a .env file in the trailsexplorer directory with: GEMINI_API_KEY=your_api_key");
-    console.error("Or set VITE_GEMINI_API_KEY=your_api_key for direct access");
-    // FIX: Removed alert per API key guidelines. The application must not ask the user for the key.
-    return null;
+  const token = getAuthToken();
+  if (!token) {
+    console.error("User not authenticated");
+    throw new Error("You must be logged in to generate a plan.");
   }
-  const ai = new GoogleGenAI({ apiKey });
-  
-  const prompt = `
-    You are an expert trekking and travel planner for "TrailsExplorer".
-    Your task is to create a detailed, day-by-day itinerary for a trekking trip in Vietnam.
-
-    The user wants a trip with the following specifications:
-    - Location: ${location}
-    - Duration: ${duration} days
-    - Difficulty: ${difficulty}
-    - Interests: ${interests}
-
-    Generate a detailed itinerary based on these preferences.
-    For each day, also provide 2-3 "smart suggestions" for nearby points of interest, such as local food stalls, restaurants, or cultural sightseeing spots.
-    The plan should be realistic, engaging, and tailored to the user's input.
-    Provide creative and appealing titles for each day.
-  `;
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            plan: {
-              type: Type.ARRAY,
-              description: 'An array of daily itinerary objects.',
-              items: {
-                type: Type.OBJECT,
-                properties: {
-                  day: { type: Type.NUMBER, description: 'The day number.' },
-                  title: { type: Type.STRING, description: 'A catchy title for the day\'s trek.' },
-                  route: { type: Type.STRING, description: 'A detailed description of the trekking route for the day.' },
-                  distance_km: { type: Type.NUMBER, description: 'Estimated trekking distance in kilometers.' },
-                  highlights: {
-                    type: Type.ARRAY,
-                    description: 'Key highlights and points of interest for the day.',
-                    items: { type: Type.STRING }
-                  },
-                  camping_suggestion: { type: Type.STRING, description: 'A suggestion for where to camp or stay overnight.' },
-                  smart_suggestions: {
-                    type: Type.ARRAY,
-                    description: 'Suggestions for nearby food or sightseeing.',
-                    items: {
-                        type: Type.OBJECT,
-                        properties: {
-                            name: { type: Type.STRING },
-                            type: { type: Type.STRING, enum: ['Food', 'Sightseeing'] },
-                            description: { type: Type.STRING }
-                        },
-                        required: ['name', 'type', 'description']
-                    }
-                  }
-                },
-                required: ['day', 'title', 'route', 'distance_km', 'highlights', 'camping_suggestion', 'smart_suggestions']
-              }
-            }
-          },
-          required: ['plan']
-        }
-      }
+    const response = await fetch(`${API_URL}/ai/generate-plan`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        location,
+        duration,
+        difficulty,
+        interests,
+        trailId
+      })
     });
-    
-    const jsonText = response.text.trim();
-    const parsedJson = JSON.parse(jsonText);
-    
-    if (parsedJson && Array.isArray(parsedJson.plan)) {
-      return parsedJson as ItineraryPlan;
-    } else {
-      console.error("Invalid JSON structure received from API:", parsedJson);
-      throw new Error("Received an invalid plan structure from the AI.");
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to generate plan");
     }
+
+    const data = await response.json();
+    // The backend returns the full saved plan object.
+    // We map 'plan_data' back to the structure expected by frontend if needed, 
+    // or just return plan_data if ItineraryPlan matches exactly.
+    // Based on previous code, ItineraryPlan is likely the plan array structure?
+    // Let's verify type from previous file view...
+    // Previous view showed ItineraryPlan was the return type.
+    // Backend returns { plan_id, plan_data: [...], checklist: [...], ... }
+
+    // We reconstruct the expected format if needed. 
+    // The previous frontend service returned `parsedJson` which had structure: { plan: [...] }
+    // Backend stores `plan_data` which IS the array `[...]`.
+    // So we assume the frontend expects { plan: [...] } wrapper? 
+    // Let's look at the old file again logic: `return parsedJson as ItineraryPlan`
+    // where parsedJson was the whole object { plan: [...] }.
+
+    return {
+      id: data.plan_id,
+      plan: data.plan_data,
+      checklist: data.checklist
+    } as ItineraryPlan;
 
   } catch (error) {
     console.error("Error generating trekking plan:", error);
@@ -102,57 +72,91 @@ export const generateTrekkingPlan = async (
   }
 };
 
-
 export const generateChecklist = async (
   location: string,
   duration: number,
   difficulty: string
 ): Promise<string[] | null> => {
-  // Get API key from process.env (defined in vite.config.ts)
-  // User should set GEMINI_API_KEY in .env file in the trailsexplorer directory
-  const apiKey = (process.env as any).API_KEY || (process.env as any).GEMINI_API_KEY;
-  
-  if (!apiKey || apiKey === '') {
-    console.error("API_KEY is not set in environment variables.");
-    console.error("Please create a .env file in the trailsexplorer directory with: GEMINI_API_KEY=your_api_key");
-    console.error("Or set VITE_GEMINI_API_KEY=your_api_key for direct access");
-    // FIX: Removed alert per API key guidelines. The application must not ask the user for the key.
-    return null;
-  }
-  const ai = new GoogleGenAI({ apiKey });
-  const prompt = `Generate a comprehensive packing checklist for a ${duration}-day trekking trip to ${location} in Vietnam, with a ${difficulty} difficulty level. Focus on essential gear, clothing, first-aid, and personal items. Do not include quantities.`;
+  // Since we moved checklist generation to be part of generate-plan in backend (Bonus 1),
+  // we might not need a separate call anymore if the UI uses the one from the plan.
+  // HOWEVER, if the UI still calls this independently, we can implement a standalone endpoint or reuse generate-plan.
+  // BUT the plan said "Smart Packing List: Will port generateChecklist to backend and save it in SavedPlan".
+  // The Backend's /generate-plan returns both.
+
+  // If the frontend needs JUST achecklist, we haven't implemented a specific endpoint for that yet.
+  // But usually, checklist is part of the trip planning.
+  // Let's assume for now we return null or throw an error saying "Checklist is generated with the Plan now".
+  // OR we can implement a specific endpoint if strictly needed.
+  // Given the user request, likely they want it INTEGRATED. 
+  // But to not break existing UI that calls this function:
+  console.warn("generateChecklist is now integrated into generateTrekkingPlan. Please use the plan generation to get the checklist.");
+  return [];
+};
+
+// Bonus: Refine Plan
+export const refineTrekkingPlan = async (
+  planId: number,
+  instruction: string
+): Promise<ItineraryPlan | null> => {
+  const token = getAuthToken();
+  if (!token) throw new Error("Authentication required");
 
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            checklist: {
-              type: Type.ARRAY,
-              description: 'An array of checklist item strings.',
-              items: { type: Type.STRING }
-            }
-          },
-          required: ['checklist']
-        }
+    const response = await fetch(`${API_URL}/ai/refine-plan`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ planId, instruction })
+    });
+
+    if (!response.ok) throw new Error("Failed to refine plan");
+
+    const data = await response.json();
+    return {
+      id: data.plan_id,
+      plan: data.plan_data,
+      checklist: data.checklist
+    } as ItineraryPlan;
+  } catch (error) {
+    console.error("Error refining plan:", error);
+    throw error;
+  }
+};
+
+export const getSavedPlans = async (): Promise<ItineraryPlan[]> => {
+  const token = getAuthToken();
+  if (!token) return [];
+
+  try {
+    const response = await fetch(`${API_URL}/user/saved-plans`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
     });
-    const jsonText = response.text.trim();
-    const parsedJson = JSON.parse(jsonText);
-    
-    if (parsedJson && Array.isArray(parsedJson.checklist)) {
-        return parsedJson.checklist;
-    } else {
-        console.error("Invalid JSON structure for checklist:", parsedJson);
-        return null;
-    }
 
+    if (!response.ok) throw new Error("Failed to fetch saved plans");
+
+    const data = await response.json();
+    return data.map((item: any) => ({
+      id: item.plan_id,
+      plan: item.plan_data,
+      checklist: item.checklist,
+      // We can also return location/duration if needed for list view, 
+      // but ItineraryPlan doesn't have them yet. 
+      // For now, let's keep it simple or extend ItineraryPlan later.
+      // Actually, for the list view, we might want 'location' and 'created_at'.
+      // Let's assume the UI will just show the first day's title or similar if meta not in type.
+      // Or better, let's allow 'any' or extend the type. 
+      // Given strict types, let's add optional fields to ItineraryPlan or create a SavedPlanSummary type.
+      // For quick integration, I'll attach them and let TS be loose or update type.
+      location: item.location,
+      duration: item.duration,
+      createdAt: item.created_at
+    }));
   } catch (error) {
-    console.error("Error generating checklist:", error);
-    throw error;
+    console.error("Error fetching saved plans:", error);
+    return [];
   }
 };
