@@ -38,7 +38,11 @@ export interface User {
   // optional runtime properties
   role?: 'admin' | 'user';
   email?: string;
-  status?: 'active' | 'inactive'; // Added for admin management
+  status?: 'active' | 'inactive';
+  bio?: string;
+  phone?: string;
+  home_city?: string;
+  home_country?: string;
 }
 
 export interface GuidebookArticle {
