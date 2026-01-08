@@ -2,94 +2,9 @@
 import React from 'react';
 import type { Trail, User, GuidebookArticle, MarketplaceItem, CommunityChallenge, SocialPost, WeatherForecast, VoiceLog, Group, GroupMember, ChatMessage } from '../types/index';
 
-export const MOCK_TRAILS: Trail[] = [
-  {
-    id: 1,
-    name: "Tà Năng - Phan Dũng",
-    location: "Bình Thuận, Lâm Đồng",
-    difficulty: "Hard",
-    length_km: 55,
-    duration_hr: 24,
-    rating: 4.9,
-    scenery: ["Grasslands", "Forest", "Hills"],
-    description: "Known as one of the most beautiful trekking routes in Vietnam, this trail crosses three provinces, offering stunning landscapes of green grasslands and pine forests.",
-    imageUrl: "https://picsum.photos/seed/tanang/800/600",
-    reviews: [
-      { username: "An Nguyen", avatarUrl: "https://picsum.photos/seed/an/40/40", rating: 5, comment: "Absolutely breathtaking! A must-do for any serious trekker in Vietnam." },
-      { username: "Binh Le", avatarUrl: "https://picsum.photos/seed/binh/40/40", rating: 4, comment: "Challenging but rewarding. Make sure you are well-prepared." },
-    ],
-    isFavorited: false,
-    lat: 11.53,
-    lng: 108.6,
-  },
-  {
-    id: 2,
-    name: "Fansipan Peak",
-    location: "Sa Pa, Lào Cai",
-    difficulty: "Hard",
-    length_km: 20,
-    duration_hr: 18,
-    rating: 4.8,
-    scenery: ["Mountains", "Cloud sea", "Forest"],
-    description: "Conquer the 'Roof of Indochina' with this challenging trek. The journey takes you through dense forests and bamboo thickets to the summit at 3,143 meters.",
-    imageUrl: "https://picsum.photos/seed/fansipan/800/600",
-    reviews: [
-      { username: "Chi Pham", avatarUrl: "https://picsum.photos/seed/chi/40/40", rating: 5, comment: "The view from the top is surreal. Worth every single step!" },
-    ],
-    isFavorited: true,
-    lat: 22.304,
-    lng: 103.775,
-  },
-  {
-    id: 3,
-    name: "Langbiang Mountain",
-    location: "Đà Lạt, Lâm Đồng",
-    difficulty: "Medium",
-    length_km: 8,
-    duration_hr: 5,
-    rating: 4.6,
-    scenery: ["Pine forests", "City view"],
-    description: "A popular day-hike near Da Lat, Langbiang offers panoramic views of the city and surrounding highlands. The trail winds through beautiful pine forests.",
-    imageUrl: "https://picsum.photos/seed/langbiang/800/600",
-    reviews: [
-        { username: "Dung Tran", avatarUrl: "https://picsum.photos/seed/dung/40/40", rating: 4, comment: "Great for a day trip. Not too hard and the view is lovely." },
-    ],
-    isFavorited: false,
-    lat: 12.055,
-    lng: 108.438,
-  },
-  {
-    id: 4,
-    name: "Cúc Phương National Park",
-    location: "Ninh Bình",
-    difficulty: "Easy",
-    length_km: 7,
-    duration_hr: 3,
-    rating: 4.5,
-    scenery: ["Jungle", "Ancient trees", "Caves"],
-    description: "Explore Vietnam's first national park. This easy trek is perfect for families and beginners, featuring ancient trees, caves, and a rich biodiversity.",
-    imageUrl: "https://picsum.photos/seed/cucphuong/800/600",
-    reviews: [
-        { username: "Emi Sato", avatarUrl: "https://picsum.photos/seed/emi/40/40", rating: 5, comment: "Beautiful and educational. The primate rescue center is a highlight." },
-    ],
-    isFavorited: false,
-    lat: 20.316,
-    lng: 105.613,
-  },
-];
+// MOCK_TRAILS removed: use real API via `trailService` instead
 
-export const MOCK_USER: User = {
-  name: "Gia Huy",
-  avatarUrl: "https://picsum.photos/seed/alex/100/100",
-  totalKm: 256,
-  avgAltitude: 1200,
-  avgTimeHr: 8.5,
-  tripHistory: MOCK_TRAILS.slice(0, 2),
-  preferences: {
-    difficulty: ['Hard', 'Medium'],
-    scenery: ['Mountains', 'Forest', 'Grasslands']
-  }
-};
+// MOCK_USER removed: provide user data from backend/auth service
 
 export const MOCK_GUIDEBOOK_ARTICLES: GuidebookArticle[] = [
   {
@@ -122,10 +37,7 @@ export const MOCK_CHALLENGES: CommunityChallenge[] = [
     { id: 3, title: "100km Challenge", description: "Trek 100km in a single month.", progress: 78, goal: 100, unit: "km" },
 ];
 
-export const MOCK_SOCIAL_FEED: SocialPost[] = [
-    { id: 1, author: "An Nguyen", avatarUrl: "https://picsum.photos/seed/an/40/40", content: "Just got back from Tà Năng - Phan Dũng. The grasslands are even more beautiful in person!", imageUrl: "https://picsum.photos/seed/tanangpost/800/600", trailName: "Tà Năng - Phan Dũng" },
-    { id: 2, author: "Chi Pham", avatarUrl: "https://picsum.photos/seed/chi/40/40", content: "Reached the summit of Fansipan! Feeling on top of the world. #RoofOfIndochina", imageUrl: "https://picsum.photos/seed/fansipanpost/800/600", trailName: "Fansipan Peak" },
-];
+// MOCK_SOCIAL_FEED removed: social posts should come from API
 
 export const MOCK_WEATHER: WeatherForecast[] = [
     { day: 'Today', temp_c: 24, condition: 'Sunny' },

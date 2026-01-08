@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import type { View } from '../types/view';
-import { MOCK_SOCIAL_FEED, MOCK_GROUP, MOCK_CHALLENGES, MOCK_MARKETPLACE_ITEMS } from '../data/constants';
+import { MOCK_GROUP, MOCK_CHALLENGES, MOCK_MARKETPLACE_ITEMS } from '../data/constants';
 import type { SocialPost, MarketplaceItem } from '../types/index';
 
 // Community now supports posting, marketplace, and cart
@@ -31,9 +31,9 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
     const [posts, setPosts] = useState<SocialPost[]>(() => {
         try {
             const raw = localStorage.getItem('community_posts');
-            return raw ? JSON.parse(raw) : MOCK_SOCIAL_FEED;
+            return raw ? JSON.parse(raw) : [];
         } catch {
-            return MOCK_SOCIAL_FEED;
+            return [];
         }
     });
     const [newPostText, setNewPostText] = useState('');
@@ -178,7 +178,7 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
                         <h3 className="text-xl font-bold font-display text-forest-green mb-4">Marketplace</h3>
                         <div className="space-y-4">
                             {marketItems.map(item => (
-                                <div key={item.id} ref={el => itemRefs.current[item.id] = el} className="bg-white p-4 rounded-lg shadow-md flex items-center item-animate">
+                                <div key={item.id} ref={el => { itemRefs.current[item.id] = el; }} className="bg-white p-4 rounded-lg shadow-md flex items-center item-animate">
                                     <img src={item.imageUrl} alt={item.name} className="w-16 h-16 rounded-md object-cover mr-4 flex-shrink-0" />
                                     <div className="flex-1 min-w-0">
                                         <p className="font-semibold truncate">{item.name}</p>

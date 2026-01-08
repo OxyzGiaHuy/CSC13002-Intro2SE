@@ -3,8 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 // lightweight CSS animations used instead of framer-motion for React 19 compatibility
 import { GoogleGenAI, Type } from '@google/genai';
 import {
-    MOCK_TRAILS, MOCK_USER, MOCK_GUIDEBOOK_ARTICLES, MOCK_MARKETPLACE_ITEMS,
-    MOCK_CHALLENGES, MOCK_SOCIAL_FEED, MOCK_WEATHER, MOCK_VOICE_LOGS, MOCK_GROUP,
+    MOCK_GUIDEBOOK_ARTICLES, MOCK_MARKETPLACE_ITEMS,
+    MOCK_CHALLENGES, MOCK_WEATHER, MOCK_VOICE_LOGS, MOCK_GROUP,
     LeafIcon, MountainIcon, CompassIcon, MenuIcon, XIcon, CheckIcon, UsersIcon,
     BookOpenIcon, MicrophoneIcon, SunIcon, CloudIcon, LightningBoltIcon, HeartIcon,
     MapIcon, ArrowLeftIcon, PaperAirplaneIcon, MapPinIcon
@@ -331,7 +331,7 @@ const App: React.FC = () => {
                 setTrails(loadedTrails);
             } catch (error) {
                 console.error('Failed to load trails:', error);
-                setTrails(MOCK_TRAILS); // Fallback to mock data
+                setTrails([]);
             }
             setIsLoadingTrails(false);
         };

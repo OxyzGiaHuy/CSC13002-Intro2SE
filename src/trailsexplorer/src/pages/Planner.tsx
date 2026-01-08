@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ItineraryPlan, ChecklistItem } from '../types/index';
 import { generateTrekkingPlan, generateChecklist } from '../../services/geminiService';
 
@@ -12,8 +12,15 @@ const Planner: React.FC = () => {
     const [isLoadingPlan, setIsLoadingPlan] = useState(false);
     const [isLoadingChecklist, setIsLoadingChecklist] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [toast, setToast] = useState<string | null>(null);
 
     const handleGeneratePlan = async () => {
+        const fieldErrors = validate();
+        if (Object.keys(fieldErrors).length > 0) {
+            setError('Please fix the highlighted validation errors.');
+            return;
+        }
+
         setIsLoadingPlan(true);
         setError(null);
         setPlan(null);
@@ -21,6 +28,7 @@ const Planner: React.FC = () => {
             const result = await generateTrekkingPlan(location, duration, difficulty, interests);
             if (result) {
                 setPlan(result);
+                setToast('Plan generated successfully');
             } else {
                 setError('Failed to generate plan. Please check your API key configuration.');
             }
@@ -32,6 +40,12 @@ const Planner: React.FC = () => {
     };
     
     const handleGenerateChecklist = async () => {
+        const fieldErrors = validate();
+        if (Object.keys(fieldErrors).length > 0) {
+            setError('Please fix the highlighted validation errors.');
+            return;
+        }
+
         setIsLoadingChecklist(true);
         setChecklist([]);
         setError(null);
@@ -39,6 +53,7 @@ const Planner: React.FC = () => {
             const result = await generateChecklist(location, duration, difficulty);
             if (result) {
                 setChecklist(result.map((text, index) => ({ id: index, text, packed: false })));
+                setToast('Checklist generated successfully');
             } else {
                 setError('Failed to generate checklist. Please check your API key configuration.');
             }
@@ -48,6 +63,23 @@ const Planner: React.FC = () => {
         }
         setIsLoadingChecklist(false);
     };
+
+    useEffect(() => {
+        if (!toast) return;
+        const t = setTimeout(() => setToast(null), 3500);
+        return () => clearTimeout(t);
+    }, [toast]);
+
+    const validate = (): Record<string, string> => {
+        const errs: Record<string, string> = {};
+        if (!location || !location.trim()) errs.location = 'Location is required.';
+        if (!Number.isFinite(duration) || duration <= 0 || duration > 30) errs.duration = 'Duration must be a number between 1 and 30 days.';
+        if (!['Easy', 'Medium', 'Hard'].includes(difficulty)) errs.difficulty = 'Please select a valid difficulty.';
+        return errs;
+    };
+
+    const fieldErrors = validate();
+    const isFormValid = Object.keys(fieldErrors).length === 0;
 
     const toggleChecklistItem = (id: number) => {
         setChecklist(checklist.map(item => item.id === id ? { ...item, packed: !item.packed } : item));
@@ -68,10 +100,12 @@ const Planner: React.FC = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Location</label>
                             <input type="text" value={location} onChange={e => setLocation(e.target.value)} className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
+                            {fieldErrors.location && <p className="text-sm text-red-600 mt-1">{fieldErrors.location}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Duration (days)</label>
-                            <input type="number" value={duration} onChange={e => setDuration(parseInt(e.target.value) || 1)} min="1" className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
+                            <input type="number" value={duration} onChange={e => setDuration(Number(e.target.value))} min="1" className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
+                            {fieldErrors.duration && <p className="text-sm text-red-600 mt-1">{fieldErrors.duration}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Difficulty</label>
@@ -80,15 +114,16 @@ const Planner: React.FC = () => {
                                 <option>Medium</option>
                                 <option>Hard</option>
                             </select>
+                            {fieldErrors.difficulty && <p className="text-sm text-red-600 mt-1">{fieldErrors.difficulty}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Interests</label>
                             <textarea value={interests} onChange={e => setInterests(e.target.value)} rows={3} className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm"></textarea>
                         </div>
-                        <button onClick={handleGeneratePlan} disabled={isLoadingPlan} className="w-full bg-sage-green text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
+                        <button onClick={handleGeneratePlan} disabled={isLoadingPlan || !isFormValid} className="w-full bg-sage-green text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
                             {isLoadingPlan ? 'Generating Plan...' : 'Generate Plan'}
                         </button>
-                        <button onClick={handleGenerateChecklist} disabled={isLoadingChecklist} className="w-full bg-earth-brown text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
+                        <button onClick={handleGenerateChecklist} disabled={isLoadingChecklist || !isFormValid} className="w-full bg-earth-brown text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
                             {isLoadingChecklist ? 'Generating Checklist...' : 'Generate Checklist'}
                         </button>
                     </div>
@@ -136,6 +171,13 @@ const Planner: React.FC = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* Toast */}
+                    {toast && (
+                        <div className="fixed right-6 top-6 z-50">
+                            <div className="bg-green-600 text-white px-4 py-2 rounded shadow-lg">{toast}</div>
+                        </div>
+                    )}
                     {/* Checklist Display */}
                     {checklist.length > 0 && (
                         <div className="bg-white p-6 rounded-lg shadow-lg">
