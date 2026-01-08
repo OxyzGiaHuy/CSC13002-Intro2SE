@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "com.trailsexplorer.mobile.app-mergeDebugResources-30:/layout/activity_main.xml",
+        "source": "com.trailsexplorer.mobile.app-main-33:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.trailsexplorer.mobile.app-mergeDebugResources-30:/layout/activity_login.xml",
+        "source": "com.trailsexplorer.mobile.app-main-33:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.trailsexplorer.mobile.app-mergeDebugResources-30:/layout/item_trail.xml",
+        "source": "com.trailsexplorer.mobile.app-main-33:/layout/item_trail.xml"
+    }
+]

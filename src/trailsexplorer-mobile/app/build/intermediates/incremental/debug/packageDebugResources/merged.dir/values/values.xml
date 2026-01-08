@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="cream">#F8F9FA</color>
+    <color name="earth_brown">#D89216</color>
+    <color name="forest_green">#1A5D1A</color>
+    <color name="sage_green">#4E9F3D</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">TrailsExplorer</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="login_button">Log In</string>
+    <string name="login_title">Log In</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="welcome_message">Your Journey Begins Here</string>
+    <style name="Theme.TrailsExplorer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        
+        <item name="colorPrimary">@color/forest_green</item>
+        <item name="colorPrimaryVariant">@color/sage_green</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <item name="colorSecondary">@color/earth_brown</item>
+        <item name="colorSecondaryVariant">@color/earth_brown</item>
+        <item name="colorOnSecondary">@color/black</item>
+        
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        
+    </style>
+</resources>

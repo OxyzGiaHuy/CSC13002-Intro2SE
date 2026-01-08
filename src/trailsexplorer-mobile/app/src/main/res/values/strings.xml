@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TrailsExplorer</string>
+    <string name="login_title">Log In</string>
+    <string name="email_hint">Enter your email</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="login_button">Log In</string>
+    <string name="welcome_message">Your Journey Begins Here</string>
+</resources>
