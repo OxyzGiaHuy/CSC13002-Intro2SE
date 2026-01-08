@@ -266,6 +266,23 @@ const App: React.FC = () => {
             if (view.view === 'mapView') {
                 return <MapView trailId={view.id} onBack={handleBack} trails={trails} />;
             }
+            if (view.view === 'group') {
+                if (user) {
+                    let groupToRender = MOCK_GROUP;
+                    if (view.name !== MOCK_GROUP.name) {
+                        groupToRender = {
+                            ...MOCK_GROUP,
+                            id: Date.now(),
+                            name: view.name,
+                            trailName: 'Planning Phase',
+                            members: [{ ...MOCK_GROUP.members[0], name: user.name, avatarUrl: user.avatarUrl, status: 'Leader' }],
+                            chatHistory: []
+                        };
+                    }
+                    return <GroupView group={groupToRender} currentUser={user} onBack={() => setView('community')} />;
+                }
+                return <Home setView={setView} trails={trails} onSelectTrail={handleSelectTrail} onToggleFavorite={handleToggleFavorite} />;
+            }
         }
 
         switch (view) {
@@ -277,14 +294,10 @@ const App: React.FC = () => {
                 return <Planner />;
             case 'community':
                 return <Community setView={setView} />;
-            case 'group':
-                if (user) {
-                    return <GroupView group={MOCK_GROUP} currentUser={user} onBack={() => setView('community')} />;
-                }
-                return null;
+
             case 'profile':
                 if (user) {
-                    return <Profile user={user} onSelectTrail={handleSelectTrail} trails={trails} />;
+                    return <Profile user={user} onSelectTrail={handleSelectTrail} trails={trails} setView={setView} />;
                 }
                 return null;
             case 'admin_dashboard':

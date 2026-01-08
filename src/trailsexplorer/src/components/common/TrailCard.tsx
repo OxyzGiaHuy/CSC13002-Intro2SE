@@ -3,9 +3,9 @@ import type { Trail } from '../../types/index';
 import { HeartIcon } from '../../data/constants';
 
 export interface TrailCardProps {
-  trail: Trail;
-  onSelect: (id: number) => void;
-  onToggleFavorite: (id: number) => void;
+    trail: Trail;
+    onSelect: (id: number) => void;
+    onToggleFavorite: (id: number) => void;
 }
 
 const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite }) => {
@@ -25,7 +25,10 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                 <h3 className="text-xl font-bold font-display text-forest-green">{trail.name}</h3>
                 <p className="text-sm text-gray-500 mb-2">{trail.location}</p>
                 <div className="flex items-center justify-between text-sm">
-                    <span className={`px-2 py-1 rounded-full text-white ${trail.difficulty === 'Easy' ? 'bg-green-500' : trail.difficulty === 'Medium' ? 'bg-yellow-500' : 'bg-red-500'}`}>
+                    <span className={`px-2 py-1 rounded-full text-white ${trail.difficulty === 'Easy' ? 'bg-sage-green' :
+                            (trail.difficulty === 'Moderate' || trail.difficulty === 'Medium') ? 'bg-yellow-500' :
+                                'bg-red-500'
+                        }`}>
                         {trail.difficulty}
                     </span>
                     <span className="font-semibold text-earth-brown">{trail.rating} ★</span>
