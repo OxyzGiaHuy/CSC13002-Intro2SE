@@ -4,3 +4,4 @@ node_modules/
 *-lock.yaml
 *.log
 C:*
+.env
