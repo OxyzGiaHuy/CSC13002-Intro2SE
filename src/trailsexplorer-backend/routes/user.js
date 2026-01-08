@@ -1,8 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const Favorite = require('../models/Favorite');
+const SavedPlan = require('../models/SavedPlan');
 const Trail = require('../models/Trail'); // Needed to fetch trail details in favorites
 const authenticateToken = require('../middleware/authMiddleware');
+
+// 1. GET /api/user/saved-plans
+router.get('/saved-plans', authenticateToken, async (req, res) => {
+    try {
+        const plans = await SavedPlan.findAll({
+            where: { user_id: req.user.id },
+            order: [['created_at', 'DESC']]
+        });
+        res.json(plans);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 // 4. GET /api/user/favorites
 router.get('/favorites', authenticateToken, async (req, res) => {

@@ -16,10 +16,12 @@ const Trail = require('./models/Trail');
 const Review = require('./models/Review');
 const CommunityPost = require('./models/CommunityPost');
 const Favorite = require('./models/Favorite');
+const SavedPlan = require('./models/SavedPlan');
 const authRoutes = require('./routes/auth');
 const trailRoutes = require('./routes/trails');
 const communityRoutes = require('./routes/community');
 const userRoutes = require('./routes/user');
+const aiRoutes = require('./routes/ai');
 
 // IMPORTANT: Existing db (pg client) might be used by /api/test-db
 const db = require('./config/db'); // Keeping for existing endpoints if they work.
@@ -37,6 +39,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/trails', trailRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/ai', aiRoutes);
 
 app.get('/', (req, res) => {
     res.send('TrailsExplorer API is running... (Updated with Auth)');

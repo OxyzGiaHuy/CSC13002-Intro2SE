@@ -27,6 +27,10 @@ async function fixSequence() {
         await sequelize.query(`SELECT setval('user_favorites_favorite_id_seq', COALESCE((SELECT MAX(favorite_id) FROM user_favorites) + 1, 1), false);`);
         console.log('✅ Sequence user_favorites_favorite_id_seq fixed.');
 
+        // Fix saved_plans table sequence
+        await sequelize.query(`SELECT setval('saved_plans_plan_id_seq', COALESCE((SELECT MAX(plan_id) FROM saved_plans) + 1, 1), false);`);
+        console.log('✅ Sequence saved_plans_plan_id_seq fixed.');
+
         process.exit(0);
     } catch (err) {
         console.error('❌ Error fixing sequence:', err);

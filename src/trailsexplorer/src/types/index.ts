@@ -64,7 +64,12 @@ export interface ItineraryDay {
 }
 
 export interface ItineraryPlan {
+  id?: number;
+  location?: string;
+  duration?: number;
+  createdAt?: string;
   plan: ItineraryDay[];
+  checklist?: string[]; // Added for unified AI response
 }
 
 export interface ChecklistItem {
@@ -102,17 +107,17 @@ export interface SocialPost {
 
 // Added for Weather Feature
 export interface WeatherForecast {
-    day: string;
-    temp_c: number;
-    condition: 'Sunny' | 'Cloudy' | 'Rainy' | 'Stormy';
+  day: string;
+  temp_c: number;
+  condition: 'Sunny' | 'Cloudy' | 'Rainy' | 'Stormy';
 }
 
 // Added for Voice Log Feature
 export interface VoiceLog {
-    id: number;
-    timestamp: string;
-    location: string;
-    transcript_preview: string;
+  id: number;
+  timestamp: string;
+  location: string;
+  transcript_preview: string;
 }
 
 // --- GROUP FEATURE TYPES ---
