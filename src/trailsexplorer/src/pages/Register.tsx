@@ -10,15 +10,21 @@ const RegisterPage: React.FC<{ setAuthView: (v: AuthView) => void }> = ({ setAut
     const [password, setPassword] = useState('');
     const auth = useAuth();
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const finalName = name || 'New Trekker';
-        auth.register(finalName, email);
+        try {
+            await auth.register(finalName, email, password);
+        } catch (err: any) {
+            // Ideally we should have an error state here too, but for now log/alert
+            console.error(err);
+            alert(err.message || 'Registration failed');
+        }
     };
 
     return (
-         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
-             <div className="flex items-center justify-center mb-6">
+        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
+            <div className="flex items-center justify-center mb-6">
                 <Logo imageSrc={logoImage} size="lg" showText={true} />
             </div>
             <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Create Your Account</h2>
@@ -27,7 +33,7 @@ const RegisterPage: React.FC<{ setAuthView: (v: AuthView) => void }> = ({ setAut
                     <label className="block text-sm font-medium text-gray-700">Full Name</label>
                     <input type="text" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
                 </div>
-                 <div>
+                <div>
                     <label className="block text-sm font-medium text-gray-700">Email Address</label>
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
                 </div>

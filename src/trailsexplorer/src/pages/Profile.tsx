@@ -53,7 +53,10 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails }) => {
                                 <button onClick={() => { setIsEditing(false); setForm({ name: user.name, avatarUrl: user.avatarUrl }); }} className="px-3 py-2">Cancel</button>
                             </div>
                         ) : (
-                            <button onClick={() => setIsEditing(true)} className="px-3 py-2 bg-gray-100 rounded">Edit Profile</button>
+                            <div className="flex gap-2">
+                                <button onClick={() => setIsEditing(true)} className="px-3 py-2 bg-gray-100 rounded hover:bg-gray-200 text-forest-green font-medium">Edit Profile</button>
+                                <button onClick={() => auth.logout()} className="px-3 py-2 bg-red-50 text-red-600 border border-red-100 rounded hover:bg-red-100 font-medium">Logout</button>
+                            </div>
                         )}
                     </div>
                 </div>

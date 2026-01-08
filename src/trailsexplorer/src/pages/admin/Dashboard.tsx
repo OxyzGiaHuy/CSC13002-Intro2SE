@@ -168,9 +168,9 @@ const Dashboard: React.FC = () => {
 
     // Trail difficulty distribution
     const difficultyData = [
-        { name: 'Easy', value: 22, color: '#86efac' },
-        { name: 'Moderate', value: 20, color: '#fbbf24' },
-        { name: 'Hard', value: 14, color: '#ef4444' },
+        { name: 'Easy', value: 22, color: '#97BC62' }, // Sage Green
+        { name: 'Moderate', value: 20, color: '#F59E0B' }, // Amber/Gold
+        { name: 'Hard', value: 14, color: '#DC2626' }, // Red
     ];
 
     // Completion rate by month
@@ -192,7 +192,7 @@ const Dashboard: React.FC = () => {
     };
 
     return (
-        <div className="space-y-8 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-green-50 via-cream to-green-50/30 min-h-screen">
+        <div className="space-y-8 p-4 sm:p-6 lg:p-8 bg-gray-50/50 min-h-screen">
             {/* Header */}
             <div className="space-y-2">
                 <div className="flex items-center gap-3">
@@ -230,18 +230,18 @@ const Dashboard: React.FC = () => {
                             <AreaChart data={userGrowthData}>
                                 <defs>
                                     <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                                     </linearGradient>
                                     <linearGradient id="colorGroups" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                                 <XAxis dataKey="day" stroke="#6b7280" />
                                 <YAxis stroke="#6b7280" />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                                 />
                                 <Legend />
@@ -267,17 +267,19 @@ const Dashboard: React.FC = () => {
                                     data={difficultyData}
                                     cx="50%"
                                     cy="50%"
-                                    labelLine={false}
-                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                    innerRadius={60}
                                     outerRadius={80}
-                                    fill="#8884d8"
+                                    paddingAngle={5}
                                     dataKey="value"
                                 >
                                     {difficultyData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
+                                        <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
                                     ))}
                                 </Pie>
-                                <Tooltip />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                                />
+                                <Legend verticalAlign="bottom" height={36} iconType="circle" />
                             </PieChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -298,7 +300,7 @@ const Dashboard: React.FC = () => {
                             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                             <XAxis dataKey="month" stroke="#6b7280" />
                             <YAxis stroke="#6b7280" />
-                            <Tooltip 
+                            <Tooltip
                                 contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                             />
                             <Bar dataKey="completions" fill="#10b981" radius={[8, 8, 0, 0]} name="Completions" />
@@ -322,8 +324,8 @@ const Dashboard: React.FC = () => {
                     <CardContent className="p-6">
                         <div className="space-y-4">
                             {popularTrails.map((trail) => (
-                                <div 
-                                    key={trail.id} 
+                                <div
+                                    key={trail.id}
                                     className="flex items-center gap-4 p-4 hover:bg-green-50/50 rounded-xl transition-all duration-300 group cursor-pointer border border-transparent hover:border-green-200"
                                 >
                                     <div className="flex-shrink-0">
@@ -375,8 +377,8 @@ const Dashboard: React.FC = () => {
                     <CardContent className="p-6">
                         <div className="space-y-4">
                             {recentActivities.map((activity) => (
-                                <div 
-                                    key={activity.id} 
+                                <div
+                                    key={activity.id}
                                     className="flex items-center gap-4 p-3 hover:bg-green-50/50 rounded-xl transition-all duration-300 group cursor-pointer"
                                 >
                                     <div className={`w-10 h-10 rounded-full ${activity.bgColor} bg-opacity-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>

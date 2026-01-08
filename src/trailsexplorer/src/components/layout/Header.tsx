@@ -5,14 +5,12 @@ import logoImage from '../../../assets/logo.png';
 import { MenuIcon, XIcon } from '../../data/constants';
 
 export interface HeaderProps {
-  setView: (view: View) => void;
-  currentView: View;
-  onLogout: () => void;
-    userName?: string | null;
-    userRole?: string;
+    setView: (view: View) => void;
+    currentView: View;
+    userRole?: string; // Keep userRole for admin dashboard link logic
 }
 
-const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout, userName, userRole }) => {
+const Header: React.FC<HeaderProps> = ({ setView, currentView, userRole }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navItems: { name: string, view: View }[] = [
         { name: 'Home', view: 'home' },
@@ -31,13 +29,13 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout, userNam
         if (typeof currentView === 'string') {
             isActive = currentView === view;
         } else if (currentView.view === 'trailDetail' || currentView.view === 'mapView' || (typeof view === 'string' && (view === 'community' || view === 'profile'))) {
-             let baseView: string = '';
-             if (currentView.view === 'mapView') {
+            let baseView: string = '';
+            if (currentView.view === 'mapView') {
                 baseView = currentView.fromTrailDetail.from;
-             } else if (currentView.view === 'trailDetail') {
+            } else if (currentView.view === 'trailDetail') {
                 baseView = currentView.from;
-             }
-             isActive = baseView === view;
+            }
+            isActive = baseView === view;
         }
 
         return (
@@ -59,22 +57,9 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, onLogout, userNam
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-4">
                             {navItems.map(item => <NavLink key={item.name} {...item} />)}
-                            {userName ? (
-                                <div className="flex items-center gap-3">
-                                    <span className="text-sm font-medium text-forest-green">{userName}</span>
-                                    <button onClick={onLogout} className="px-3 py-2 rounded-md text-sm font-medium text-forest-green hover:text-sage-green">Logout</button>
-                                </div>
-                            ) : (
-                                <button onClick={onLogout} className="px-3 py-2 rounded-md text-sm font-medium text-forest-green hover:text-sage-green">Logout</button>
-                            )}
                         </div>
                     </div>
                     <div className="md:hidden flex items-center">
-                                                <button onClick={onLogout} className="p-2 rounded-md text-forest-green hover:text-sage-green focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                            </svg>
-                        </button>
                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-forest-green hover:text-sage-green focus:outline-none">
                             {isMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
                         </button>

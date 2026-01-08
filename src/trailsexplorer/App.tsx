@@ -68,7 +68,7 @@ const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void 
             }
         };
     }, [group.members]);
-    
+
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [chatMessages]);
@@ -166,86 +166,7 @@ const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void 
     );
 };
 
-// --- AUTHENTICATION COMPONENTS ---
-const Login: React.FC<{ onLogin: (email: string) => void, setAuthView: (view: AuthView) => void }> = ({ onLogin, setAuthView }) => {
-    const [email, setEmail] = useState('giahuy@trailsexplorer.com');
-    const [password, setPassword] = useState('password123');
-    const [error, setError] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Mock validation: Allow default user OR any admin email
-        if ((email === 'giahuy@trailsexplorer.com' && password === 'password123') || email.toLowerCase().includes('admin')) {
-            onLogin(email);
-        } else {
-            setError('Invalid email or password. For admin, use an email containing "admin".');
-        }
-    };
-
-    return (
-        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
-             <div className="flex items-center justify-center mb-6">
-                <Logo imageSrc={logoImage} size="lg" showText={true} />
-            </div>
-            <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Welcome Back</h2>
-            {error && <p className="bg-red-100 text-red-700 p-2 rounded-md mb-4 text-center">{error}</p>}
-            <form onSubmit={handleSubmit} className="space-y-6">
-                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                <button type="submit" className="w-full bg-sage-green text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors">Login</button>
-            </form>
-            <p className="mt-6 text-center text-sm text-gray-600">
-                Don't have an account?{' '}
-                <button onClick={() => setAuthView('register')} className="font-medium text-sage-green hover:underline">Sign up</button>
-            </p>
-        </div>
-    );
-};
-
-const Register: React.FC<{ onRegister: (name: string) => void, setAuthView: (view: AuthView) => void }> = ({ onRegister, setAuthView }) => {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onRegister(name || 'New Trekker');
-    };
-
-    return (
-         <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
-             <div className="flex items-center justify-center mb-6">
-                <Logo imageSrc={logoImage} size="lg" showText={true} />
-            </div>
-            <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Create Your Account</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
-                </div>
-                <button type="submit" className="w-full bg-sage-green text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors">Create Account</button>
-            </form>
-            <p className="mt-6 text-center text-sm text-gray-600">
-                Already have an account?{' '}
-                <button onClick={() => setAuthView('login')} className="font-medium text-sage-green hover:underline">Log in</button>
-            </p>
-        </div>
-    );
-};
 
 
 // --- MAIN APP COMPONENT ---
@@ -255,12 +176,12 @@ const App: React.FC = () => {
     const [trails, setTrails] = useState<Trail[]>([]);
     const [isLoadingTrails, setIsLoadingTrails] = useState(true);
     const [authView, setAuthView] = useState<AuthView>('login');
-    const { user, isAuthenticated, login, register, logout } = useAuth();
+    const { user, isAuthenticated } = useAuth();
     const prevAuth = useRef(isAuthenticated);
 
     useEffect(() => {
         console.log('[App] auth change', { user, isAuthenticated });
-        
+
         // Detect login event (transition from false to true)
         if (!prevAuth.current && isAuthenticated) {
             console.log('User just logged in. Role:', user?.role);
@@ -300,20 +221,8 @@ const App: React.FC = () => {
     }, []);
 
     // wrappers so Login/Register pages (which expect callbacks) work
-    const handleLogin = (email: string) => {
-        login(email);
-        // View redirection is now handled by the useEffect above
-    };
+    // Handlers removed as logic is now handled in components via useAuth context directly.
 
-    const handleRegister = (name: string) => {
-        register(name);
-        setView('home');
-    };
-    
-    const handleLogout = () => {
-        logout();
-        setView('home');
-    };
 
     const handleSelectTrail = (id: number) => {
         let fromView: 'home' | 'discover' | 'profile' = 'discover'; // default
@@ -324,7 +233,7 @@ const App: React.FC = () => {
         }
         setView({ view: 'trailDetail', id, from: fromView });
     };
-    
+
     const handleSelectMap = (trailId: number) => {
         if (typeof view === 'object' && view.view === 'trailDetail') {
             setView({ view: 'mapView', id: trailId, fromTrailDetail: view });
@@ -354,7 +263,7 @@ const App: React.FC = () => {
             if (view.view === 'trailDetail') {
                 return <TrailDetail trailId={view.id} onBack={handleBack} trails={trails} onToggleFavorite={handleToggleFavorite} onSelectMap={handleSelectMap} />;
             }
-             if (view.view === 'mapView') {
+            if (view.view === 'mapView') {
                 return <MapView trailId={view.id} onBack={handleBack} trails={trails} />;
             }
         }
@@ -374,7 +283,7 @@ const App: React.FC = () => {
                 }
                 return null;
             case 'profile':
-                 if (user) {
+                if (user) {
                     return <Profile user={user} onSelectTrail={handleSelectTrail} trails={trails} />;
                 }
                 return null;
@@ -389,11 +298,11 @@ const App: React.FC = () => {
 
     if (!isAuthenticated) {
         return (
-             <div className="min-h-screen bg-cream flex items-center justify-center p-4" style={{ backgroundImage: "url('https://picsum.photos/seed/authbg/1600/1200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                 <div className="absolute inset-0 bg-black bg-opacity-30"></div>
-                {authView === 'login' 
-                    ? <LoginPage setAuthView={setAuthView} onLogin={handleLogin} /> 
-                    : <RegisterPage setAuthView={setAuthView} onRegister={handleRegister} />
+            <div className="min-h-screen bg-cream flex items-center justify-center p-4" style={{ backgroundImage: "url('https://picsum.photos/seed/authbg/1600/1200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+                {authView === 'login'
+                    ? <LoginPage setAuthView={setAuthView} />
+                    : <RegisterPage setAuthView={setAuthView} />
                 }
             </div>
         )
@@ -420,7 +329,7 @@ const App: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-cream">
-            <Header setView={setView} currentView={view} onLogout={handleLogout} userName={user?.name} userRole={user?.role} />
+            <Header setView={setView} currentView={view} userRole={user?.role} />
             <main>{renderContent()}</main>
             <footer className="bg-forest-green text-cream mt-8 py-4">
                 <div className="container mx-auto text-center text-sm">
