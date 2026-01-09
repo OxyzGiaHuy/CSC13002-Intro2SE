@@ -22,7 +22,7 @@ INSERT INTO trail_categories (category_id, name, description) VALUES
 -- ==========================================
 
 INSERT INTO users (user_id, username, email, password_hash, full_name, phone, bio, role, fitness_level, home_city, home_country) VALUES
-(1, 'trailblazer_vn', 'thao.nguyen@email.com', '$2a$12$hashed_password', 'Thảo Nguyễn', '+84123456789', 'Một người yêu thiên nhiên và những chuyến phiêu lưu. Đã chinh phục 50+ cung đường trekking.', 'USER', 'INTERMEDIATE', 'Hà Nội', 'Việt Nam'),
+(1, 'trailblazer_vn', 'thao.nguyen@email.com', '$2b$10$6YYv4H9aqiI/DnbWqoXohOn1a7/bu./CO8HPyFXi4938p8kjQZzzm', 'Thảo Nguyễn', '+84123456789', 'Một người yêu thiên nhiên và những chuyến phiêu lưu. Đã chinh phục 50+ cung đường trekking.', 'USER', 'INTERMEDIATE', 'Hà Nội', 'Việt Nam'),
 (2, 'mountain_rider', 'tuan.pham@email.com', '$2a$12$hashed_password', 'Tuấn Phạm', '+84987654321', 'Chuyên gia leo núi với 10 năm kinh nghiệm. Thích những thử thách độ cao.', 'USER', 'ADVANCED', 'Đà Lạt', 'Việt Nam'),
 (3, 'nature_lover99', 'lan.hoang@email.com', '$2a$12$hashed_password', 'Lan Hoàng', '+84111222333', 'Thích chụp ảnh thiên nhiên và khám phá các cung đường mới.', 'USER', 'BEGINNER', 'Hồ Chí Minh', 'Việt Nam'),
 (4, 'adventure_seeker', 'minh.tran@email.com', '$2a$hashed_password', 'Minh Trần', '+84444555666', 'Tìm kiếm những trải nghiệm mới mẻ và thử thách bản thân.', 'USER', 'INTERMEDIATE', 'Đà Nẵng', 'Việt Nam'),
@@ -329,6 +329,10 @@ INSERT INTO trail_images (trail_id, uploaded_by, image_url, caption, is_featured
 -- Additional featured images for trails that were missing (17-20)
 -- ==========================================
 INSERT INTO trail_images (trail_id, uploaded_by, image_url, caption, is_featured, taken_at, location) VALUES
+(11, 2, 'https://images.unsplash.com/photo-1626017367352-8780373e9111?q=80&w=1200&h=800&auto=format&fit=crop', 'Đỉnh Lang Bian', TRUE, '2024-11-20 07:00:00', ST_SetSRID(ST_MakePoint(108.4333, 12.0500), 4326)),
+(12, 7, 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?q=80&w=1200&h=800&auto=format&fit=crop', 'Đèo Ô Quy Hồ', TRUE, '2024-12-25 08:00:00', ST_SetSRID(ST_MakePoint(103.6667, 22.4167), 4326)),
+(13, 6, 'https://images.unsplash.com/photo-1583344697392-5d46152a5ca4?q=80&w=1200&h=800&auto=format&fit=crop', 'Rừng Trà Sư', TRUE, '2024-10-15 09:00:00', ST_SetSRID(ST_MakePoint(105.0833, 10.4167), 4326)),
+(15, 10, 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?q=80&w=1200&h=800&auto=format&fit=crop', 'Vịnh Bái Tử Long', TRUE, '2024-10-20 10:00:00', ST_SetSRID(ST_MakePoint(107.4167, 21.0833), 4326)),
 (17, 3, 'https://images.unsplash.com/photo-1552394459-917cbbffbc84?q=80&w=1200&h=800&auto=format&fit=crop', 'Núi Tây Côn Lĩnh sương mù', TRUE, '2024-11-05 07:45:00', ST_SetSRID(ST_MakePoint(104.8, 22.7), 4326)),
 (18, 8, 'https://images.unsplash.com/photo-1686755660203-55781dbc2f24?q=80&w=1200&h=800&auto=format&fit=crop', 'Cổng Trời Quản Bạ', TRUE, '2024-09-15 08:20:00', ST_SetSRID(ST_MakePoint(104.9, 23.0), 4326)),
 (19, 2, 'https://images.unsplash.com/photo-1595634840658-26e8575ded94?q=80&w=1200&h=800&auto=format&fit=crop', 'Hồ Ba Bể bình minh', TRUE, '2024-10-22 06:50:00', ST_SetSRID(ST_MakePoint(105.6, 22.4), 4326)),
@@ -1779,3 +1783,26 @@ BEGIN
     RAISE NOTICE 'Tổng số bản ghi đã tạo: %', total_records;
     RAISE NOTICE 'Dữ liệu mẫu đã được tạo thành công!';
 END $$;
+
+-- Reviews cho các trail chưa có reviews (16-20) và bổ sung cho các trail khác
+INSERT INTO trail_reviews (trail_id, user_id, overall_rating, scenery_rating, difficulty_rating, safety_rating, accessibility_rating, title, content, visited_date, visited_with, weather_during_visit, helpful_count) VALUES
+-- Trail 16: Bidoup
+(16, 1, 5, 5, 4, 4, 3, 'Bidoup mùa lá đỏ', 'Rừng lá phong rất đẹp, trek vừa sức. Không khí rất trong lành.', '2024-12-05', 'SOLO', 'COOL', 12),
+(16, 3, 4, 4, 5, 4, 4, 'Hành trình thú vị', 'Cây Pơ-mu cổ thụ rất ấn tượng. Đường đi khá dốc.', '2024-11-20', 'FRIENDS', 'CLOUDY', 5),
+
+-- Trail 17: Tây Côn Lĩnh
+(17, 7, 5, 5, 5, 3, 2, 'Tây Côn Lĩnh hùng vĩ', 'Rừng nguyên sinh rậm rạp, rất hoang sơ. Cần guide dẫn đường.', '2024-11-05', 'GROUP', 'RAIN', 8),
+(17, 5, 4, 5, 5, 4, 3, 'Thử thách thực sự', 'Độ khó cao, không dành cho người mới. Nhưng cảnh rất đẹp.', '2024-10-15', 'SOLO', 'FOGGY', 6),
+
+-- Trail 18: Cổng Trời Quản Bạ
+(18, 8, 5, 5, 2, 5, 5, 'Quản Bạ yên bình', 'Cổng trời Quản Bạ nhìn xuống núi đôi rất đẹp. Đường dễ đi.', '2024-09-15', 'FAMILY', 'CLEAR', 11),
+(18, 2, 4, 4, 2, 4, 4, 'Chụp ảnh đẹp', 'Điểm check-in tuyệt vời. Nên đi vào sáng sớm để săn mây.', '2024-08-20', 'FRIENDS', 'SUNNY', 9),
+
+-- Trail 19: Hồ Ba Bể
+(19, 2, 5, 5, 2, 5, 4, 'Hồ Ba Bể trong xanh', 'Nước hồ xanh biếc, chèo kayak rất vui. Đồ ăn bản địa ngon.', '2024-10-22', 'FRIENDS', 'CLOUDY', 8),
+(19, 6, 4, 4, 1, 5, 5, 'Thư giãn cuối tuần', 'Không gian yên tĩnh, thích hợp nghỉ dưỡng.', '2024-09-10', 'FAMILY', 'RAIN', 4),
+
+-- Trail 20: Núi Dinh
+(20, 4, 4, 3, 4, 4, 3, 'Núi Dinh cuối tuần', 'Địa điểm trekking gần Sài Gòn khá ổn. Có suối Tiên tắm mát.', '2024-11-11', 'SOLO', 'HOT', 5),
+(20, 10, 3, 3, 3, 4, 4, 'Khá đông', 'Cuối tuần đông người đi. Đường mòn rõ ràng.', '2024-10-05', 'FRIENDS', 'HOT', 3);
+

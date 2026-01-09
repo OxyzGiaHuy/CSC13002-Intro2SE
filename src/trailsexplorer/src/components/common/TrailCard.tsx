@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Trail } from '../../types/index';
 import { HeartIcon } from '../../data/constants';
-import { Zap, Activity, Flame, Star } from 'lucide-react';
+import { Zap, Activity, Flame, Star, Clock, Route } from 'lucide-react';
 
 interface TrailCardProps {
     trail: Trail;
@@ -67,45 +67,63 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                     </div>
                 </div>
 
-                {/* Rating Badge */}
-                <div className="absolute top-4 right-4">
-                    <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-white/20 shadow-lg">
-                        <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
-                        <span className="text-xs font-bold text-gray-800">{trail.rating > 0 ? trail.rating.toFixed(1) : (4.5).toFixed(1)}</span>
-                    </div>
+                {/* Favorite Button (Top Right) */}
+                <div className="absolute top-4 right-4 z-10">
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onToggleFavorite(trail.id);
+                        }}
+                        className="p-2.5 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white text-gray-400 hover:text-rose-500 transition-all duration-300 shadow-lg active:scale-95 group/btn"
+                    >
+                        <HeartIcon className={`w-5 h-5 ${trail.isFavorited ? 'text-rose-500 fill-current' : 'group-hover/btn:text-rose-500'}`} filled={trail.isFavorited} />
+                    </button>
                 </div>
             </div>
 
             {/* Content Section */}
             <div className="p-5 flex-grow flex flex-col">
                 <div className="mb-2">
-                    <p className="text-xs font-semibold text-sage-green uppercase tracking-wider mb-1">{trail.location}</p>
+                    <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs font-semibold text-sage-green uppercase tracking-wider">{trail.location}</p>
+                        {/* Rating moved here */}
+                        <div className="flex items-center gap-1">
+                            <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+                            <span className="text-sm font-bold text-gray-800">{trail.rating > 0 ? trail.rating.toFixed(1) : (4.5).toFixed(1)}</span>
+                            <span className="text-xs text-gray-400 font-medium">({trail.total_reviews || 0})</span>
+                        </div>
+                    </div>
                     <h3 className="text-xl font-bold font-display text-forest-green line-clamp-2 min-h-[3.5rem] leading-tight group-hover:text-green-800 transition-colors">
                         {trail.name}
                     </h3>
                 </div>
 
-                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
-                    <div className="flex gap-4">
-                        <div className="flex flex-col">
-                            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Distance</span>
-                            <span className="text-sm font-bold text-gray-700">{formatDistance(trail.length_km)}</span>
+                <div className="mt-auto pt-4 border-t border-gray-50">
+                    <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-3 group/stat flex-1 justify-center">
+                            <div className="p-2 rounded-full bg-emerald-50 text-emerald-600 group-hover/stat:bg-emerald-100 transition-colors">
+                                <Route className="w-4 h-4" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-gray-400 font-bold tracking-wider leading-none mb-0.5">DISTANCE</span>
+                                <span className="text-sm font-black text-gray-800">{formatDistance(trail.length_km)}</span>
+                            </div>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-tighter">Duration</span>
-                            <span className="text-sm font-bold text-gray-700">{trail.duration_hr} hr</span>
+
+                        {/* Vertical Separator */}
+                        <div className="w-px h-8 bg-gray-100 self-center"></div>
+
+                        <div className="flex items-center gap-3 group/stat flex-1 justify-center">
+                            <div className="p-2 rounded-full bg-amber-50 text-amber-600 group-hover/stat:bg-amber-100 transition-colors">
+                                <Clock className="w-4 h-4" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-gray-400 font-bold tracking-wider leading-none mb-0.5">DURATION</span>
+                                <span className="text-sm font-black text-gray-800">{trail.duration_hr}h</span>
+                            </div>
                         </div>
                     </div>
 
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onToggleFavorite(trail.id);
-                        }}
-                        className="p-2.5 rounded-full bg-gray-50 hover:bg-rose-50 text-gray-400 hover:text-rose-500 transition-all active:scale-90"
-                    >
-                        <HeartIcon className={`w-5 h-5 ${trail.isFavorited ? 'text-rose-500 fill-current' : ''}`} filled={trail.isFavorited} />
-                    </button>
                 </div>
             </div>
 

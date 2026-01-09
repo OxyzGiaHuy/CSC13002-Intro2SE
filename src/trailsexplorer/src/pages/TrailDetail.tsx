@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Trail } from '../types/index';
+import { getTrailById } from '../services/trailService';
 import {
     ArrowLeftIcon,
     HeartIcon,
@@ -20,7 +21,22 @@ export interface TrailDetailProps {
 }
 
 const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onToggleFavorite, onSelectMap }) => {
-    const trail = trails.find(t => t.id === trailId);
+    // Initial trail from props (might have partial data)
+    const initialTrail = trails.find(t => t.id === trailId);
+    const [trail, setTrail] = React.useState<Trail | undefined>(initialTrail);
+
+    React.useEffect(() => {
+        const fetchDetail = async () => {
+            if (trailId) {
+                const detailedTrail = await getTrailById(trailId);
+                if (detailedTrail) {
+                    setTrail(detailedTrail);
+                }
+            }
+        };
+        fetchDetail();
+    }, [trailId]);
+
     if (!trail) return <div className="p-8 text-center text-gray-500">Trail not found.</div>;
 
     const getDifficultyStyles = (difficulty: string) => {
@@ -158,7 +174,18 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                 {trail.reviews.map((r, idx) => (
                                     <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                                         <div className="flex items-center gap-4 mb-4">
-                                            <img src={r.avatarUrl} alt={r.username} className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100" />
+                                            <img
+                                                src={r.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=random`}
+                                                alt={r.username}
+                                                className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100 bg-gray-100"
+                                                onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    // Prevent infinite loop if fallback also fails
+                                                    if (!target.src.includes('ui-avatars.com')) {
+                                                        target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=random`;
+                                                    }
+                                                }}
+                                            />
                                             <div>
                                                 <p className="font-bold text-gray-900">{r.username}</p>
                                                 <div className="flex text-yellow-400 text-sm">
@@ -168,7 +195,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                                 </div>
                                             </div>
                                         </div>
-                                        <p className="text-gray-600 italic">"{r.comment}"</p>
+                                        <p className="text-gray-600 leading-relaxed text-sm lg:text-base">"{r.comment}"</p>
                                     </div>
                                 ))}
                             </div>

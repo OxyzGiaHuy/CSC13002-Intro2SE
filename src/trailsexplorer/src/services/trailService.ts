@@ -42,7 +42,13 @@ const mapBackendTrailToFrontend = (backendTrail: any): Trail => {
         scenery: backendTrail.tags || [], // Assuming tags JSONB maps simply
         description: backendTrail.description || '',
         imageUrl: backendTrail.image_url || 'https://picsum.photos/800/600', // Fallback
-        reviews: [], // Populated separately if needed
+        reviews: backendTrail.Reviews ? backendTrail.Reviews.map((r: any) => ({
+            username: r.User ? r.User.username : 'Anonymous',
+            avatarUrl: r.User ? r.User.avatar_url : 'https://i.pravatar.cc/150',
+            rating: r.overall_rating,
+            comment: r.content
+        })) : [],
+        total_reviews: backendTrail.num_reviews || 0,
         isFavorited: false, // User specific
         lat: lat,
         lng: lng,
@@ -55,7 +61,7 @@ const mapBackendTrailToFrontend = (backendTrail: any): Trail => {
  */
 export const getTrails = async (): Promise<Trail[]> => {
     try {
-        const response = await fetch(`${API_URL}/trails`);
+        const response = await fetch(`${API_URL}/trails?limit=100`);
         if (!response.ok) {
             throw new Error(`Error fetching trails: ${response.statusText}`);
         }
