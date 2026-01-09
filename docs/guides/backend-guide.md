@@ -94,6 +94,50 @@ SELECT
     (SELECT COUNT(*) FROM trail_reviews) as review_count;
 ```
 
+## 6. API Documentation
+
+Tài liệu API chi tiết (dạng JSON Postman) được lưu tại `/docs/api/TrailsExplorer.postman_collection.json`.
+
+### Các Endpoints hiện có
+
+| Method | Endpoint | Mô tả | Request Body | Example Response |
+| :--- | :--- | :--- | :--- | :--- |
+| **GET** | `/` | Trang chủ API | None | `TrailsExplorer API is running...` |
+| **GET** | `/api/health` | Kiểm tra sức khỏe hệ thống | None | `{"status": "OK", "message": "..."}` |
+| **GET** | `/api/test-error` | Test lỗi (Middleware check) | None | `{"message": "Đây là lỗi..."}` |
+
+### Mã lỗi thường gặp
+*   **200:** Success (Thành công).
+*   **400:** Bad Request (Lỗi logic hoặc dữ liệu đầu vào).
+*   **500:** Internal Server Error (Lỗi hệ thống).
+
+
+### Hướng dẫn chạy Automated Test (Postman)
+
+Để kiểm tra tự động toàn bộ hệ thống, chúng tôi đã chuẩn bị sẵn bộ test script.
+
+#### Bước 1: Cài đặt Postman
+Khuyên dùng **Postman Desktop App** để tránh lỗi kết nối Localhost (CORS/DNS) thường gặp trên phiên bản Web.
+*   Link tải: [https://www.postman.com/downloads/](https://www.postman.com/downloads/)
+
+#### Bước 2: Import Test Script
+1.  Mở Postman, nhấn nút **Import** (góc trên bên trái).
+2.  Chọn file: `docs/api/TrailsExplorer.postman_collection.json` từ thư mục dự án.
+
+#### Bước 3: Chạy Test tự động (Collection Runner)
+1.  Trong cột bên trái, nhấn vào tên Collection **"TrailsExplorer API Testing"**.
+2.  Nhìn lên thanh menu của tab vừa mở, nhấn nút **Run** (biểu tượng play ▶️ "Run").
+3.  Chọn mục **"Run TrailsExplorer API Testing"**.
+4.  Cấu hình Runner:
+    *   **Iterations:** 1 (Chạy 1 lần).
+    *   **Delay:** 0ms (Không cần độ trễ).
+5.  Nhấn nút màu cam **Run TrailsExplorer API Testing**.
+
+#### Bước 4: Kiểm tra kết quả
+Quan sát màn hình kết quả chạy:
+*   ✅ **PASS (Xanh lá):** API hoạt động đúng, status code và dữ liệu trả về khớp với mong đợi.
+*   ❌ **FAIL (Đỏ):** Có lỗi xảy ra, cần kiểm tra lại server hoặc code.
+
 ---
 
 **Ready to explore trails!** 🥾
