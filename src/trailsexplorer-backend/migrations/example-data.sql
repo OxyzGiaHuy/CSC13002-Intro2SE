@@ -31,7 +31,7 @@ INSERT INTO users (user_id, username, email, password_hash, full_name, phone, bi
 (7, 'peak_conqueror', 'dung.vo@email.com', '$2a$hashed_password', 'Dũng Võ', '+84555666777', 'Mục tiêu chinh phục tất cả đỉnh núi cao trên 3000m tại Việt Nam.', 'USER', 'ADVANCED', 'Hà Nội', 'Việt Nam'),
 (8, 'camping_enthusiast', 'mai.dao@email.com', '$2a$hashed_password', 'Mai Đào', '+84888999000', 'Chuyên gia cắm trại và sinh tồn trong rừng.', 'USER', 'INTERMEDIATE', 'Nha Trang', 'Việt Nam'),
 (9, 'photo_trekker', 'hieu.bui@email.com', '$2a$hashed_password', 'Hiếu Bùi', '+84123459876', 'Nhiếp ảnh gia du lịch, chuyên chụp ảnh thiên nhiên hoang dã.', 'USER', 'INTERMEDIATE', 'Huế', 'Việt Nam'),
-(10, 'weekend_hiker', 'linh.nguyen@email.com', '$2a$hashed_password', 'Linh Nguyễn', '+84987651234', 'Chỉ đi trekking vào cuối tuần, thích những cung đường ngắn và đẹp.', 'USER', 'BEGINNER', 'Hải Phòng', 'Việt Nam');
+(10, 'weekend_hiker', 'linh.nguyen@email.com', '$2a$hashed_password', 'Linh Nguyễn', '+84987651234', 'Chỉ đi trekking vào cuối tuần, thích những cung đường ngắn và đẹp.', 'USER', 'BEGINNER', 'Hải Phòng', 'Việt Nam') ON CONFLICT (email) DO NOTHING;
 
 -- Thiết lập last_location cho một số users
 UPDATE users SET 
@@ -295,27 +295,44 @@ INSERT INTO trail_pois (trail_id, name, type, location, distance_from_start_km, 
 -- ==========================================
 -- 5. HÌNH ẢNH CUNG ĐƯỜNG (TRAIL IMAGES) - 20 ảnh
 -- ==========================================
-
 INSERT INTO trail_images (trail_id, uploaded_by, image_url, caption, is_featured, taken_at, location) VALUES
-(1, 2, 'https://trailsexplorer.com/images/fansipan-summit.jpg', 'Đỉnh Fansipan vào buổi sáng', TRUE, '2024-03-15 07:30:00', ST_SetSRID(ST_MakePoint(103.815, 22.310), 4326)),
-(1, 7, 'https://trailsexplorer.com/images/fansipan-cloud-sea.jpg', 'Biển mây trên đỉnh Fansipan', FALSE, '2024-03-15 08:00:00', ST_SetSRID(ST_MakePoint(103.815, 22.310), 4326)),
-(2, 3, 'https://trailsexplorer.com/images/dalat-valley.jpg', 'Thung lũng tình yêu Đà Lạt', TRUE, '2024-04-20 10:00:00', ST_SetSRID(ST_MakePoint(108.445, 11.948), 4326)),
-(3, 1, 'https://trailsexplorer.com/images/cucphuong-ancient-tree.jpg', 'Cây chò ngàn năm tuổi', TRUE, '2024-02-10 14:00:00', ST_SetSRID(ST_MakePoint(105.715, 20.256), 4326)),
-(4, 7, 'https://trailsexplorer.com/images/bachma-summit.jpg', 'View từ đỉnh Bạch Mã', TRUE, '2024-05-05 11:00:00', ST_SetSRID(ST_MakePoint(107.803, 16.197), 4326)),
-(5, 10, 'https://trailsexplorer.com/images/catba-view.jpg', 'Toàn cảnh vịnh Lan Hạ', TRUE, '2024-06-12 09:00:00', ST_SetSRID(ST_MakePoint(107.002, 20.803), 4326)),
-(6, 4, 'https://trailsexplorer.com/images/ninhthuan-desert.jpg', 'Sa mạc hóa tại Ninh Thuận', TRUE, '2024-01-25 16:00:00', ST_SetSRID(ST_MakePoint(109.220, 11.702), 4326)),
-(7, 8, 'https://trailsexplorer.com/images/puluong-terrace.jpg', 'Ruộng bậc thang Pù Luông', TRUE, '2024-09-08 07:00:00', ST_SetSRID(ST_MakePoint(105.119, 20.436), 4326)),
-(8, 2, 'https://trailsexplorer.com/images/tanang-grassland.jpg', 'Đồi cỏ Tà Năng mùa mưa', TRUE, '2024-10-15 15:00:00', ST_SetSRID(ST_MakePoint(107.884, 11.317), 4326)),
-(9, 9, 'https://trailsexplorer.com/images/haivan-pass.jpg', 'Đèo Hải Vân nhìn từ trên cao', TRUE, '2024-07-22 14:00:00', ST_SetSRID(ST_MakePoint(108.202, 16.185), 4326)),
-(10, 6, 'https://trailsexplorer.com/images/halong-bay.jpg', 'Vịnh Hạ Long từ núi Đầu Gỗ', TRUE, '2024-11-30 10:00:00', ST_SetSRID(ST_MakePoint(107.087, 20.952), 4326)),
-(11, 3, 'https://trailsexplorer.com/images/langbian-volcano.jpg', 'Miệng núi lửa Lang Bian', FALSE, '2024-12-10 12:00:00', ST_SetSRID(ST_MakePoint(108.434, 12.051), 4326)),
-(12, 7, 'https://trailsexplorer.com/images/oquyho-pass.jpg', 'Cổng trời Ô Quy Hồ', FALSE, '2024-10-05 08:00:00', ST_SetSRID(ST_MakePoint(103.667, 22.417), 4326)),
-(13, 6, 'https://trailsexplorer.com/images/tra-su-forest.jpg', 'Rừng tràm Trà Sư', FALSE, '2024-11-20 09:00:00', ST_SetSRID(ST_MakePoint(105.084, 10.417), 4326)),
-(14, 4, 'https://trailsexplorer.com/images/ba-den-mountain.jpg', 'Chùa trên núi Bà Đen', FALSE, '2024-04-15 13:00:00', ST_SetSRID(ST_MakePoint(106.201, 11.367), 4326));
+-- Fansipan (Núi cao, mây)
+(1, 2, 'https://images.unsplash.com/photo-1733821793652-e650876d9a7a?q=80&w=1200&h=800&auto=format&fit=crop', 'Đỉnh Fansipan hùng vĩ', TRUE, '2024-03-15 07:30:00', ST_SetSRID(ST_MakePoint(103.815, 22.310), 4326)),
+-- Đà Lạt (Rừng thông)
+(2, 3, 'https://images.unsplash.com/photo-1678099006439-dba9e4d3f9f5?q=80&w=1200&h=800&auto=format&fit=crop', 'Rừng thông Đà Lạt trong sương', TRUE, '2024-04-20 10:00:00', ST_SetSRID(ST_MakePoint(108.445, 11.948), 4326)),
+-- Cúc Phương (Rừng nhiệt đới)
+(3, 1, 'https://images.unsplash.com/photo-1713429647867-7c8c0cc369fb?q=80&w=1200&h=800&auto=format&fit=crop', 'Đường mòn rừng Cúc Phương', TRUE, '2024-02-10 14:00:00', ST_SetSRID(ST_MakePoint(105.715, 20.256), 4326)),
+-- Bạch Mã (Thác nước)
+(4, 7, 'https://images.unsplash.com/photo-1523224949444-170258978eef?q=80&w=1200&h=800&auto=format&fit=crop', 'Thác nước tại Bạch Mã', TRUE, '2024-05-05 11:00:00', ST_SetSRID(ST_MakePoint(107.803, 16.197), 4326)),
+-- Cát Bà (Vịnh biển)
+(5, 10, 'https://images.unsplash.com/photo-1725701191382-ff47fc9f90c4?q=80&w=1200&h=800&auto=format&fit=crop', 'Vịnh Lan Hạ nhìn từ trên cao', TRUE, '2024-06-12 09:00:00', ST_SetSRID(ST_MakePoint(107.002, 20.803), 4326)),
+-- Ninh Thuận (Bãi đá, sa mạc)
+(6, 4, 'https://images.unsplash.com/photo-1524195958835-70f542b1924b?q=80&w=1200&h=800&auto=format&fit=crop', 'Bãi biển Ninh Thuận hoang sơ', TRUE, '2024-01-25 16:00:00', ST_SetSRID(ST_MakePoint(109.220, 11.702), 4326)),
+-- Pù Luông (Ruộng bậc thang)
+(7, 8, 'https://images.unsplash.com/photo-1695289566332-08eb1e223b6e?q=80&w=1200&h=800&auto=format&fit=crop', 'Ruộng bậc thang Pù Luông mùa lúa chín', TRUE, '2024-09-08 07:00:00', ST_SetSRID(ST_MakePoint(105.119, 20.436), 4326)),
+-- Tà Năng Phan Dũng (Đồi cỏ)
+(8, 2, 'https://images.unsplash.com/photo-1565693235245-37dc4d88a60e?q=80&w=1200&h=800&auto=format&fit=crop', 'Đồi cỏ Tà Năng mướt mắt', TRUE, '2024-10-15 15:00:00', ST_SetSRID(ST_MakePoint(107.884, 11.317), 4326)),
+-- Hải Vân (Đường đèo, biển)
+(9, 9, 'https://images.unsplash.com/photo-1663856449506-a009e27878a9?q=80&w=1200&h=800&auto=format&fit=crop', 'Cung đường đèo Hải Vân', TRUE, '2024-07-22 14:00:00', ST_SetSRID(ST_MakePoint(108.202, 16.185), 4326)),
+-- Hạ Long
+(10, 6, 'https://images.unsplash.com/photo-1692731797626-fa37b7fbfd91?q=80&w=1200&h=800&auto=format&fit=crop', 'Vịnh Hạ Long buổi hoàng hôn', TRUE, '2024-11-30 10:00:00', ST_SetSRID(ST_MakePoint(107.087, 20.952), 4326)),
+-- Bà Đen (Chùa, núi)
+(14, 4, 'https://images.unsplash.com/photo-1695442443973-40067c5f3d7a?q=80&w=1200&h=800&auto=format&fit=crop', 'Chùa Bà Đen Tây Ninh', FALSE, '2024-04-15 13:00:00', ST_SetSRID(ST_MakePoint(106.201, 11.367), 4326)),
+-- Bidoup
+(16, 3, 'https://images.unsplash.com/photo-1686242228254-ca3bedc1db57?q=80&w=1200&h=800&auto=format&fit=crop', 'Rừng già Bidoup Núi Bà', TRUE, '2024-12-01 09:30:00', ST_SetSRID(ST_MakePoint(108.5, 12.1), 4326));
 
 -- ==========================================
 -- 6. OFFLINE MAPS - 5 regions
 -- ==========================================
+
+-- ==========================================
+-- Additional featured images for trails that were missing (17-20)
+-- ==========================================
+INSERT INTO trail_images (trail_id, uploaded_by, image_url, caption, is_featured, taken_at, location) VALUES
+(17, 3, 'https://images.unsplash.com/photo-1552394459-917cbbffbc84?q=80&w=1200&h=800&auto=format&fit=crop', 'Núi Tây Côn Lĩnh sương mù', TRUE, '2024-11-05 07:45:00', ST_SetSRID(ST_MakePoint(104.8, 22.7), 4326)),
+(18, 8, 'https://images.unsplash.com/photo-1686755660203-55781dbc2f24?q=80&w=1200&h=800&auto=format&fit=crop', 'Cổng Trời Quản Bạ', TRUE, '2024-09-15 08:20:00', ST_SetSRID(ST_MakePoint(104.9, 23.0), 4326)),
+(19, 2, 'https://images.unsplash.com/photo-1595634840658-26e8575ded94?q=80&w=1200&h=800&auto=format&fit=crop', 'Hồ Ba Bể bình minh', TRUE, '2024-10-22 06:50:00', ST_SetSRID(ST_MakePoint(105.6, 22.4), 4326)),
+(20, 4, 'https://images.unsplash.com/photo-1462688681110-15bc88b1497c?q=80&w=1200&h=800&auto=format&fit=crop', 'Núi Dinh khung cảnh sớm mai', TRUE, '2024-11-11 07:10:00', ST_SetSRID(ST_MakePoint(107.1, 10.5), 4326));
 
 INSERT INTO offline_map_regions (region_id, name, description, bounding_box, zoom_levels, size_mb, version, is_active) VALUES
 (1, 'Tây Bắc Việt Nam', 'Bản đồ offline khu vực Tây Bắc bao gồm Sapa, Fansipan, Mù Cang Chải', 
@@ -999,23 +1016,23 @@ INSERT INTO post_likes (comment_id, user_id, reaction_type) VALUES
 INSERT INTO user_groups (group_id, uuid, name, description, avatar_url, group_type, 
                          membership_approval_required, member_count, post_count, created_by, tags) VALUES
 (1, uuid_generate_v4(), 'Trekking Việt Nam', 'Cộng đồng yêu thích trekking và khám phá thiên nhiên Việt Nam',
- 'https://trailsexplorer.com/groups/trekking_vietnam.jpg', 'PUBLIC', FALSE, 8, 12, 1,
+ 'https://images.unsplash.com/photo-1533240332313-0db49b459ad6?q=80&w=400&h=400&auto=format&fit=crop', 'PUBLIC', FALSE, 8, 12, 1,
  '["trekking", "vietnam", "hiking", "adventure"]'::jsonb),
 
 (2, uuid_generate_v4(), 'Cắm Trại Chuyên Nghiệp', 'Chia sẻ kinh nghiệm cắm trại và sinh tồn',
- 'https://trailsexplorer.com/groups/camping_pro.jpg', 'PUBLIC', FALSE, 5, 8, 8,
+ 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=400&h=400&auto=format&fit=crop', 'PUBLIC', FALSE, 5, 8, 8,
  '["camping", "survival", "outdoor", "gear"]'::jsonb),
 
 (3, uuid_generate_v4(), 'Nhiếp Ảnh Thiên Nhiên', 'Dành cho các nhiếp ảnh gia yêu thích chụp ảnh thiên nhiên',
- 'https://trailsexplorer.com/groups/nature_photography.jpg', 'INVITE_ONLY', TRUE, 3, 6, 9,
+ 'https://images.unsplash.com/photo-1452784444945-3f422708fe5e?q=80&w=400&h=400&auto=format&fit=crop', 'INVITE_ONLY', TRUE, 3, 6, 9,
  '["photography", "nature", "landscape", "wildlife"]'::jsonb),
 
 (4, uuid_generate_v4(), 'Tây Bắc Exploration', 'Chuyên khám phá các cung đường Tây Bắc',
- 'https://trailsexplorer.com/groups/taybac_exploration.jpg', 'PUBLIC', FALSE, 4, 5, 7,
+ 'https://images.unsplash.com/photo-1500076656116-558758c991c1?q=80&w=400&h=400&auto=format&fit=crop', 'PUBLIC', FALSE, 4, 5, 7,
  '["taybac", "fansipan", "sapa", "northwest"]'::jsonb),
 
 (5, uuid_generate_v4(), 'Beginner Trekker Việt Nam', 'Dành cho người mới bắt đầu trekking',
- 'https://trailsexplorer.com/groups/beginner_trekker.jpg', 'PUBLIC', FALSE, 6, 9, 10,
+ 'https://images.unsplash.com/photo-1618413516603-d33a4e56c8a1?q=80&w=400&h=400&auto=format&fit=crop', 'PUBLIC', FALSE, 6, 9, 10,
  '["beginner", "easy-trails", "first-time", "introduction"]'::jsonb);
 
 -- ==========================================
@@ -1138,6 +1155,15 @@ INSERT INTO marketplace_items (item_id, seller_id, title, category, condition, p
 
 -- Cập nhật sold_at cho item đã bán
 UPDATE marketplace_items SET sold_at = '2024-04-05 14:00:00+07' WHERE item_id = 8;
+
+-- ==========================================
+-- 21b. UPDATE Marketplace images to Unsplash CDN (800x800)
+-- ==========================================
+UPDATE marketplace_items SET images = '["https://images.unsplash.com/photo-1502993032709-d45193ca08e7?q=80&w=800&h=800&auto=format&fit=crop"]'::jsonb WHERE item_id = 1; -- Giày Salomon
+UPDATE marketplace_items SET images = '["https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=800&h=800&auto=format&fit=crop"]'::jsonb WHERE item_id = 2; -- Balo Osprey
+UPDATE marketplace_items SET images = '["https://images.unsplash.com/photo-1478827536114-da961b7f86d2?q=80&w=800&h=800&auto=format&fit=crop"]'::jsonb WHERE item_id = 3; -- Lều Naturehike
+UPDATE marketplace_items SET images = '["https://images.unsplash.com/photo-1738220543088-aa5b0f83733b?q=80&w=800&h=800&auto=format&fit=crop"]'::jsonb WHERE item_id = 4; -- Bếp gas mini
+UPDATE marketplace_items SET images = '["https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=800&h=800&auto=format&fit=crop"]'::jsonb WHERE item_id = 5; -- Áo khoác TNF
 
 -- ==========================================
 -- 22. MARKETPLACE FAVORITES - 10 favorites

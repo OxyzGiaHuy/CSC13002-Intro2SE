@@ -1,0 +1,57 @@
+---
+description: Guide to deploying the full stack application for free
+---
+
+# Free Deployment Guide (Vercel + Render + Neon)
+
+This guide walks you through deploying the TrailsExplorer application using the best free-tier services available.
+
+## 1. Database (PostgreSQL) -> **Neon Console**
+Neon offers a generous free tier for PostgreSQL with branching support.
+
+1.  Go to [Neon.tech](https://neon.tech/) and sign up.
+2.  Create a new project (e.g., `trailsexplorer-db`).
+3.  Copy the **Connection String** (Postgres URL).
+    *   It looks like: `postgres://user:pass@ep-xyz.us-east-2.aws.neon.tech/dbname?sslmode=require`
+4.  **Important:** You will need this URL for both your Backend and your local `.env` if you want to connect locally.
+
+## 2. Backend (Node.js/Express) -> **Render**
+Render provides a free Web Service tier that spins down after inactivity but works great for demos.
+
+1.  Push your latest code to GitHub.
+2.  Go to [Render Dashboard](https://dashboard.render.com/).
+3.  Click **New +** -> **Web Service**.
+4.  Connect your GitHub repository.
+5.  **Settings:**
+    *   **Root Directory:** `src/trailsexplorer-backend` (Important! Since your backend is in a subdir)
+    *   **Runtime:** Node
+    *   **Build Command:** `npm install` (or `pnpm install`)
+    *   **Start Command:** `node server.js`
+6.  **Environment Variables:**
+    *   Add `DATABASE_URL`: Paste your Neon connection string here.
+    *   Add `JWT_SECRET`: Generate a random secure string.
+    *   Add `GEMINI_API_KEY`: Your Google Gemini API Key.
+    *   Add `PORT`: `10000` (Render default).
+7.  Click **Deploy**.
+
+## 3. Frontend (React/Vite) -> **Vercel**
+Vercel is optimized for frontend frameworks and offers a seamless free tier.
+
+1.  Go to [Vercel Dashboard](https://vercel.com/).
+2.  Click **Add New...** -> **Project**.
+3.  Import your GitHub repository.
+4.  **Framework Preset:** Vite
+5.  **Root Directory:** Click "Edit" and select `src/trailsexplorer` (your frontend folder).
+6.  **Environment Variables:**
+    *   `VITE_API_BASE_URL`: The URL of your deployed Render backend (e.g., `https://trailsexplorer-api.onrender.com`).
+        *   *Note: In your code, ensure you use this var. You might need to update `AuthContext.tsx` or `geminiService.ts` to use `import.meta.env.VITE_API_BASE_URL` instead of hardcoded localhost.*
+7.  Click **Deploy**.
+
+## 4. Final Verification
+1.  Open your Vercel URL.
+2.  Try to Register/Login.
+    *   If it fails, check the Network tab. If it's hitting `localhost`, you missed step 3.6.
+3.  Test the AI features to ensure the Backend can talk to Gemini.
+
+---
+**Note:** Render free instances spin down after 15 mins of inactivity. The first request might take 30-50s to wake it up. This is normal for the free tier.

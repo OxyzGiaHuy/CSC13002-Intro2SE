@@ -4,6 +4,7 @@ const { Op } = require('sequelize');
 const Trail = require('../models/Trail');
 const Review = require('../models/Review');
 const User = require('../models/User');
+const TrailImage = require('../models/TrailImage');
 const authenticateToken = require('../middleware/authMiddleware');
 
 // 1. GET /api/trails: List trails (Pagination, Filtering)
@@ -18,18 +19,34 @@ router.get('/', async (req, res) => {
 
         const { count, rows } = await Trail.findAndCountAll({
             where,
+            include: [{
+                model: TrailImage,
+                as: 'images',
+                attributes: ['image_url'],
+                required: false
+            }],
+            distinct: true, // Specific for findAndCountAll with include
             limit: parseInt(limit),
             offset: parseInt(offset),
             order: [['created_at', 'DESC']]
+        });
+
+        // Flatten image_url for frontend convenience
+        const data = rows.map(trail => {
+            const t = trail.toJSON();
+            // Pick first image as main image
+            t.image_url = t.images && t.images.length > 0 ? t.images[0].image_url : null;
+            return t;
         });
 
         res.json({
             total: count,
             page: parseInt(page),
             pages: Math.ceil(count / limit),
-            data: rows
+            data: data
         });
     } catch (err) {
+        // console.error(err); // Consider logging
         res.status(500).json({ error: err.message });
     }
 });
@@ -48,10 +65,22 @@ router.get('/search', async (req, res) => {
                     { location_region: { [Op.iLike]: `%${q}%` } }
                 ]
             },
+            include: [{
+                model: TrailImage,
+                as: 'images',
+                attributes: ['image_url'],
+                required: false
+            }],
             limit: 20
         });
 
-        res.json(trails);
+        const data = trails.map(trail => {
+            const t = trail.toJSON();
+            t.image_url = t.images && t.images.length > 0 ? t.images[0].image_url : null;
+            return t;
+        });
+
+        res.json(data);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -61,16 +90,28 @@ router.get('/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const trail = await Trail.findByPk(req.params.id, {
-            include: [{
-                model: Review,
-                include: [{ model: User, attributes: ['username', 'avatar_url'] }],
-                order: [['created_at', 'DESC']],
-                limit: 5 // Initial reviews
-            }]
+            include: [
+                {
+                    model: Review,
+                    include: [{ model: User, attributes: ['username', 'avatar_url'] }],
+                    order: [['created_at', 'DESC']],
+                    limit: 5 // Initial reviews
+                },
+                {
+                    model: TrailImage,
+                    as: 'images',
+                    required: false
+                }
+            ]
         });
 
         if (!trail) return res.status(404).json({ message: "Trail not found" });
-        res.json(trail);
+
+        const t = trail.toJSON();
+        // ensure image_url is at top level if needed, or frontend can use images array
+        t.image_url = t.images && t.images.length > 0 ? t.images[0].image_url : null;
+
+        res.json(t);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -119,3 +160,4 @@ router.delete('/:id/reviews/:reviewId', authenticateToken, async (req, res) => {
 });
 
 module.exports = router;
+
