@@ -21,15 +21,28 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(`[Auth] Attempting login for email: ${email}`);
+
         const user = await User.findOne({ where: { email } });
-        if (!user) return res.status(404).json({ message: "Email không tồn tại" });
+        if (!user) {
+            console.log(`[Auth] Email not found: ${email}`);
+            return res.status(404).json({ message: "Email không tồn tại" });
+        }
+
+        console.log(`[Auth] User found: ${user.username}, Stored hash: ${user.password.substring(0, 10)}...`);
+        console.log(`[Auth] Comparing password length: ${password?.length}`);
 
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log(`[Auth] Password match result: ${isMatch}`);
+
         if (!isMatch) return res.status(400).json({ message: "Sai mật khẩu" });
 
         const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
         res.json({ message: "Login thành công", token, user });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) {
+        console.error("[Auth] Login error:", err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 // Đăng xuất

@@ -3,10 +3,11 @@ const corsOptions = {
         // Cho phép các domain trong whitelist hoặc không có origin (như Postman/Server-to-Server)
         const whitelist = [
             'http://localhost:3000', // Frontend React
+            'http://localhost:3001', // Frontend React (fallback port)
             'http://localhost:5173', // Vite React (nếu dùng Vite)
             'http://127.0.0.1:3000'
         ];
-        
+
         if (whitelist.indexOf(origin) !== -1 || !origin) {
             callback(null, true);
         } else {
