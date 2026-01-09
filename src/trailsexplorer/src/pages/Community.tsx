@@ -109,10 +109,10 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
     };
 
     useEffect(() => {
-        try { localStorage.setItem('market_items', JSON.stringify(marketItems)); } catch {}
+        try { localStorage.setItem('market_items', JSON.stringify(marketItems)); } catch { }
     }, [marketItems]);
     useEffect(() => {
-        try { localStorage.setItem('market_cart', JSON.stringify(cart)); } catch {}
+        try { localStorage.setItem('market_cart', JSON.stringify(cart)); } catch { }
     }, [cart]);
 
     const handleSellSubmit = (e: React.FormEvent) => {
@@ -182,7 +182,7 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
                                     <img src={item.imageUrl} alt={item.name} className="w-16 h-16 rounded-md object-cover mr-4" />
                                     <div className="flex-1 min-w-0 mr-4">
                                         <p className="font-semibold truncate">{item.name}</p>
-                                        <p className="text-sm text-gray-500 truncate">{item.seller} ΓÇó {item.condition}</p>
+                                        <p className="text-sm text-gray-500 truncate">{item.seller} • {item.condition}</p>
                                         <p className="text-sm text-earth-brown font-bold">{item.price.toLocaleString()} VND</p>
                                     </div>
                                     <button onClick={() => handleAddToCart(item)} className="ml-auto px-4 py-2 bg-sage-green text-white rounded-md whitespace-nowrap flex-shrink-0 hover:bg-forest-green transition-colors font-medium text-sm">Add to Cart</button>

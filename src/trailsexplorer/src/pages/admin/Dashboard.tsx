@@ -108,7 +108,7 @@ const Dashboard: React.FC = () => {
         const fetchStats = async () => {
             try {
                 // Fetch Trails Count
-                const trailRes = await fetch('http://localhost:5000/api/trails?limit=1');
+                const trailRes = await fetch('/api/trails?limit=1');
                 const trailData = await trailRes.json();
 
                 if (trailData && trailData.total !== undefined) {
