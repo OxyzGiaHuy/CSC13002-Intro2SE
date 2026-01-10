@@ -43,6 +43,19 @@ async function runSeed() {
         console.log(`✅ Users: ${userCount.rows[0].count}`);
         console.log(`✅ Reviews: ${reviewCount.rows[0].count}`);
 
+        // Task 6: Set sequences to max id + 1 for auto-increment
+        console.log('🔧 Setting sequences to max row index...');
+        await client.query(`
+            SELECT setval('users_id_seq', (SELECT COALESCE(MAX(id), 0) FROM users) + 1);
+            SELECT setval('trails_id_seq', (SELECT COALESCE(MAX(id), 0) FROM trails) + 1);
+            SELECT setval('trail_reviews_id_seq', (SELECT COALESCE(MAX(id), 0) FROM trail_reviews) + 1);
+            SELECT setval('community_posts_id_seq', (SELECT COALESCE(MAX(id), 0) FROM community_posts) + 1);
+            SELECT setval('favorites_id_seq', (SELECT COALESCE(MAX(id), 0) FROM favorites) + 1);
+            SELECT setval('saved_plans_id_seq', (SELECT COALESCE(MAX(id), 0) FROM saved_plans) + 1);
+            SELECT setval('trail_images_id_seq', (SELECT COALESCE(MAX(id), 0) FROM trail_images) + 1);
+        `);
+        console.log('✅ Sequences updated successfully');
+
         console.log('✨ Database reset and seeded successfully!');
     } catch (err) {
         console.error('❌ Error seeding database:', err);
