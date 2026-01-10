@@ -162,9 +162,6 @@ exports.registerUser = async (req, res, next) => {
             
             // Gọi hàm gửi mail
             sendEmail(user.email, emailSubject, emailBody);
-            
-            // Gọi hàm gửi mail
-            sendEmail(user.email, emailSubject, emailBody);
 
             // 5. Trả về kết quả thành công
             res.status(201).json({
