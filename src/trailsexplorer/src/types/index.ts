@@ -83,32 +83,17 @@ export interface ChecklistItem {
   packed: boolean;
 }
 
-export interface MarketplaceItem {
+export interface ChecklistItem {
   id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-  seller: string;
-  condition: 'New' | 'Like New' | 'Used';
+  text: string;
+  packed: boolean;
 }
 
-export interface CommunityChallenge {
-  id: number;
-  title: string;
-  description: string;
-  progress: number;
-  goal: number;
-  unit: string;
-}
-
-export interface SocialPost {
-  id: number;
-  author: string;
-  avatarUrl: string;
-  content: string;
-  imageUrl?: string;
-  trailName: string;
-}
+// Export new community types
+export * from './marketplace';
+export * from './group';
+export * from './challenge';
+export * from './post';
 
 // Added for Weather Feature
 export interface WeatherForecast {
@@ -125,7 +110,7 @@ export interface VoiceLog {
   transcript_preview: string;
 }
 
-// --- GROUP FEATURE TYPES ---
+// Chat types - keep if not covered by Group
 export interface ChatMessage {
   id: number;
   author: string;
@@ -133,22 +118,5 @@ export interface ChatMessage {
   text: string;
   timestamp: string;
   isCurrentUser: boolean;
-}
-
-export interface GroupMember {
-  id: number;
-  name: string;
-  avatarUrl: string;
-  lat: number;
-  lng: number;
-  status: 'On Track' | 'Lagging Behind' | 'Leader';
-}
-
-export interface Group {
-  id: number;
-  name: string;
-  trailName: string;
-  members: GroupMember[];
-  chatHistory: ChatMessage[];
 }
 

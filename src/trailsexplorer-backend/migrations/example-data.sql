@@ -22,16 +22,16 @@ INSERT INTO trail_categories (category_id, name, description) VALUES
 -- ==========================================
 
 INSERT INTO users (user_id, username, email, password_hash, full_name, phone, bio, role, fitness_level, home_city, home_country) VALUES
-(1, 'trailblazer_vn', 'thao.nguyen@email.com', '$2b$10$6YYv4H9aqiI/DnbWqoXohOn1a7/bu./CO8HPyFXi4938p8kjQZzzm', 'Thảo Nguyễn', '+84123456789', 'Một người yêu thiên nhiên và những chuyến phiêu lưu. Đã chinh phục 50+ cung đường trekking.', 'USER', 'INTERMEDIATE', 'Hà Nội', 'Việt Nam'),
-(2, 'mountain_rider', 'tuan.pham@email.com', '$2a$12$hashed_password', 'Tuấn Phạm', '+84987654321', 'Chuyên gia leo núi với 10 năm kinh nghiệm. Thích những thử thách độ cao.', 'USER', 'ADVANCED', 'Đà Lạt', 'Việt Nam'),
-(3, 'nature_lover99', 'lan.hoang@email.com', '$2a$12$hashed_password', 'Lan Hoàng', '+84111222333', 'Thích chụp ảnh thiên nhiên và khám phá các cung đường mới.', 'USER', 'BEGINNER', 'Hồ Chí Minh', 'Việt Nam'),
-(4, 'adventure_seeker', 'minh.tran@email.com', '$2a$hashed_password', 'Minh Trần', '+84444555666', 'Tìm kiếm những trải nghiệm mới mẻ và thử thách bản thân.', 'USER', 'INTERMEDIATE', 'Đà Nẵng', 'Việt Nam'),
+(1, 'trailblazer_vn', 'thao.nguyen@email.com', '$2b$10$6YYv4H9aqiI/DnbWqoXohOn1a7/bu./CO8HPyFXi4938p8kjQZzzm', 'Nguyễn Phương Thảo', '+84123456789', 'Một người yêu thiên nhiên và những chuyến phiêu lưu. Đã chinh phục 50+ cung đường trekking.', 'USER', 'INTERMEDIATE', 'Hà Nội', 'Việt Nam'),
+(2, 'mountain_rider', 'tuan.pham@email.com', '$2a$12$hashed_password', 'Phạm Minh Tuấn', '+84987654321', 'Chuyên gia leo núi với 10 năm kinh nghiệm. Thích những thử thách độ cao.', 'USER', 'ADVANCED', 'Đà Lạt', 'Việt Nam'),
+(3, 'nature_lover99', 'lan.hoang@email.com', '$2a$12$hashed_password', 'Hoàng Ngọc Lan', '+84111222333', 'Thích chụp ảnh thiên nhiên và khám phá các cung đường mới.', 'USER', 'BEGINNER', 'Hồ Chí Minh', 'Việt Nam'),
+(4, 'adventure_seeker', 'minh.tran@email.com', '$2a$hashed_password', 'Trần Văn Minh', '+84444555666', 'Tìm kiếm những trải nghiệm mới mẻ và thử thách bản thân.', 'USER', 'INTERMEDIATE', 'Đà Nẵng', 'Việt Nam'),
 (5, 'trekking_master', 'admin@trailsexplorer.com', '$2a$hashed_password', 'Admin System', '+84111111111', 'Quản trị viên hệ thống TrailsExplorer', 'ADMIN', 'EXPERT', 'Hà Nội', 'Việt Nam'),
-(6, 'saigon_walker', 'hoa.le@email.com', '$2a$hashed_password', 'Hoa Lê', '+84222333444', 'Thích đi bộ đường dài và khám phá văn hóa địa phương.', 'USER', 'BEGINNER', 'Hồ Chí Minh', 'Việt Nam'),
-(7, 'peak_conqueror', 'dung.vo@email.com', '$2a$hashed_password', 'Dũng Võ', '+84555666777', 'Mục tiêu chinh phục tất cả đỉnh núi cao trên 3000m tại Việt Nam.', 'USER', 'ADVANCED', 'Hà Nội', 'Việt Nam'),
-(8, 'camping_enthusiast', 'mai.dao@email.com', '$2a$hashed_password', 'Mai Đào', '+84888999000', 'Chuyên gia cắm trại và sinh tồn trong rừng.', 'USER', 'INTERMEDIATE', 'Nha Trang', 'Việt Nam'),
-(9, 'photo_trekker', 'hieu.bui@email.com', '$2a$hashed_password', 'Hiếu Bùi', '+84123459876', 'Nhiếp ảnh gia du lịch, chuyên chụp ảnh thiên nhiên hoang dã.', 'USER', 'INTERMEDIATE', 'Huế', 'Việt Nam'),
-(10, 'weekend_hiker', 'linh.nguyen@email.com', '$2a$hashed_password', 'Linh Nguyễn', '+84987651234', 'Chỉ đi trekking vào cuối tuần, thích những cung đường ngắn và đẹp.', 'USER', 'BEGINNER', 'Hải Phòng', 'Việt Nam') ON CONFLICT (email) DO NOTHING;
+(6, 'saigon_walker', 'hoa.le@email.com', '$2a$hashed_password', 'Lê Thị Hoa', '+84222333444', 'Thích đi bộ đường dài và khám phá văn hóa địa phương.', 'USER', 'BEGINNER', 'Hồ Chí Minh', 'Việt Nam'),
+(7, 'peak_conqueror', 'dung.vo@email.com', '$2a$hashed_password', 'Võ Tiến Dũng', '+84555666777', 'Mục tiêu chinh phục tất cả đỉnh núi cao trên 3000m tại Việt Nam.', 'USER', 'ADVANCED', 'Hà Nội', 'Việt Nam'),
+(8, 'camping_enthusiast', 'mai.dao@email.com', '$2a$hashed_password', 'Đào Tuyết Mai', '+84888999000', 'Chuyên gia cắm trại và sinh tồn trong rừng.', 'USER', 'INTERMEDIATE', 'Nha Trang', 'Việt Nam'),
+(9, 'photo_trekker', 'hieu.bui@email.com', '$2a$hashed_password', 'Bùi Trung Hiếu', '+84123459876', 'Nhiếp ảnh gia du lịch, chuyên chụp ảnh thiên nhiên hoang dã.', 'USER', 'INTERMEDIATE', 'Huế', 'Việt Nam'),
+(10, 'weekend_hiker', 'linh.nguyen@email.com', '$2a$hashed_password', 'Nguyễn Thùy Linh', '+84987651234', 'Chỉ đi trekking vào cuối tuần, thích những cung đường ngắn và đẹp.', 'USER', 'BEGINNER', 'Hải Phòng', 'Việt Nam') ON CONFLICT (email) DO NOTHING;
 
 -- Thiết lập last_location cho một số users
 UPDATE users SET 
@@ -818,82 +818,82 @@ INSERT INTO checkpoint_logs (checkpoint_id, user_id, trip_id, planned_checkin_ti
 -- ==========================================
 
 INSERT INTO community_posts (post_id, uuid, user_id, content_type, title, content, media_urls, 
-                            trail_id, trip_id, like_count, comment_count, visibility, tags, location) VALUES
+                            trail_id, trip_id, like_count, comment_count, visibility, tags, location, created_at) VALUES
 (1, uuid_generate_v4(), 1, 'TRIP_REPORT', 'Hành trình chinh phục Fansipan - Nóc nhà Đông Dương',
  'Sau nhiều lần trì hoãn, cuối cùng mình cũng đã chinh phục được đỉnh Fansipan 3147m! Hành trình 2 ngày 1 đêm đầy thử thách nhưng xứng đáng với view tuyệt đẹp trên đỉnh...',
- '["https://trailsexplorer.com/media/fansipan_summit_selfie.jpg", "https://trailsexplorer.com/media/fansipan_sunrise.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=800"]'::jsonb,
  1, 1, 45, 12, 'PUBLIC', '["fansipan", "summit", "achievement", "vietnam"]'::jsonb,
- ST_SetSRID(ST_MakePoint(103.815, 22.310), 4326)),
+ ST_SetSRID(ST_MakePoint(103.815, 22.310), 4326), '2025-10-20 08:30:00+07'),
 
 (2, uuid_generate_v4(), 2, 'TRAIL_REVIEW', 'Review cung đường Tà Năng - Phan Dũng',
  'Đây thực sự là cung đường trekking đẹp nhất mình từng đi! Đồi cỏ xanh mướt vào mùa mưa, rừng thông mát mẻ...',
- '["https://trailsexplorer.com/media/tanang_grassland_panorama.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1623126908029-58cb08a2b272?q=80&w=800"]'::jsonb,
  8, 8, 78, 25, 'PUBLIC', '["tanang", "grassland", "best-trail", "scenic"]'::jsonb,
- ST_SetSRID(ST_MakePoint(107.884, 11.317), 4326)),
+ ST_SetSRID(ST_MakePoint(107.884, 11.317), 4326), '2025-06-15 10:00:00+07'),
 
 (3, uuid_generate_v4(), 3, 'PHOTO', 'Thung lũng tình yêu Đà Lạt mùa hoa',
  'Chia sẻ vài bức ảnh chụp tại Thung Lũng Tình Yêu Đà Lạt vào cuối tuần vừa rồi. Hoa nở rực rỡ!',
- '["https://trailsexplorer.com/media/dalat_flower_field.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1508233620467-f79f1e317a05?q=80&w=800"]'::jsonb,
  2, 3, 32, 8, 'PUBLIC', '["dalat", "flowers", "valley", "photography"]'::jsonb,
- ST_SetSRID(ST_MakePoint(108.443, 11.947), 4326)),
+ ST_SetSRID(ST_MakePoint(108.443, 11.947), 4326), '2025-02-14 09:15:00+07'),
 
 (4, uuid_generate_v4(), 7, 'TRIP_REPORT', 'Bạch Mã - View đáng giá mọi nỗ lực',
  'Leo Bạch Mã khá mệt nhưng view từ trên đỉnh thực sự đáng giá. Nhìn thấy cả biển và núi!',
- '["https://trailsexplorer.com/media/bachma_waterfall.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1590487988256-9ed24133863e?q=80&w=800"]'::jsonb,
  4, 4, 28, 6, 'PUBLIC', '["bachma", "mountain", "view", "challenge"]'::jsonb,
- ST_SetSRID(ST_MakePoint(107.803, 16.197), 4326)),
+ ST_SetSRID(ST_MakePoint(107.803, 16.197), 4326), '2025-07-20 16:00:00+07'),
 
 (5, uuid_generate_v4(), 10, 'TRIP_REPORT', 'Cát Bà 2 ngày 1 đêm - Trải nghiệm tuyệt vời',
  'Đi Cát Bà không chỉ để tắm biển mà còn để trekking lên đỉnh Ngự Lâm ngắm toàn cảnh vịnh...',
- '["https://trailsexplorer.com/media/catba_island_view.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?q=80&w=800"]'::jsonb,
  5, 5, 41, 15, 'PUBLIC', '["catba", "island", "trekking", "beach"]'::jsonb,
- ST_SetSRID(ST_MakePoint(107.002, 20.803), 4326)),
+ ST_SetSRID(ST_MakePoint(107.002, 20.803), 4326), '2025-05-30 11:30:00+07'),
 
 (6, uuid_generate_v4(), 4, 'TRIP_REPORT', 'Sa mạc Ninh Thuận - Thử thách khắc nghiệt',
  'Núi Chúa thực sự là thử thách với thời tiết nắng nóng khắc nghiệt. Nhưng cảnh quan sa mạc độc đáo...',
- '["https://trailsexplorer.com/media/ninhthuan_desert_sunset.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1565259160563-7eb5a8e0344d?q=80&w=800"]'::jsonb,
  6, 6, 36, 9, 'PUBLIC', '["desert", "ninhthuan", "challenge", "hot"]'::jsonb,
- ST_SetSRID(ST_MakePoint(109.220, 11.702), 4326)),
+ ST_SetSRID(ST_MakePoint(109.220, 11.702), 4326), '2025-06-25 14:45:00+07'),
 
 (7, uuid_generate_v4(), 8, 'PHOTO', 'Ruộng bậc thang Pù Luông mùa lúa chín',
  'Pù Luông đẹp nhất vào mùa lúa chín! Chia sẻ vài bức ảnh chụp được trong chuyến đi vừa rồi.',
- '["https://trailsexplorer.com/media/puluong_rice_terrace.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1533550889-43c162657d2f?q=80&w=800"]'::jsonb,
  7, 7, 52, 18, 'PUBLIC', '["puluong", "rice-terrace", "harvest", "vietnam"]'::jsonb,
- ST_SetSRID(ST_MakePoint(105.119, 20.436), 4326)),
+ ST_SetSRID(ST_MakePoint(105.119, 20.436), 4326), '2025-09-10 17:00:00+07'),
 
 (8, uuid_generate_v4(), 9, 'PHOTO', 'Hoàng hôn trên đèo Hải Vân',
  'Đèo Hải Vân không chỉ đẹp vào ban ngày. Hoàng hôn ở đây còn tuyệt vời hơn nữa!',
- '["https://trailsexplorer.com/media/haivan_sunset.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800"]'::jsonb,
  9, 9, 67, 22, 'PUBLIC', '["haivan", "sunset", "pass", "photography"]'::jsonb,
- ST_SetSRID(ST_MakePoint(108.202, 16.185), 4326)),
+ ST_SetSRID(ST_MakePoint(108.202, 16.185), 4326), '2025-07-30 18:15:00+07'),
 
 (9, uuid_generate_v4(), 6, 'TRAIL_REVIEW', 'Hạ Long từ trên cao - Không thể bỏ lỡ',
  'Trekking lên núi Đầu Gỗ để ngắm vịnh Hạ Long là trải nghiệm không thể bỏ lỡ khi đến đây.',
- '["https://trailsexplorer.com/media/halong_bay_view.jpg"]'::jsonb,
+ '["https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=800"]'::jsonb,
  10, 10, 89, 31, 'PUBLIC', '["halong", "bay", "view", "unesco"]'::jsonb,
- ST_SetSRID(ST_MakePoint(107.087, 20.952), 4326)),
+ ST_SetSRID(ST_MakePoint(107.087, 20.952), 4326), '2025-11-20 09:30:00+07'),
 
 (10, uuid_generate_v4(), 5, 'QUESTION', 'Nên đi Fansipan vào tháng mấy là đẹp nhất?',
  'Mình đang lên kế hoạch đi Fansipan. Các bạn có kinh nghiệm cho mình hỏi nên đi tháng mấy thì thời tiết đẹp và view biển mây đẹp nhất?',
- NULL, 1, NULL, 15, 23, 'PUBLIC', '["fansipan", "advice", "weather", "planning"]'::jsonb, NULL);
+ NULL, 1, NULL, 15, 23, 'PUBLIC', '["fansipan", "advice", "weather", "planning"]'::jsonb, NULL, '2025-01-05 20:00:00+07');
 
 -- Thêm 15 posts nữa
-INSERT INTO community_posts (post_id, user_id, content_type, title, content, trail_id, like_count, comment_count) VALUES
-(11, 2, 'TEXT', 'Tìm bạn đồng hành đi Ô Quy Hồ tháng 12', 'Mình dự định đi Ô Quy Hồ cuối tháng 12. Có ai muốn join không?', 12, 8, 5),
-(12, 3, 'PHOTO', 'Lang Bian sương mù', 'Lang Bian đẹp mơ màng trong sương', 11, 24, 7),
-(13, 4, 'TRIP_REPORT', 'Núi Bà Đen với gia đình', 'Đi núi Bà Đen với 2 đứa nhỏ. Có cáp treo nên khá dễ', 14, 18, 4),
-(14, 6, 'TRAIL_REVIEW', 'Rừng Trà Sư mùa nước nổi', 'Đẹp nhưng nhiều muỗi, nhớ mang thuốc chống muỗi', 13, 22, 9),
-(15, 7, 'QUESTION', 'Cần trang bị gì cho trekking mùa đông Tây Bắc?', 'Chuẩn bị đi Tây Bắc vào đông, cần mang theo những gì?', 1, 12, 18),
-(16, 8, 'TEXT', 'Chia sẻ kinh nghiệm cắm trại an toàn', 'Vài tips cắm trại an toàn trong rừng từ kinh nghiệm bản thân', NULL, 45, 12),
-(17, 9, 'PHOTO', 'Bình minh trên đỉnh Bạch Mã', NULL, 4, 31, 8),
-(18, 10, 'TRIP_REPORT', 'Bái Tử Long bị hủy do bão', 'Tiếc quá, chuyến đi bị hủy vì bão', 15, 5, 3),
-(19, 1, 'TRAIL_REVIEW', 'Cúc Phương mùa bướm', 'Đúng mùa bướm, đẹp không tả nổi', 3, 56, 21),
-(20, 2, 'QUESTION', 'Tà Năng mùa nào đẹp nhất?', NULL, 8, 19, 14),
-(21, 3, 'TEXT', 'Giới thiệu nhóm trekking Đà Lạt', 'Nhóm mình thường xuyên tổ chức trek Đà Lạt. Ai quan tâm inbox nhé!', 2, 33, 11),
-(22, 5, 'TEXT', 'Thông báo: Hệ thống nâng cấp vào 2h sáng mai', 'Hệ thống sẽ tạm ngừng để nâng cấp từ 2h-4h sáng mai', NULL, 3, 0),
-(23, 7, 'TRIP_REPORT', 'Ô Quy Hồ lần đầu', 'Khó hơn mình tưởng, nhưng xứng đáng', 12, 27, 6),
-(24, 8, 'PHOTO', 'Cắm trại đêm tại Pù Luông', NULL, 7, 41, 15),
-(25, 9, 'TRAIL_REVIEW', 'Hải Vân cho người mới bắt đầu', 'Phù hợp cho người mới, view đẹp, đường dễ', 9, 38, 10);
+INSERT INTO community_posts (post_id, user_id, content_type, title, content, media_urls, trail_id, like_count, comment_count, created_at) VALUES
+(11, 2, 'TEXT', 'Tìm bạn đồng hành đi Ô Quy Hồ tháng 12', 'Mình dự định đi Ô Quy Hồ cuối tháng 12. Có ai muốn join không?', '["https://images.unsplash.com/photo-1516246843873-9d12356b6fab?q=80&w=800"]'::jsonb, 12, 8, 5, '2025-10-15 09:00:00+07'),
+(12, 3, 'PHOTO', 'Lang Bian sương mù', 'Lang Bian đẹp mơ màng trong sương', '["https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=800"]'::jsonb, 11, 24, 7, '2025-08-20 07:30:00+07'),
+(13, 4, 'TRIP_REPORT', 'Núi Bà Đen với gia đình', 'Đi núi Bà Đen với 2 đứa nhỏ. Có cáp treo nên khá dễ', '["https://images.unsplash.com/photo-1605648916361-9bc12ad6a569?q=80&w=800"]'::jsonb, 14, 18, 4, '2025-06-01 14:00:00+07'),
+(14, 6, 'TRAIL_REVIEW', 'Rừng Trà Sư mùa nước nổi', 'Đẹp nhưng nhiều muỗi, nhớ mang thuốc chống muỗi', '["https://images.unsplash.com/photo-1628744876497-eb30460be9f6?q=80&w=800"]'::jsonb, 13, 22, 9, '2025-11-10 11:00:00+07'),
+(15, 7, 'QUESTION', 'Cần trang bị gì cho trekking mùa đông Tây Bắc?', 'Chuẩn bị đi Tây Bắc vào đông, cần mang theo những gì?', '[]'::jsonb, 1, 12, 18, '2025-12-05 20:00:00+07'),
+(16, 8, 'TEXT', 'Chia sẻ kinh nghiệm cắm trại an toàn', 'Vài tips cắm trại an toàn trong rừng từ kinh nghiệm bản thân', '["https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=800"]'::jsonb, NULL, 45, 12, '2025-09-15 18:00:00+07'),
+(17, 9, 'PHOTO', 'Bình minh trên đỉnh Bạch Mã', NULL, '["https://images.unsplash.com/photo-1615196531553-61b6062776f7?q=80&w=800"]'::jsonb, 4, 31, 8, '2025-05-20 05:45:00+07'),
+(18, 10, 'TRIP_REPORT', 'Bái Tử Long bị hủy do bão', 'Tiếc quá, chuyến đi bị hủy vì bão', '["https://images.unsplash.com/photo-1505118380757-91f5f5632de0?q=80&w=800"]'::jsonb, 15, 5, 3, '2025-07-15 08:00:00+07'),
+(19, 1, 'TRAIL_REVIEW', 'Cúc Phương mùa bướm', 'Đúng mùa bướm, đẹp không tả nổi', '["https://images.unsplash.com/photo-1470753937643-efeb931202a9?q=80&w=800"]'::jsonb, 3, 56, 21, '2025-04-10 10:00:00+07'),
+(20, 2, 'QUESTION', 'Tà Năng mùa nào đẹp nhất?', NULL, '[]'::jsonb, 8, 19, 14, '2025-03-01 21:00:00+07'),
+(21, 3, 'TEXT', 'Giới thiệu nhóm trekking Đà Lạt', 'Nhóm mình thường xuyên tổ chức trek Đà Lạt. Ai quan tâm inbox nhé!', '["https://images.unsplash.com/photo-1533473359331-0135ef1bcfb0?q=80&w=800"]'::jsonb, 2, 33, 11, '2025-02-14 15:00:00+07'),
+(22, 5, 'TEXT', 'Thông báo: Hệ thống nâng cấp vào 2h sáng mai', 'Hệ thống sẽ tạm ngừng để nâng cấp từ 2h-4h sáng mai', '[]'::jsonb, NULL, 3, 0, '2025-01-10 09:00:00+07'),
+(23, 7, 'TRIP_REPORT', 'Ô Quy Hồ lần đầu', 'Khó hơn mình tưởng, nhưng xứng đáng', '["https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800"]'::jsonb, 12, 27, 6, '2025-08-05 16:30:00+07'),
+(24, 8, 'PHOTO', 'Cắm trại đêm tại Pù Luông', NULL, '["https://images.unsplash.com/photo-1510312301138-173652c421bb?q=80&w=800"]'::jsonb, 7, 41, 15, '2025-09-20 20:00:00+07'),
+(25, 9, 'TRAIL_REVIEW', 'Hải Vân cho người mới bắt đầu', 'Phù hợp cho người mới, view đẹp, đường dễ', '["https://images.unsplash.com/photo-1623329007629-87c2cv8910b?q=80&w=800"]'::jsonb, 9, 38, 10, '2025-06-15 08:00:00+07');
 
 -- ==========================================
 -- 17. POST COMMENTS - 50 comments
@@ -1288,39 +1288,39 @@ INSERT INTO trail_reviews (trail_id, user_id, overall_rating, title, content, vi
 -- 24. CHALLENGES - 5 challenges
 -- ==========================================
 
-INSERT INTO challenges (challenge_id, uuid, name, description, challenge_type, target_value, unit, 
+INSERT INTO challenges (name, description, challenge_type, target_value, unit, 
                        start_date, end_date, is_recurring, reward_type, participation_fee, 
                        max_participants, current_participants, is_featured, is_active, 
                        visibility, created_by, rules, tags) VALUES
-(1, uuid_generate_v4(), 'Thử Thách 100km Tháng 3', 
+('Thử Thách 100km Tháng 3', 
  'Tích lũy 100km trekking trong tháng 3 năm 2024. Dành cho mọi cấp độ.',
  'DISTANCE', 100, 'km', '2024-03-01', '2024-03-31', TRUE, 'BADGE',
  0, 1000, 156, TRUE, TRUE, 'PUBLIC', 5,
  '{"1": "Chỉ tính quãng đường trekking/hiking", "2": "Phải sử dụng tính năng tracking của app", "3": "Không tính quãng đường đi bộ thông thường"}'::jsonb,
  '["distance", "monthly", "beginner-friendly"]'::jsonb),
 
-(2, uuid_generate_v4(), 'Chinh Phục 3 Đỉnh Núi', 
+('Chinh Phục 3 Đỉnh Núi', 
  'Chinh phục 3 đỉnh núi cao trên 1000m trong năm 2024.',
  'TRAIL_COUNT', 3, 'peaks', '2024-01-01', '2024-12-31', FALSE, 'POINTS',
  0, 500, 89, TRUE, TRUE, 'PUBLIC', 5,
  '{"1": "Phải là núi có độ cao trên 1000m", "2": "Phải check-in tại đỉnh", "3": "Phải có ảnh/ghi chú làm bằng chứng"}'::jsonb,
  '["mountain", "summit", "yearly"]'::jsonb),
 
-(3, uuid_generate_v4(), 'Leo 5000m Độ Cao', 
+('Leo 5000m Độ Cao', 
  'Tích lũy 5000m độ cao leo (elevation gain) trong quý 2/2024.',
  'ELEVATION', 5000, 'meters', '2024-04-01', '2024-06-30', TRUE, 'PHYSICAL',
  0, 300, 67, FALSE, TRUE, 'PUBLIC', 5,
  '{"1": "Chỉ tính elevation gain (leo lên)", "2": "Không tính elevation loss (xuống dốc)", "3": "Dữ liệu từ app tracking"}'::jsonb,
  '["elevation", "quarterly", "advanced"]'::jsonb),
 
-(4, uuid_generate_v4(), 'Streak Trekking 30 Ngày', 
+('Streak Trekking 30 Ngày', 
  'Đi trekking ít nhất 5km mỗi ngày trong 30 ngày liên tiếp.',
  'STREAK', 30, 'days', '2024-04-15', '2024-07-15', FALSE, 'BADGE',
  0, 200, 42, TRUE, TRUE, 'PUBLIC', 5,
  '{"1": "Ít nhất 5km/ngày", "2": "Phải liên tiếp, nếu bỏ 1 ngày phải bắt đầu lại", "3": "Có thể đi nhiều lần trong ngày"}'::jsonb,
  '["streak", "consistency", "daily"]'::jsonb),
 
-(5, uuid_generate_v4(), '100 Giờ Trong Rừng', 
+('100 Giờ Trong Rừng', 
  'Dành 100 giờ trekking trong rừng/quốc gia trong năm 2024.',
  'DURATION', 100, 'hours', '2024-01-01', '2024-12-31', FALSE, 'COUPON',
  0, 150, 31, FALSE, TRUE, 'PUBLIC', 5,

@@ -14,12 +14,16 @@ const sequelize = require('./config/database');
 const User = require('./models/User');
 const Trail = require('./models/Trail');
 const Review = require('./models/Review');
-const CommunityPost = require('./models/CommunityPost');
-const Favorite = require('./models/Favorite');
-const SavedPlan = require('./models/SavedPlan');
+const MarketplaceItem = require('./models/MarketplaceItem');
+const Group = require('./models/Group');
+const GroupMember = require('./models/GroupMember');
+const Challenge = require('./models/Challenge');
 const authRoutes = require('./routes/auth');
 const trailRoutes = require('./routes/trails');
 const communityRoutes = require('./routes/community');
+const marketplaceRoutes = require('./routes/marketplace');
+const groupRoutes = require('./routes/groups');
+const challengeRoutes = require('./routes/challenges');
 const userRoutes = require('./routes/user');
 const aiRoutes = require('./routes/ai');
 
@@ -31,13 +35,16 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors(corsOptions));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/trails', trailRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/groups', groupRoutes);
+app.use('/api/challenges', challengeRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/ai', aiRoutes);
 

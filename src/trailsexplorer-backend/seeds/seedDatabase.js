@@ -26,26 +26,57 @@ async function runSeed() {
         await client.query(schemaSql);
 
         console.log('🧹 Truncating tables just in case...');
-        await client.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE');
+        await client.query('TRUNCATE TABLE users, challenges, marketplace_items, user_groups, group_members, community_posts, trails, trail_reviews, system_configs RESTART IDENTITY CASCADE');
 
         console.log('🌱 Seeding example data (example-data.sql)...');
         const dataPath = path.join(__dirname, '../migrations/example-data.sql');
         const dataSql = fs.readFileSync(dataPath, 'utf8');
         await client.query(dataSql);
 
+        // Reset sequences because example-data.sql uses explicit IDs
+        console.log('🔄 Resetting sequences...');
+        const tableMap = {
+            'users': 'user_id',
+            'challenges': 'challenge_id',
+            'marketplace_items': 'item_id',
+            'user_groups': 'group_id',
+            'community_posts': 'post_id',
+            'trails': 'trail_id',
+            'trips': 'trip_id',
+            'track_logs': 'track_id'
+        };
+
+        for (const [table, idColumn] of Object.entries(tableMap)) {
+            try {
+                await client.query(`SELECT setval(pg_get_serial_sequence('${table}', '${idColumn}'), COALESCE(MAX(${idColumn}), 1) + 1, false) FROM ${table};`);
+            } catch (seqErr) {
+                console.log(`⚠️ Could not reset sequence for ${table}: ${seqErr.message}`);
+            }
+        }
+
+        console.log('🌱 Seeding community data (community_seed.sql)...');
+        const communityPath = path.join(__dirname, '../migrations/community_seed.sql');
+        if (fs.existsSync(communityPath)) {
+            const communitySql = fs.readFileSync(communityPath, 'utf8');
+            await client.query(communitySql);
+        }
+
         // Task 5: Verify data
         console.log('🔍 Verifying data...');
         const trailCount = await client.query('SELECT COUNT(*) FROM trails');
         const userCount = await client.query('SELECT COUNT(*) FROM users');
         const reviewCount = await client.query('SELECT COUNT(*) FROM trail_reviews');
+        const challengeCount = await client.query('SELECT COUNT(*) FROM challenges');
 
         console.log(`✅ Trails: ${trailCount.rows[0].count}`);
         console.log(`✅ Users: ${userCount.rows[0].count}`);
         console.log(`✅ Reviews: ${reviewCount.rows[0].count}`);
+        console.log(`✅ Challenges: ${challengeCount.rows[0].count}`);
 
         console.log('✨ Database reset and seeded successfully!');
     } catch (err) {
         console.error('❌ Error seeding database:', err);
+        fs.writeFileSync(path.join(__dirname, 'seed_error.log'), JSON.stringify(err, null, 2));
         process.exit(1);
     } finally {
         client.release();
