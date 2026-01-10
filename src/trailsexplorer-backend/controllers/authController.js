@@ -55,14 +55,113 @@ exports.registerUser = async (req, res, next) => {
             const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${verificationToken}`;
 
             // 4. Gửi email chào mừng (Chạy bất đồng bộ, không cần đợi gửi xong mới phản hồi)
-            const emailSubject = 'Xác thực tài khoản TrailsExplorer';
+            // ... (Đoạn tạo verificationUrl giữ nguyên) ...
+
+            // --- GIAO DIỆN EMAIL CHUYÊN NGHIỆP ---
+            const emailSubject = 'Verify your TrailsExplorer account';
+
             const emailBody = `
-                <h3>Xin chào ${user.full_name},</h3>
-                <p>Cảm ơn bạn đã đăng ký. Vui lòng click vào link dưới đây để xác thực email:</p>
-                <a href="${verificationUrl}" target="_blank" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Xác thực ngay</a>
-                <p>Hoặc copy link này: ${verificationUrl}</p>
-                <p>Link này sẽ hết hạn sau 24 giờ.</p>
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Verify Email</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f4f6f8;">
+                
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="padding: 20px 0 30px 0;">
+                            
+                            <!-- MAIN CONTAINER -->
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; border: 1px solid #cccccc; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                
+                                <!-- HEADER -->
+                                <tr>
+                                    <td align="center" bgcolor="#2E7D32" style="padding: 40px 0 30px 0;">
+                                        <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0;">
+                                            TrailsExplorer
+                                        </h1>
+                                    </td>
+                                </tr>
+
+                                <!-- BODY CONTENT -->
+                                <tr>
+                                    <td bgcolor="#ffffff" style="padding: 40px 30px 40px 30px;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td style="color: #333333; font-size: 18px; font-weight: 600;">
+                                                    Hello ${user.full_name},
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 20px 0 30px 0; color: #555555; font-size: 16px; line-height: 1.6;">
+                                                    Thank you for joining the <b>TrailsExplorer</b> community! <br/>
+                                                    To begin exploring breathtaking trails and adventures, please verify your email address by clicking the button below.
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td align="center">
+                                                    <table border="0" cellpadding="0" cellspacing="0">
+                                                        <tr>
+                                                            <td align="center" bgcolor="#2E7D32" style="border-radius: 5px;">
+                                                                <a href="${verificationUrl}" target="_blank"
+                                                                style="font-size: 18px; font-family: Helvetica, Arial, sans-serif;
+                                                                color: #ffffff; text-decoration: none; border-radius: 5px;
+                                                                padding: 12px 35px; border: 1px solid #2E7D32;
+                                                                display: inline-block; font-weight: bold;">
+                                                                    Verify Email Now
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 30px 0 0 0; color: #555555; font-size: 16px; line-height: 1.6;">
+                                                    This link will expire in <b>24 hours</b>. If you did not create this account, please ignore this email.
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <!-- FOOTER / FALLBACK LINK -->
+                                <tr>
+                                    <td bgcolor="#f8f9fa" style="padding: 30px; border-top: 1px solid #eeeeee;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td style="color: #888888; font-family: Arial, sans-serif; font-size: 14px; text-align: center;">
+                                                    <p style="margin: 0 0 10px 0;">
+                                                        If the button above does not work, please copy and paste the link below into your browser:
+                                                    </p>
+                                                    <p style="margin: 0; word-break: break-all;">
+                                                        <a href="${verificationUrl}" style="color: #2E7D32;">
+                                                            ${verificationUrl}
+                                                        </a>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 20px 0 0 0; color: #aaaaaa; font-family: Arial, sans-serif; font-size: 12px; text-align: center;">
+                                                    &copy; 2024 TrailsExplorer System.<br/>
+                                                    This is an automated email. Please do not reply.
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>
             `;
+            
+            // Gọi hàm gửi mail
+            sendEmail(user.email, emailSubject, emailBody);
             
             // Gọi hàm gửi mail
             sendEmail(user.email, emailSubject, emailBody);
