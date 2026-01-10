@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import type { View } from '../types/view';
 import { MOCK_GROUP, MOCK_CHALLENGES, MOCK_MARKETPLACE_ITEMS } from '../data/constants';
@@ -109,10 +109,10 @@ export const Community: React.FC<CommunityProps> = ({ setView }) => {
     };
 
     useEffect(() => {
-        try { localStorage.setItem('market_items', JSON.stringify(marketItems)); } catch {}
+        try { localStorage.setItem('market_items', JSON.stringify(marketItems)); } catch { }
     }, [marketItems]);
     useEffect(() => {
-        try { localStorage.setItem('market_cart', JSON.stringify(cart)); } catch {}
+        try { localStorage.setItem('market_cart', JSON.stringify(cart)); } catch { }
     }, [cart]);
 
     const handleSellSubmit = (e: React.FormEvent) => {

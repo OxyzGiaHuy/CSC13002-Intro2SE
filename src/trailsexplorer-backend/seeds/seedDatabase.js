@@ -25,6 +25,9 @@ async function runSeed() {
         const schemaSql = fs.readFileSync(schemaPath, 'utf8');
         await client.query(schemaSql);
 
+        console.log('🧹 Truncating tables just in case...');
+        await client.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE');
+
         console.log('🌱 Seeding example data (example-data.sql)...');
         const dataPath = path.join(__dirname, '../migrations/example-data.sql');
         const dataSql = fs.readFileSync(dataPath, 'utf8');

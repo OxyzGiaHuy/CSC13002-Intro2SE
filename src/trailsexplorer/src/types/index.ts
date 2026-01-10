@@ -11,6 +11,7 @@ export interface Trail {
   description: string;
   imageUrl: string;
   reviews: Review[];
+  total_reviews?: number; // Added for list view
   isFavorited?: boolean; // Added for favorite feature
   lat?: number;
   lng?: number;

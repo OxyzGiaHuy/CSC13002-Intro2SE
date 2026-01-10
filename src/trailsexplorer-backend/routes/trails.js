@@ -5,6 +5,7 @@ const sequelize = require('../config/database');
 const Trail = require('../models/Trail');
 const Review = require('../models/Review');
 const User = require('../models/User');
+const TrailImage = require('../models/TrailImage');
 const authenticateToken = require('../middleware/authMiddleware');
 
 // 1. GET /api/trails: List trails (Pagination, Filtering)
@@ -14,42 +15,64 @@ router.get('/', async (req, res) => {
         const offset = (page - 1) * limit;
         const where = {};
 
-        if (difficulty) where.difficulty = difficulty;
+        if (difficulty) where.difficulty = difficulty.toUpperCase();
         if (location) where.location_province = { [Op.iLike]: `%${location}%` };
 
-                const { count, rows } = await Trail.findAndCountAll({
-                    where,
-                    limit: parseInt(limit),
-                    offset: parseInt(offset),
-                    order: [['created_at', 'DESC']]
-                });
+        const { count, rows } = await Trail.findAndCountAll({
+            where,
+            attributes: {
+                include: [
+                    [
+                        sequelize.literal(`(
+                            SELECT CAST(AVG(overall_rating) AS DECIMAL(3,1))
+                            FROM trail_reviews AS review
+                            WHERE
+                                review.trail_id = "Trail"."trail_id"
+                        )`),
+                        'avg_rating'
+                    ],
+                    [
+                        sequelize.literal(`(
+                            SELECT COUNT(*)
+                            FROM trail_reviews AS review
+                            WHERE
+                                review.trail_id = "Trail"."trail_id"
+                        )`),
+                        'num_reviews'
+                    ]
+                ]
+            },
+            include: [{
+                model: TrailImage,
+                as: 'images',
+                attributes: ['image_url'],
+                required: false
+            }],
+            distinct: true, // Specific for findAndCountAll with include
+            limit: parseInt(limit),
+            offset: parseInt(offset),
+            order: [['created_at', 'DESC']]
+        });
 
-                // Attach featured image_url from trail_images when available
-                try {
-                    const trailIds = rows.map(r => r.trail_id).filter(Boolean);
-                    if (trailIds.length > 0) {
-                        const images = await sequelize.query(
-                            `SELECT trail_id, image_url FROM trail_images WHERE trail_id IN (${trailIds.join(',')}) AND is_featured = true`,
-                            { type: QueryTypes.SELECT }
-                        );
-                        const imageMap = {};
-                        images.forEach(i => { imageMap[i.trail_id] = i.image_url; });
-                        // attach image_url to each row (plain object)
-                        const data = rows.map(r => ({ ...r.get ? r.get() : r, image_url: imageMap[r.trail_id] || null }));
-                        return res.json({ total: count, page: parseInt(page), pages: Math.ceil(count / limit), data });
-                    }
-                } catch (e) {
-                    // silent: if image join fails, fall back to raw rows
-                    console.error('Failed to attach trail images', e.message || e);
-                }
+        // Flatten image_url for frontend convenience
+        const data = rows.map(trail => {
+            const t = trail.toJSON();
+            // Pick first image as main image
+            t.image_url = t.images && t.images.length > 0 ? t.images[0].image_url : null;
+            // Ensure rating is a number
+            t.avg_rating = parseFloat(t.avg_rating) || 0;
+            t.num_reviews = parseInt(t.num_reviews) || 0;
+            return t;
+        });
 
-                res.json({
-                    total: count,
-                    page: parseInt(page),
-                    pages: Math.ceil(count / limit),
-                    data: rows
-                });
+        res.json({
+            total: count,
+            page: parseInt(page),
+            pages: Math.ceil(count / limit),
+            data: data
+        });
     } catch (err) {
+        // console.error(err); // Consider logging
         res.status(500).json({ error: err.message });
     }
 });
@@ -68,10 +91,46 @@ router.get('/search', async (req, res) => {
                     { location_region: { [Op.iLike]: `%${q}%` } }
                 ]
             },
+            attributes: {
+                include: [
+                    [
+                        sequelize.literal(`(
+                            SELECT CAST(AVG(overall_rating) AS DECIMAL(3,1))
+                            FROM trail_reviews AS review
+                            WHERE
+                                review.trail_id = "Trail"."trail_id"
+                        )`),
+                        'avg_rating'
+                    ],
+                    [
+                        sequelize.literal(`(
+                            SELECT COUNT(*)
+                            FROM trail_reviews AS review
+                            WHERE
+                                review.trail_id = "Trail"."trail_id"
+                        )`),
+                        'num_reviews'
+                    ]
+                ]
+            },
+            include: [{
+                model: TrailImage,
+                as: 'images',
+                attributes: ['image_url'],
+                required: false
+            }],
             limit: 20
         });
 
-        res.json(trails);
+        const data = trails.map(trail => {
+            const t = trail.toJSON();
+            t.image_url = t.images && t.images.length > 0 ? t.images[0].image_url : null;
+            t.avg_rating = parseFloat(t.avg_rating) || 0;
+            t.num_reviews = parseInt(t.num_reviews) || 0;
+            return t;
+        });
+
+        res.json(data);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -81,30 +140,52 @@ router.get('/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const trail = await Trail.findByPk(req.params.id, {
-            include: [{
-                model: Review,
-                include: [{ model: User, attributes: ['username', 'avatar_url'] }],
-                order: [['created_at', 'DESC']],
-                limit: 5 // Initial reviews
-            }]
+            attributes: {
+                include: [
+                    [
+                        sequelize.literal(`(
+                            SELECT CAST(AVG(overall_rating) AS DECIMAL(3,1))
+                            FROM trail_reviews AS review
+                            WHERE
+                                review.trail_id = "Trail"."trail_id"
+                        )`),
+                        'avg_rating'
+                    ],
+                    [
+                        sequelize.literal(`(
+                            SELECT COUNT(*)
+                            FROM trail_reviews AS review
+                            WHERE
+                                review.trail_id = "Trail"."trail_id"
+                        )`),
+                        'num_reviews'
+                    ]
+                ]
+            },
+            include: [
+                {
+                    model: Review,
+                    include: [{ model: User, attributes: ['username', 'avatar_url'] }],
+                    order: [['created_at', 'DESC']],
+                    limit: 5 // Initial reviews
+                },
+                {
+                    model: TrailImage,
+                    as: 'images',
+                    required: false
+                }
+            ]
         });
 
         if (!trail) return res.status(404).json({ message: "Trail not found" });
 
-        // Try to attach a featured image from trail_images
-        try {
-            const images = await sequelize.query(
-                `SELECT image_url FROM trail_images WHERE trail_id = ${req.params.id} AND is_featured = true LIMIT 1`,
-                { type: QueryTypes.SELECT }
-            );
-            const image = images && images[0] && images[0].image_url ? images[0].image_url : null;
-            const out = trail.get ? trail.get() : trail;
-            out.image_url = out.image_url || image;
-            return res.json(out);
-        } catch (e) {
-            console.error('Failed to attach trail image for detail', e.message || e);
-            return res.json(trail);
-        }
+        const t = trail.toJSON();
+        // ensure image_url is at top level if needed, or frontend can use images array
+        t.image_url = t.images && t.images.length > 0 ? t.images[0].image_url : null;
+        t.avg_rating = parseFloat(t.avg_rating) || 0;
+        t.num_reviews = parseInt(t.num_reviews) || 0;
+
+        res.json(t);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -153,3 +234,4 @@ router.delete('/:id/reviews/:reviewId', authenticateToken, async (req, res) => {
 });
 
 module.exports = router;
+

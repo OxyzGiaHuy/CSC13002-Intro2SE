@@ -214,7 +214,7 @@ const App: React.FC = () => {
         }
     }, [view]);
 
-    // Load trails using service layer
+    // Load trails using service layer. Run on mount and when auth changes so UI updates immediately after login.
     useEffect(() => {
         const loadTrails = async () => {
             setIsLoadingTrails(true);
@@ -283,8 +283,9 @@ const App: React.FC = () => {
             }
             setIsLoadingTrails(false);
         };
-        loadTrails();
-    }, []);
+        // Only load trails when authenticated; also run on initial mount if already authenticated
+        if (isAuthenticated) loadTrails();
+    }, [isAuthenticated]);
 
     // wrappers so Login/Register pages (which expect callbacks) work
     // Handlers removed as logic is now handled in components via useAuth context directly.
@@ -416,13 +417,9 @@ const App: React.FC = () => {
     }, [logout]);
 
     return (
-        <div className="min-h-screen bg-cream">
-            <Header setView={setView} currentView={view} onLogout={handleLogout} userName={user?.name} />
-            <main>
-                <div key={typeof view === 'string' ? view : JSON.stringify(view)} className="page-animate">
-                    {renderContent()}
-                </div>
-            </main>
+        <div className="min-h-screen bg-cream flex flex-col">
+            <Header setView={setView} currentView={view} userRole={user?.role} />
+            <main className="flex-grow">{renderContent()}</main>
             <footer className="bg-forest-green text-cream mt-8 py-4">
                 <div className="container mx-auto text-center text-sm">
                     <p>&copy; {new Date().getFullYear()} TrailsExplorer. Adventure Awaits.</p>

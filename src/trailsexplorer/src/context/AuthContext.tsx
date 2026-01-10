@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import type { User } from '../types/index';
 import { apiCall } from '../services/api';
 
@@ -26,8 +25,12 @@ interface AuthProviderProps {
     children: ReactNode;
 }
 
+// LocalStorage keys used by the provider (match `api.ts` usage)
 const TOKEN_KEY = 'trails_explorer_token';
 const USER_KEY = 'trails_explorer_user';
+
+// Ensure this matches your backend URL
+const API_URL = '/api';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(() => {
@@ -58,8 +61,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             if (!token) throw new Error('Missing token from login response');
             try { localStorage.setItem(TOKEN_KEY, token); } catch (e) {}
             if (usr) {
-                try { localStorage.setItem(USER_KEY, JSON.stringify(usr)); } catch (e) {}
-                setUser(usr);
+                const normalized = (function normalizeUser(raw:any) {
+                    if (!raw) return null;
+                    return {
+                        id: raw.id ?? raw.user_id ?? (raw.id ? String(raw.id) : undefined),
+                        name: raw.name || raw.username || (raw.email ? raw.email.split('@')[0] : 'Trekker'),
+                        avatarUrl: raw.avatarUrl || raw.avatar_url || 'https://i.pravatar.cc/100',
+                        totalKm: raw.totalKm ?? raw.total_km ?? 0,
+                        avgAltitude: raw.avgAltitude ?? raw.avg_altitude ?? 0,
+                        avgTimeHr: raw.avgTimeHr ?? raw.avg_time_hr ?? 0,
+                        tripHistory: Array.isArray(raw.tripHistory) ? raw.tripHistory : (Array.isArray(raw.trips) ? raw.trips : []),
+                        preferences: raw.preferences || { difficulty: ['Moderate'], scenery: [] },
+                        role: raw.role ? (String(raw.role).toLowerCase() === 'admin' ? 'admin' : 'user') : undefined,
+                        email: raw.email,
+                        status: raw.status,
+                        bio: raw.bio || raw.description || '',
+                        phone: raw.phone || raw.phone_number || '',
+                        home_city: raw.home_city || raw.city || '',
+                        home_country: raw.home_country || raw.country || ''
+                    };
+                })(usr);
+                try { localStorage.setItem(USER_KEY, JSON.stringify(normalized)); } catch (e) {}
+                setUser(normalized as any);
             }
             setIsAuthenticated(true);
         } catch (err: any) {
@@ -79,8 +102,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 setIsAuthenticated(true);
             }
             if (usr) {
-                try { localStorage.setItem(USER_KEY, JSON.stringify(usr)); } catch (e) {}
-                setUser(usr);
+                const normalized = (function normalizeUser(raw:any) {
+                    if (!raw) return null;
+                    return {
+                        id: raw.id ?? raw.user_id ?? (raw.id ? String(raw.id) : undefined),
+                        name: raw.name || raw.username || (raw.email ? raw.email.split('@')[0] : 'Trekker'),
+                        avatarUrl: raw.avatarUrl || raw.avatar_url || 'https://i.pravatar.cc/100',
+                        totalKm: raw.totalKm ?? raw.total_km ?? 0,
+                        avgAltitude: raw.avgAltitude ?? raw.avg_altitude ?? 0,
+                        avgTimeHr: raw.avgTimeHr ?? raw.avg_time_hr ?? 0,
+                        tripHistory: Array.isArray(raw.tripHistory) ? raw.tripHistory : (Array.isArray(raw.trips) ? raw.trips : []),
+                        preferences: raw.preferences || { difficulty: ['Moderate'], scenery: [] },
+                        role: raw.role ? (String(raw.role).toLowerCase() === 'admin' ? 'admin' : 'user') : undefined,
+                        email: raw.email,
+                        status: raw.status,
+                        bio: raw.bio || raw.description || '',
+                        phone: raw.phone || raw.phone_number || '',
+                        home_city: raw.home_city || raw.city || '',
+                        home_country: raw.home_country || raw.country || ''
+                    };
+                })(usr);
+                try { localStorage.setItem(USER_KEY, JSON.stringify(normalized)); } catch (e) {}
+                setUser(normalized as any);
             }
         } catch (err) {
             throw err;
@@ -96,9 +139,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     const logout = () => {
-        try { localStorage.removeItem(TOKEN_KEY); localStorage.removeItem(USER_KEY); } catch (e) {}
+        try {
+            // Remove known auth keys (both current and legacy names)
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
+            localStorage.removeItem('trailsexplorer_token');
+            localStorage.removeItem('trailsexplorer_user');
+            // Remove other app-local keys that should be cleared on logout
+            localStorage.removeItem('community_posts');
+            localStorage.removeItem('market_cart');
+            localStorage.removeItem('market_items');
+            localStorage.removeItem('trails_explorer_view');
+            // Any other keys can be added here if required
+        } catch (e) {}
         setUser(null);
         setIsAuthenticated(false);
+        try { if (typeof window !== 'undefined') window.location.href = '/'; } catch(e) {}
     };
 
     return (

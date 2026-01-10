@@ -165,7 +165,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                         </div>
                         <div className="p-4 rounded-xl bg-purple-50/50 border border-purple-100 flex flex-col items-center justify-center gap-1 group hover:bg-purple-50 transition-colors">
                             <Map className="w-6 h-6 text-purple-600 mb-1 group-hover:scale-110 transition-transform" />
-                            <span className="text-3xl font-bold text-purple-700">{user.tripHistory.length}</span>
+                            <span className="text-3xl font-bold text-purple-700">{Array.isArray(user.tripHistory) ? user.tripHistory.length : 0}</span>
                             <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Trips Completed</span>
                         </div>
                     </div>
@@ -215,9 +215,9 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
 
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                         <h3 className="text-xl font-bold font-display text-forest-green mb-6">Trip History</h3>
-                        {user.tripHistory.length > 0 ? (
+                        {Array.isArray(user.tripHistory) && user.tripHistory.length > 0 ? (
                             <div className="space-y-4">
-                                {user.tripHistory.map(trail => (
+                                {(user.tripHistory || []).map(trail => (
                                     <div key={trail.id} onClick={() => onSelectTrail(trail.id)} className="flex items-center group cursor-pointer p-2 hover:bg-gray-50 rounded-xl transition-colors">
                                         <img src={trail.imageUrl} alt={trail.name} className="w-20 h-20 rounded-xl object-cover shadow-sm mr-4" />
                                         <div className="flex-grow">

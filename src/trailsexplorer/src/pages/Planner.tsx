@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Map as MapIcon, Tent, Backpack } from 'lucide-react';
 import type { ItineraryPlan, ChecklistItem } from '../types/index';
 import { generateTrekkingPlan, refineTrekkingPlan, generateChecklist } from '../../services/geminiService';
 
@@ -181,7 +182,33 @@ const Planner: React.FC = () => {
 
                         {isLoading && <div className="text-center py-8"><p className="text-gray-500 animate-pulse">Designing your perfect adventure...</p></div>}
 
-                        {!isLoading && !plan && !error && <p className="text-gray-500">Your generated plan will appear here.</p>}
+                        {!isLoading && !plan && !error && (
+                            <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
+                                <div className="p-4 bg-green-50 rounded-full">
+                                    <MapIcon className="w-12 h-12 text-forest-green" />
+                                </div>
+                                <div className="max-w-md space-y-2">
+                                    <h4 className="text-xl font-bold text-gray-900">Ready to Plan Your Adventure?</h4>
+                                    <p className="text-gray-500">
+                                        Fill in the details on the left, and our AI will generate a personalized day-by-day itinerary and packing checklist just for you.
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-3 gap-4 w-full max-w-sm pt-4">
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><MapIcon className="w-5 h-5" /></div>
+                                        <span className="text-xs text-gray-500 font-medium">Daily Route</span>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="p-2 bg-amber-50 text-amber-600 rounded-lg"><Tent className="w-5 h-5" /></div>
+                                        <span className="text-xs text-gray-500 font-medium">Campsites</span>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-2">
+                                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><Backpack className="w-5 h-5" /></div>
+                                        <span className="text-xs text-gray-500 font-medium">Pack List</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         {plan && (
                             <div className="space-y-6">

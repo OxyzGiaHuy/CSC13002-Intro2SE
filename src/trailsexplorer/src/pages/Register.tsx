@@ -15,6 +15,8 @@ const RegisterPage: React.FC<{ setAuthView: (v: AuthView) => void }> = ({ setAut
         const finalName = name || 'New Trekker';
         try {
             await auth.register(finalName, email, password);
+            // After registration, navigate to root so authenticated UI loads
+            try { window.location.href = '/'; } catch (e) {}
         } catch (err: any) {
             // Ideally we should have an error state here too, but for now log/alert
             console.error(err);

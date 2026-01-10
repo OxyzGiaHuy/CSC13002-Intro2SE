@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Trail } from '../types/index';
+import { getTrailById } from '../services/trailService';
 import {
     ArrowLeftIcon,
     HeartIcon,
@@ -9,7 +10,7 @@ import {
     LightningBoltIcon
 } from '../data/constants';
 import { MOCK_WEATHER } from '../data/constants';
-import fallbackImg from '../../assets/logo.png';
+import { Zap, Activity, Flame, Star, Map as LucideMap } from 'lucide-react';
 
 export interface TrailDetailProps {
     trailId: number;
@@ -20,15 +21,48 @@ export interface TrailDetailProps {
 }
 
 const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onToggleFavorite, onSelectMap }) => {
-    const trail = trails.find(t => t.id === trailId);
+    // Initial trail from props (might have partial data)
+    const initialTrail = trails.find(t => t.id === trailId);
+    const [trail, setTrail] = React.useState<Trail | undefined>(initialTrail);
+
+    React.useEffect(() => {
+        const fetchDetail = async () => {
+            if (trailId) {
+                const detailedTrail = await getTrailById(trailId);
+                if (detailedTrail) {
+                    setTrail(detailedTrail);
+                }
+            }
+        };
+        fetchDetail();
+    }, [trailId]);
+
     if (!trail) return <div className="p-8 text-center text-gray-500">Trail not found.</div>;
 
-    const imageSrc = (trail as any).imageUrl || (trail as any).image_url || (trail as any).cover_image_url || fallbackImg;
-    const lengthKm = (trail as any).length_km ?? (trail as any).length ?? null;
-    const durationHr = (trail as any).duration_hr ?? (trail as any).estimated_duration_hours ?? null;
-    const rating = (trail as any).rating ?? (trail as any).avg_rating ?? 0;
-    const scenery = Array.isArray((trail as any).scenery) ? (trail as any).scenery : ((trail as any).features || (trail as any).tags || []);
-    const reviews = Array.isArray((trail as any).reviews) ? (trail as any).reviews : [];
+    const getDifficultyStyles = (difficulty: string) => {
+        switch (difficulty.toLowerCase()) {
+            case 'easy':
+                return {
+                    badge: 'bg-emerald-900/40 text-emerald-300 border-emerald-500/30',
+                    icon: <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400" />,
+                    text: 'text-emerald-500'
+                };
+            case 'hard':
+                return {
+                    badge: 'bg-rose-900/40 text-rose-300 border-rose-500/30',
+                    icon: <Flame className="w-4 h-4 text-rose-400 fill-rose-400" />,
+                    text: 'text-rose-500'
+                };
+            default:
+                return {
+                    badge: 'bg-amber-900/40 text-amber-300 border-amber-500/30',
+                    icon: <Activity className="w-4 h-4 text-amber-400" />,
+                    text: 'text-amber-500'
+                };
+        }
+    };
+
+    const diffStyles = getDifficultyStyles(trail.difficulty);
 
     const WeatherIcon = ({ condition }: { condition: 'Sunny' | 'Cloudy' | 'Rainy' | 'Stormy' }) => {
         switch (condition) {
@@ -58,9 +92,10 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                 <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
                     <div className="container mx-auto">
                         <div className="max-w-4xl">
-                            <span className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-wider text-green-300 uppercase bg-green-900/40 backdrop-blur-md rounded-full border border-green-500/30">
-                                {trail.difficulty} Level
-                            </span>
+                            <div className={`inline-flex items-center gap-2 px-4 py-2 mb-4 text-xs font-bold tracking-widest uppercase backdrop-blur-md rounded-full border shadow-2xl ${diffStyles.badge}`}>
+                                {diffStyles.icon}
+                                <span>{trail.difficulty} Level</span>
+                            </div>
                             <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-2 leading-tight">
                                 {trail.name}
                             </h1>
@@ -88,24 +123,27 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                     <div className="lg:col-span-2 space-y-10">
                         {/* Key Stats Grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
-                                <span className="text-sm text-gray-500 uppercase font-semibold tracking-wider">Distance</span>
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                                <span className="text-xs text-gray-400 uppercase font-black tracking-widest mb-2">Distance</span>
                                 <span className="text-2xl font-display font-bold text-forest-green">{trail.length_km} <span className="text-sm align-middle text-gray-400 font-sans font-normal">km</span></span>
                             </div>
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
-                                <span className="text-sm text-gray-500 uppercase font-semibold tracking-wider">Duration</span>
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                                <span className="text-xs text-gray-400 uppercase font-black tracking-widest mb-2">Duration</span>
                                 <span className="text-2xl font-display font-bold text-earth-brown">{trail.duration_hr} <span className="text-sm align-middle text-gray-400 font-sans font-normal">hr</span></span>
                             </div>
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
-                                <span className="text-sm text-gray-500 uppercase font-semibold tracking-wider">Rating</span>
-                                <span className="text-2xl font-display font-bold text-yellow-500">{trail.rating} <span className="text-sm align-middle text-gray-400 font-sans font-normal">/5</span></span>
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
+                                <span className="text-xs text-gray-400 uppercase font-black tracking-widest mb-2">Rating</span>
+                                <div className="flex items-center gap-1.5">
+                                    <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                                    <span className="text-2xl font-display font-bold text-gray-900">{trail.rating > 0 ? trail.rating.toFixed(1) : (4.5).toFixed(1)} <span className="text-sm align-middle text-gray-400 font-sans font-normal">/5</span></span>
+                                </div>
                             </div>
                             <button
                                 onClick={() => onSelectMap(trail.id)}
-                                className="bg-forest-green hover:bg-green-900 text-white p-4 rounded-2xl shadow-lg shadow-green-900/20 flex flex-col items-center justify-center transition-all transform hover:scale-[1.02]"
+                                className="bg-forest-green hover:bg-green-900 text-white p-6 rounded-2xl shadow-xl shadow-green-900/20 flex flex-col items-center justify-center transition-all transform hover:scale-[1.02] active:scale-95"
                             >
-                                <MapIcon className="w-6 h-6 mb-1" />
-                                <span className="font-bold text-sm uppercase tracking-wider">View Map</span>
+                                <LucideMap className="w-6 h-6 mb-2" />
+                                <span className="font-black text-xs uppercase tracking-widest">View Map</span>
                             </button>
                         </div>
 
@@ -136,7 +174,18 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                 {trail.reviews.map((r, idx) => (
                                     <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                                         <div className="flex items-center gap-4 mb-4">
-                                            <img src={r.avatarUrl} alt={r.username} className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100" />
+                                            <img
+                                                src={r.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=random`}
+                                                alt={r.username}
+                                                className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100 bg-gray-100"
+                                                onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    // Prevent infinite loop if fallback also fails
+                                                    if (!target.src.includes('ui-avatars.com')) {
+                                                        target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=random`;
+                                                    }
+                                                }}
+                                            />
                                             <div>
                                                 <p className="font-bold text-gray-900">{r.username}</p>
                                                 <div className="flex text-yellow-400 text-sm">
@@ -146,7 +195,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                                 </div>
                                             </div>
                                         </div>
-                                        <p className="text-gray-600 italic">"{r.comment}"</p>
+                                        <p className="text-gray-600 leading-relaxed text-sm lg:text-base">"{r.comment}"</p>
                                     </div>
                                 ))}
                             </div>

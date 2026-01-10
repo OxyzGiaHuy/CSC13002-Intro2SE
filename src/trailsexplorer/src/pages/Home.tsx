@@ -7,7 +7,7 @@ export interface HomeProps {
     setView: (view: View) => void;
     trails: Trail[];
     onSelectTrail: (id: number) => void;
-    onToggleFavorite: (id: number) => void;
+    onToggleFavorite: (id: number | string) => void;
 }
 
 const Home: React.FC<HomeProps> = ({ setView, trails, onSelectTrail, onToggleFavorite }) => {

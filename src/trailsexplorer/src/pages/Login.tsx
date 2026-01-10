@@ -19,6 +19,8 @@ const LoginPage: React.FC<{ setAuthView: (v: AuthView) => void }> = ({ setAuthVi
         }
         try {
             await auth.login(email, password);
+            // Ensure app state updates immediately and routes to main app
+            try { window.location.href = '/'; } catch (e) {}
         } catch (err: any) {
             setError(err.message || 'Login failed');
         }
