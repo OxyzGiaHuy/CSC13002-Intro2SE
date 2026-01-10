@@ -175,19 +175,19 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                     <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                                         <div className="flex items-center gap-4 mb-4">
                                             <img
-                                                src={r.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=random`}
-                                                alt={r.username}
+                                                src={r.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.full_name)}&background=random`}
+                                                alt={r.full_name}
                                                 className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100 bg-gray-100"
                                                 onError={(e) => {
                                                     const target = e.target as HTMLImageElement;
                                                     // Prevent infinite loop if fallback also fails
                                                     if (!target.src.includes('ui-avatars.com')) {
-                                                        target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(r.username)}&background=random`;
+                                                        target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(r.full_name)}&background=random`;
                                                     }
                                                 }}
                                             />
                                             <div>
-                                                <p className="font-bold text-gray-900">{r.username}</p>
+                                                <p className="font-bold text-gray-900">{r.full_name}</p>
                                                 <div className="flex text-yellow-400 text-sm">
                                                     {[...Array(5)].map((_, i) => (
                                                         <span key={i}>{i < r.rating ? "★" : "☆"}</span>

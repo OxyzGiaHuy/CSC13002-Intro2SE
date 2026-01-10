@@ -15,8 +15,8 @@ export const MOCK_TRAILS: Trail[] = [
     description: "Known as one of the most beautiful trekking routes in Vietnam, this trail crosses three provinces, offering stunning landscapes of green grasslands and pine forests.",
     imageUrl: "https://picsum.photos/seed/tanang/800/600",
     reviews: [
-      { username: "An Nguyen", avatarUrl: "https://picsum.photos/seed/an/40/40", rating: 5, comment: "Absolutely breathtaking! A must-do for any serious trekker in Vietnam." },
-      { username: "Binh Le", avatarUrl: "https://picsum.photos/seed/binh/40/40", rating: 4, comment: "Challenging but rewarding. Make sure you are well-prepared." },
+      { full_name: "An Nguyen", avatarUrl: "https://picsum.photos/seed/an/40/40", rating: 5, comment: "Absolutely breathtaking! A must-do for any serious trekker in Vietnam." },
+      { full_name: "Binh Le", avatarUrl: "https://picsum.photos/seed/binh/40/40", rating: 4, comment: "Challenging but rewarding. Make sure you are well-prepared." },
     ],
     isFavorited: false,
     lat: 11.53,
@@ -34,7 +34,7 @@ export const MOCK_TRAILS: Trail[] = [
     description: "Conquer the 'Roof of Indochina' with this challenging trek. The journey takes you through dense forests and bamboo thickets to the summit at 3,143 meters.",
     imageUrl: "https://picsum.photos/seed/fansipan/800/600",
     reviews: [
-      { username: "Chi Pham", avatarUrl: "https://picsum.photos/seed/chi/40/40", rating: 5, comment: "The view from the top is surreal. Worth every single step!" },
+      { full_name: "Chi Pham", avatarUrl: "https://picsum.photos/seed/chi/40/40", rating: 5, comment: "The view from the top is surreal. Worth every single step!" },
     ],
     isFavorited: true,
     lat: 22.304,
@@ -52,7 +52,7 @@ export const MOCK_TRAILS: Trail[] = [
     description: "A popular day-hike near Da Lat, Langbiang offers panoramic views of the city and surrounding highlands. The trail winds through beautiful pine forests.",
     imageUrl: "https://picsum.photos/seed/langbiang/800/600",
     reviews: [
-        { username: "Dung Tran", avatarUrl: "https://picsum.photos/seed/dung/40/40", rating: 4, comment: "Great for a day trip. Not too hard and the view is lovely." },
+        { full_name: "Dung Tran", avatarUrl: "https://picsum.photos/seed/dung/40/40", rating: 4, comment: "Great for a day trip. Not too hard and the view is lovely." },
     ],
     isFavorited: false,
     lat: 12.055,
@@ -70,7 +70,7 @@ export const MOCK_TRAILS: Trail[] = [
     description: "Explore Vietnam's first national park. This easy trek is perfect for families and beginners, featuring ancient trees, caves, and a rich biodiversity.",
     imageUrl: "https://picsum.photos/seed/cucphuong/800/600",
     reviews: [
-        { username: "Emi Sato", avatarUrl: "https://picsum.photos/seed/emi/40/40", rating: 5, comment: "Beautiful and educational. The primate rescue center is a highlight." },
+        { full_name: "Emi Sato", avatarUrl: "https://picsum.photos/seed/emi/40/40", rating: 5, comment: "Beautiful and educational. The primate rescue center is a highlight." },
     ],
     isFavorited: false,
     lat: 20.316,

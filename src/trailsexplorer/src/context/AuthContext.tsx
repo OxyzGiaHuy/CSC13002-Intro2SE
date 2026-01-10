@@ -56,7 +56,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const res = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password: password || 'password123' }) // Default password for backward compat if UI doesn't send it yet
+                body: JSON.stringify({ email, password: password || 'password123' })
             });
 
             if (!res.ok) {
@@ -64,18 +64,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 throw new Error(err.message || 'Login failed');
             }
 
-            const data = await res.json();
-            const { token, user: backendUser } = data;
+            const response = await res.json();
+            // Backend returns: { success: true, message: '...', data: { user_id, username, full_name, email, role, token } }
+            const { token, user_id, username, full_name, email: userEmail, role } = response.data;
 
-            // Map backend user to frontend User type if needed
-            // Assuming backendUser has id, nam, email, role etc.
-            // We might need to merge with MOCK_USER structure for missing fields like tripHistory if backend doesn't send them populated yet
+            // Map backend data to frontend User type
             const userData: User = {
-                ...MOCK_USER, // fallback for UI fields not yet in DB or needed for UI
-                ...backendUser,
-                name: backendUser.username || backendUser.name, // Adjust based on DB column
-                // ensure role is correct type
-                role: (backendUser.role || 'user').toLowerCase() as 'admin' | 'user'
+                ...MOCK_USER, // fallback for UI fields not yet in DB
+                id: user_id?.toString(),
+                name: full_name || username, // Display full_name in UI
+                email: userEmail,
+                role: (role || 'user').toLowerCase() as 'admin' | 'user'
             };
 
             localStorage.setItem('token', token);
@@ -85,7 +84,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setIsAuthenticated(true);
         } catch (error) {
             console.error('[Auth] Login error:', error);
-            throw error; // Re-throw to be handled by UI
+            throw error;
         }
     };
 
@@ -94,7 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const res = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: name, email, password: password || 'password123' })
+                body: JSON.stringify({ full_name: name, email, password: password || 'password123' })
             });
 
             if (!res.ok) {
@@ -102,8 +101,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 throw new Error(err.message || 'Registration failed');
             }
 
-            // Auto login after register
-            await login(email, password || 'password123');
+            // Success: Check email for verification link
+            const data = await res.json();
+            alert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
+            console.log('[Auth] Registration response:', data);
 
         } catch (error) {
             console.error('[Auth] Register error:', error);

@@ -18,7 +18,7 @@ export interface Trail {
 }
 
 export interface Review {
-  username: string;
+  full_name: string;
   avatarUrl: string;
   rating: number;
   comment: string;
