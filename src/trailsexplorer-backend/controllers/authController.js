@@ -14,14 +14,14 @@ exports.registerUser = async (req, res, next) => {
         // 1. Validate dữ liệu đầu vào
         if (!full_name || !email || !password) {
             res.status(400);
-            throw new Error('Vui lòng điền đầy đủ thông tin (Họ tên, Email, Mật khẩu)');
+            throw new Error('Please provide full name, email and password');
         }
 
         // 2. Kiểm tra email đã tồn tại chưa
         const userExists = await User.findOne({ where: { email } });
         if (userExists) {
             res.status(400);
-            throw new Error('Email này đã được sử dụng. Vui lòng chọn email khác.');
+            throw new Error('This email is already in use. Please choose a different email.');
         }
 
         const baseName = email.split('@')[0];
@@ -169,7 +169,7 @@ exports.registerUser = async (req, res, next) => {
             // 5. Trả về kết quả thành công
             res.status(201).json({
                 success: true,
-                message: 'Đăng ký thành công! Vui lòng kiểm tra email.',
+                message: 'Registration successful! Please check your email.',
                 data: {
                     user_id: user.user_id,
                     username: user.username,
@@ -180,7 +180,7 @@ exports.registerUser = async (req, res, next) => {
             });
         } else {
             res.status(400);
-            throw new Error('Dữ liệu người dùng không hợp lệ');
+            throw new Error('Invalid user data');
         }
 
     } catch (error) {
@@ -203,7 +203,7 @@ exports.verifyEmail = async (req, res, next) => {
 
         if (!token) {
             res.status(400);
-            throw new Error('Link xác thực không hợp lệ (Thiếu token)');
+            throw new Error('Invalid verification link (Missing token)');
         }
 
         // Giải mã token
@@ -214,12 +214,12 @@ exports.verifyEmail = async (req, res, next) => {
 
         if (!user) {
             res.status(404);
-            throw new Error('Không tìm thấy người dùng');
+            throw new Error('User not found');
         }
 
         // Kiểm tra xem đã xác thực chưa
         if (user.is_email_verified) {
-            return res.status(200).send('<h1>Email này đã được xác thực trước đó rồi! ✅</h1>');
+            return res.status(200).send('<h1>This email has already been verified!</h1>');
         }
 
         // Cập nhật trạng thái
@@ -229,14 +229,14 @@ exports.verifyEmail = async (req, res, next) => {
         // Trả về giao diện đơn giản báo thành công
         res.status(200).send(`
             <div style="text-align: center; padding-top: 50px;">
-                <h1 style="color: green;">Xác thực thành công! 🎉</h1>
-                <p>Chào mừng <b>${user.full_name}</b>, tài khoản của bạn đã được kích hoạt.</p>
-                <p>Bây giờ bạn có thể đăng nhập vào ứng dụng.</p>
+                <h1 style="color: green;">Verification successful! 🎉</h1>
+                <p>Welcome <b>${user.full_name}</b>, your account has been activated.</p>
+                <p>You can now log in to the application.</p>
             </div>
         `);
 
     } catch (error) {
-        res.status(400).send(`<h1 style="color: red;">Xác thực thất bại! ❌</h1><p>${error.message}</p>`);
+        res.status(400).send(`<h1 style="color: red;">Verification failed!</h1><p>${error.message}</p>`);
     }
 };
 
@@ -247,7 +247,7 @@ exports.loginUser = async (req, res, next) => {
         // 1. Validate đầu vào
         if (!email || !password) {
             res.status(400);
-            throw new Error('Vui lòng nhập email và mật khẩu');
+            throw new Error('Please enter both email and password');
         }
 
         // 2. Tìm user trong DB
@@ -260,20 +260,20 @@ exports.loginUser = async (req, res, next) => {
             // Kiểm tra xem đã xác thực email chưa
             if (!user.is_email_verified) {
                 res.status(401); // 401 Unauthorized
-                throw new Error('Tài khoản chưa được xác thực. Vui lòng kiểm tra email để kích hoạt!');
+                throw new Error('Account not verified. Please check your email to activate!');
             }
 
             // Kiểm tra xem tài khoản có bị khóa không (is_active)
             if (!user.is_active) {
                 res.status(403); // 403 Forbidden
-                throw new Error('Tài khoản của bạn đã bị khóa.');
+                throw new Error('Your account has been locked.');
             }
             // -------------------------------------
 
             // 4. Nếu mọi thứ OK, cấp Token
             res.json({
                 success: true,
-                message: 'Đăng nhập thành công',
+                message: 'Login successful',
                 data: {
                     user_id: user.user_id,
                     username: user.username,
@@ -285,7 +285,7 @@ exports.loginUser = async (req, res, next) => {
             });
         } else {
             res.status(401);
-            throw new Error('Email hoặc mật khẩu không chính xác');
+            throw new Error('Incorrect email or password');
         }
     } catch (error) {
         next(error);
