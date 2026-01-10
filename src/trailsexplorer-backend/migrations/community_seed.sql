@@ -39,9 +39,9 @@ INSERT INTO community_posts (user_id, content_type, title, content, media_urls, 
 -- 4. POLISHED GROUPS
 -- ==========================================
 INSERT INTO user_groups (created_by, name, description, group_type, avatar_url, member_count) VALUES
-(1, 'Hội đam mê Fansipan 2026', 'Nhóm dành cho những người chuẩn bị chinh phục Fansipan trong năm 2026. Chia sẻ lịch trình và tìm đồng đội.', 'PUBLIC', 'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800', 1250),
-(2, 'Trekking Đà Lạt & Tây Nguyên 2026', 'Cùng nhau khám phá những cung đường sương mù tuyệt đẹp tại Đà Lạt năm 2026.', 'PUBLIC', 'https://images.unsplash.com/photo-1527838832700-50592524d78b?q=80&w=800', 850),
-(3, 'Cộng đồng Ultralight Trekking VN', 'Nơi chia sẻ kinh nghiệm trekking nhẹ nhàng, tối ưu hóa trang bị.', 'PUBLIC', 'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?q=80&w=800', 420);
+(1, 'Hội đam mê Fansipan 2026', 'Nhóm dành cho những người chuẩn bị chinh phục Fansipan trong năm 2026. Chia sẻ lịch trình và tìm đồng đội.', 'PUBLIC', '/group_fansipan.png', 1250),
+(2, 'Trekking Đà Lạt & Tây Nguyên 2026', 'Cùng nhau khám phá những cung đường sương mù tuyệt đẹp tại Đà Lạt năm 2026.', 'PUBLIC', '/group_dalat.png', 850),
+(3, 'Cộng đồng Ultralight Trekking VN', 'Nơi chia sẻ kinh nghiệm trekking nhẹ nhàng, tối ưu hóa trang bị.', 'PUBLIC', '/group_ultralight.png', 420);
 
 -- ==========================================
 -- 5. GROUP MEMBERShips

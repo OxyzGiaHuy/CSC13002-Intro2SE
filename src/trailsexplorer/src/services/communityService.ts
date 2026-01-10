@@ -88,6 +88,20 @@ export const joinGroup = async (groupId: number) => {
     return response.data;
 };
 
+export const getGroupMessages = async (groupId: number) => {
+    const response = await axios.get(`${API_URL}/groups/${groupId}/messages`, {
+        headers: getAuthHeader()
+    });
+    return response.data;
+};
+
+export const sendGroupMessage = async (groupId: number, content: string) => {
+    const response = await axios.post(`${API_URL}/groups/${groupId}/messages`, { content }, {
+        headers: getAuthHeader()
+    });
+    return response.data;
+};
+
 // --- Challenges ---
 export const getChallenges = async () => {
     const response = await axios.get(`${API_URL}/challenges`, {

@@ -2,8 +2,8 @@
 import ReactDOM from 'react-dom';
 import type { View } from '../types/view';
 import { SocialPost, MarketplaceItem, Group, Challenge } from '../types/index';
-import { getPosts, createPost, getMarketplaceItems, createMarketplaceItem, getGroups, getChallenges, likePost, sharePost, getNotifications, markNotificationAsRead } from '../services/communityService';
-import { ArrowRight, MessageSquare, Heart, Share2, Users, ShoppingBag, Trophy, Image as ImageIcon, Search, Filter, Plus, ShoppingCart, Bold, Italic, Link as LinkIcon, List, LayoutGrid, Activity, Bell, X } from 'lucide-react';
+import { getPosts, createPost, getMarketplaceItems, createMarketplaceItem, getGroups, getChallenges, likePost, sharePost, getNotifications, markNotificationAsRead, joinGroup, getGroupMessages, sendGroupMessage } from '../services/communityService';
+import { ArrowRight, MessageSquare, Heart, Share2, Users, ShoppingBag, Trophy, Image as ImageIcon, Search, Filter, Plus, ShoppingCart, Bold, Italic, Link as LinkIcon, List, LayoutGrid, Activity, Bell, X, Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 export interface CommunityProps {
@@ -118,7 +118,15 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
     const [loadingPosts, setLoadingPosts] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
     const [filterType, setFilterType] = useState('ALL');
+
+    // Chat / Group State
+    const [joinedGroups, setJoinedGroups] = useState<Set<number>>(new Set());
+    const [showChatModal, setShowChatModal] = useState(false);
+    const [currentChatGroup, setCurrentChatGroup] = useState<Group | null>(null);
+    const [chatMessages, setChatMessages] = useState<any[]>([]);
+    const [chatInput, setChatInput] = useState('');
 
     // Marketplace Filters
     const [marketCategory, setMarketCategory] = useState('ALL');
@@ -299,6 +307,46 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
         const reader = new FileReader();
         reader.onload = () => setSellForm(s => ({ ...s, imagePreview: reader.result as string }));
         reader.readAsDataURL(file);
+    };
+
+
+    // Group Functions
+    const handleJoinGroup = async (e: React.MouseEvent, group: Group) => {
+        e.stopPropagation();
+        try {
+            await joinGroup(group.group_id);
+            setJoinedGroups(prev => new Set(prev).add(group.group_id));
+            alert(`Joined ${group.name} successfully!`);
+            // Refresh groups to update member count
+            const updatedGroups = await getGroups();
+            setGroups(Array.isArray(updatedGroups) ? updatedGroups : (updatedGroups.data || []));
+        } catch (error) {
+            console.error("Join group failed", error);
+            alert("Failed to join group");
+        }
+    };
+
+    const handleOpenChat = async (group: Group) => {
+        setCurrentChatGroup(group);
+        setShowChatModal(true);
+        try {
+            const msgs = await getGroupMessages(group.group_id);
+            setChatMessages(Array.isArray(msgs) ? msgs : []);
+        } catch (e) {
+            console.error("Failed to load messages", e);
+        }
+    };
+
+    const handleSendMessage = async (e?: React.FormEvent) => {
+        e?.preventDefault();
+        if (!chatInput.trim() || !currentChatGroup) return;
+        try {
+            const newMsg = await sendGroupMessage(currentChatGroup.group_id, chatInput);
+            setChatMessages(prev => [...prev, newMsg]);
+            setChatInput('');
+        } catch (error) {
+            console.error("Send message failed", error);
+        }
     };
 
     const handleLike = async (postId: number) => {
@@ -555,19 +603,35 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                         <div>
                             <h3 className="text-2xl font-display font-bold text-forest-green mb-6 flex items-center gap-2"><Users /> Discussion Groups</h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                {groups.map(group => (
-                                    <div key={group.group_id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex gap-4 hover:shadow-xl transition-all border-l-4 border-l-sage-green cursor-pointer">
-                                        <img src={group.avatar_url} className="w-16 h-16 rounded-xl object-cover" alt={group.name} />
-                                        <div className="flex-1 min-w-0">
-                                            <h4 className="font-bold text-gray-900 mb-1 truncate">{group.name}</h4>
-                                            <p className="text-xs text-gray-500 line-clamp-2 mb-3">{group.description}</p>
-                                            <div className="flex items-center justify-between text-[10px] font-black text-gray-400 uppercase">
-                                                <span>{group.member_count} Members</span>
-                                                <span className="text-sage-green">Join Now →</span>
+                                {groups.map(group => {
+                                    const isJoined = joinedGroups.has(group.group_id);
+                                    return (
+                                        <div key={group.group_id}
+                                            onClick={() => isJoined ? handleOpenChat(group) : null}
+                                            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex gap-4 hover:shadow-xl transition-all border-l-4 border-l-sage-green cursor-pointer">
+                                            <img src={group.avatar_url} className="w-16 h-16 rounded-xl object-cover" alt={group.name} />
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="font-bold text-gray-900 mb-1 truncate">{group.name}</h4>
+                                                <p className="text-sm text-gray-500 line-clamp-2 mb-3">{group.description}</p>
+                                                <div className="flex items-center justify-between text-[10px] font-black text-gray-400 uppercase">
+                                                    <span>{group.member_count} Members</span>
+                                                    {isJoined ? (
+                                                        <span className="text-forest-green flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg">
+                                                            <MessageSquare size={12} /> Chat
+                                                        </span>
+                                                    ) : (
+                                                        <button
+                                                            onClick={(e) => handleJoinGroup(e, group)}
+                                                            className="text-sage-green bg-sage-green/10 px-4 py-2 rounded-xl hover:bg-sage-green hover:text-white transition-all font-bold"
+                                                        >
+                                                            Join Now →
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
@@ -708,6 +772,59 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                             </div>
                         </div>
                         <div className="p-6 bg-gray-50 border-t flex justify-end"><button onClick={() => setShowChallengesModal(false)} className="px-8 py-3 bg-white border font-bold rounded-2xl hover:bg-gray-100 transition-all">Close</button></div>
+                    </div>
+                </Modal>
+            )}
+
+            {showChatModal && currentChatGroup && (
+                <Modal onClose={() => setShowChatModal(false)}>
+                    <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col h-[600px]">
+                        <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <img src={currentChatGroup.avatar_url} className="w-10 h-10 rounded-full object-cover" />
+                                <div>
+                                    <h3 className="font-bold text-gray-900">{currentChatGroup.name}</h3>
+                                    <p className="text-xs text-gray-500">{currentChatGroup.member_count} members</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setShowChatModal(false)}><X className="text-gray-400 hover:text-gray-600" /></button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/30">
+                            {chatMessages.length === 0 ? (
+                                <div className="text-center text-gray-400 mt-10">No messages yet. Start the conversation!</div>
+                            ) : (
+                                chatMessages.map((msg: any) => {
+                                    const isMe = msg.user_id === 1; // Assuming user ID 1 for now or check sender
+                                    // ideally we check msg.sender.username === 'You' or actual logic
+                                    // For now simple display
+                                    return (
+                                        <div key={msg.message_id} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}>
+                                            <img src={msg.sender?.avatar_url || 'https://ui-avatars.com/api/?name=User'} className="w-8 h-8 rounded-full" />
+                                            <div className="max-w-[80%]">
+                                                <div className={`p-3 rounded-2xl text-sm ${isMe ? 'bg-forest-green text-white rounded-tr-none' : 'bg-white border rounded-tl-none'}`}>
+                                                    {!isMe && <p className="text-[10px] font-bold opacity-50 mb-1">{msg.sender?.username}</p>}
+                                                    {msg.content}
+                                                </div>
+                                                <p className="text-[10px] text-gray-400 mt-1 text-right">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                        <div className="p-4 bg-white border-t">
+                            <form onSubmit={handleSendMessage} className="flex gap-2">
+                                <input
+                                    value={chatInput}
+                                    onChange={e => setChatInput(e.target.value)}
+                                    placeholder="Type a message..."
+                                    className="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 focus:ring-2 focus:ring-forest-green outline-none"
+                                />
+                                <button type="submit" disabled={!chatInput.trim()} className="bg-forest-green text-white p-2 rounded-full hover:bg-sage-green transition-colors disabled:opacity-50">
+                                    <Send size={20} />
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </Modal>
             )}

@@ -719,6 +719,16 @@ CREATE TABLE group_members (
     PRIMARY KEY (group_id, user_id)
 );
 
+-- Tin nhắn nhóm
+CREATE TABLE group_messages (
+    message_id SERIAL PRIMARY KEY,
+    group_id INT REFERENCES user_groups(group_id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    media_urls JSONB DEFAULT '[]'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Chợ đồ phượt (Feature #3)
 CREATE TABLE marketplace_items (
     item_id SERIAL PRIMARY KEY,
