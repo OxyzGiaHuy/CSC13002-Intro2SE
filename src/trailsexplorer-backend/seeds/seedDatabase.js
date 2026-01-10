@@ -42,13 +42,16 @@ async function runSeed() {
             'user_groups': 'group_id',
             'community_posts': 'post_id',
             'trails': 'trail_id',
-            'trips': 'trip_id',
-            'track_logs': 'track_id'
+            'user_favorites': 'favorite_id',
+            'saved_plans': 'plan_id',
+            'trail_images': 'image_id'
         };
 
         for (const [table, idColumn] of Object.entries(tableMap)) {
             try {
-                await client.query(`SELECT setval(pg_get_serial_sequence('${table}', '${idColumn}'), COALESCE(MAX(${idColumn}), 1) + 1, false) FROM ${table};`);
+                // Determine sequence name. Default is usually table_id_seq or table_column_seq.
+                // Using pg_get_serial_sequence is safest.
+                await client.query(`SELECT setval(pg_get_serial_sequence('${table}', '${idColumn}'), COALESCE(MAX(${idColumn}), 0) + 1, false) FROM ${table};`);
             } catch (seqErr) {
                 console.log(`⚠️ Could not reset sequence for ${table}: ${seqErr.message}`);
             }
@@ -72,6 +75,8 @@ async function runSeed() {
         console.log(`✅ Users: ${userCount.rows[0].count}`);
         console.log(`✅ Reviews: ${reviewCount.rows[0].count}`);
         console.log(`✅ Challenges: ${challengeCount.rows[0].count}`);
+
+        console.log('✅ Sequences updated successfully');
 
         console.log('✨ Database reset and seeded successfully!');
     } catch (err) {

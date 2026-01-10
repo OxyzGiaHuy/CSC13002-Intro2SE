@@ -43,7 +43,7 @@ const mapBackendTrailToFrontend = (backendTrail: any): Trail => {
         description: backendTrail.description || '',
         imageUrl: backendTrail.image_url || 'https://picsum.photos/800/600', // Fallback
         reviews: backendTrail.Reviews ? backendTrail.Reviews.map((r: any) => ({
-            username: r.User ? r.User.username : 'Anonymous',
+            full_name: r.User ? (r.User.full_name || r.User.username || 'Anonymous') : 'Anonymous',
             avatarUrl: r.User ? r.User.avatar_url : 'https://i.pravatar.cc/150',
             rating: r.overall_rating,
             comment: r.content
