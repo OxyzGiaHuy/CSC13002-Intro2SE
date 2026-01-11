@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Users, Home, LogOut, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Users, Home, LogOut, ShieldCheck, FileText, MessageSquare } from 'lucide-react';
 import { View } from '../types/view';
 import { useAuth } from '../context/AuthContext';
 
@@ -15,6 +15,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, currentView, onNavi
     const menuItems = [
         { label: 'Dashboard', view: 'admin_dashboard' as const, icon: LayoutDashboard },
         { label: 'Users', view: 'admin_users' as const, icon: Users },
+        { label: 'Reviews Moderation', view: 'admin_reviews_moderation' as const, icon: FileText },
+        { label: 'Posts Moderation', view: 'admin_posts_moderation' as const, icon: MessageSquare },
     ];
 
     return (

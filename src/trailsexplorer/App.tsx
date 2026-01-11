@@ -27,6 +27,8 @@ import Header from './src/components/layout/Header';
 import AdminLayout from './src/layouts/AdminLayout'; // Admin Layout
 import Dashboard from './src/pages/admin/Dashboard'; // Admin Dashboard
 import Users from './src/pages/admin/Users'; // Admin Users
+import ReviewsModeration from './src/pages/admin/ReviewsModeration'; // Admin Reviews Moderation
+import PostsModeration from './src/pages/admin/PostsModeration'; // Admin Posts Moderation
 import LoginPage from './src/pages/Login';
 import RegisterPage from './src/pages/Register';
 import { useAuth } from './src/context/AuthContext';
@@ -198,7 +200,8 @@ const App: React.FC = () => {
     // Route Guard for Admin Views
     useEffect(() => {
         // Only redirect if user is loaded and not admin
-        if ((view === 'admin_dashboard' || view === 'admin_users') && user && user.role !== 'admin') {
+        const adminViews = ['admin_dashboard', 'admin_users', 'admin_reviews_moderation', 'admin_posts_moderation'];
+        if (adminViews.includes(view as string) && user && user.role !== 'admin') {
             console.log('Redirecting to home: User is not admin', user);
             setView('home');
         }
@@ -304,6 +307,10 @@ const App: React.FC = () => {
                 return <Dashboard />;
             case 'admin_users':
                 return <Users />;
+            case 'admin_reviews_moderation':
+                return <ReviewsModeration />;
+            case 'admin_posts_moderation':
+                return <PostsModeration />;
             default:
                 return <Home setView={setView} trails={trails} onSelectTrail={handleSelectTrail} onToggleFavorite={handleToggleFavorite} />;
         }
@@ -322,7 +329,8 @@ const App: React.FC = () => {
     }
 
     // Check if current view is an admin view
-    const isAdminView = view === 'admin_dashboard' || view === 'admin_users';
+    const adminViews = ['admin_dashboard', 'admin_users', 'admin_reviews_moderation', 'admin_posts_moderation'];
+    const isAdminView = adminViews.includes(view as string);
     const isUserAdmin = user?.role === 'admin';
 
     console.log('App Render:', { view, isAdminView, userRole: user?.role, isAuthenticated });
