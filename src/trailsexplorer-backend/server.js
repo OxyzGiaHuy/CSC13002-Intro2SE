@@ -58,6 +58,7 @@ const groupRoutes = require('./routes/groups');
 const challengeRoutes = require('./routes/challenges');
 const userRoutes = require('./routes/user');
 const aiRoutes = require('./routes/ai');
+const adminRoutes = require('./routes/admin');
 
 // Legacy raw pg client 
 const db = require('./config/db');
@@ -83,6 +84,7 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/challenges', challengeRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
   res.send('TrailsExplorer API is running... (Updated with Auth)');

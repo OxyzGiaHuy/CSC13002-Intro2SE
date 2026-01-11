@@ -166,6 +166,8 @@ router.get('/:id', async (req, res) => {
             include: [
                 {
                     model: Review,
+                    where: { is_approved: true, is_published: true },
+                    required: false,
                     include: [{ model: User, attributes: ['username', 'avatar_url'] }],
                     order: [['created_at', 'DESC']],
                     limit: 5 // Initial reviews

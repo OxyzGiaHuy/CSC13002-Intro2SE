@@ -28,7 +28,17 @@ const CommunityPost = sequelize.define('CommunityPost', {
         type: DataTypes.ENUM('PUBLIC', 'PRIVATE', 'FRIENDS_ONLY', 'GROUP'),
         defaultValue: 'PUBLIC'
     },
-    is_published: { type: DataTypes.BOOLEAN, defaultValue: true }
+    is_published: { type: DataTypes.BOOLEAN, defaultValue: true },
+    // Moderation fields
+    is_approved: { type: DataTypes.BOOLEAN, defaultValue: false },
+    report_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+    reported_by_users: { type: DataTypes.JSONB, defaultValue: [] },
+    moderated_at: { type: DataTypes.DATE, allowNull: true },
+    moderated_by: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: User, key: 'user_id' }
+    }
 }, {
     tableName: 'community_posts',
     timestamps: true,
