@@ -173,7 +173,7 @@ exports.registerUser = async (req, res, next) => {
                 success: true,
                 message: 'Registration successful! Please check your email.',
                 data: {
-                    user_id: user.user_id,
+                    user_id: user.id, // Fixed: Access via model attribute 'id'
                     username: user.username,
                     full_name: user.full_name,
                     email: user.email,
@@ -277,12 +277,12 @@ exports.loginUser = async (req, res, next) => {
                 success: true,
                 message: 'Login successful',
                 data: {
-                    user_id: user.user_id,
+                    user_id: user.id, // Fixed: Access via model attribute 'id', not column name 'user_id'
                     username: user.username,
                     full_name: user.full_name,
                     email: user.email,
                     role: user.role,
-                    token: generateToken(user.user_id) // Hàm tạo token bạn đã có hoặc dùng jwt.sign trực tiếp
+                    token: generateToken(user.id) // Fixed: Pass user.id to generateToken
                 }
             });
         } else {

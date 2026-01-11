@@ -10,4 +10,6 @@ export interface Challenge {
     image_url?: string; // Optional since schema doesn't have it explicitly but UI might assume
     participants_count?: number;
     progress?: number;
+    is_joined?: boolean;
+    status?: string;
 }

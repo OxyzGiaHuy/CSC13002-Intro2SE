@@ -50,6 +50,10 @@ export interface GuidebookArticle {
   id: string;
   title: string;
   content: string;
+  imageUrl?: string;
+  author?: string;
+  date?: string;
+  category?: string;
 }
 
 export interface SmartSuggestion {

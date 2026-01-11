@@ -37,6 +37,17 @@ const Challenge = require('./models/Challenge');
 const CommunityPost = require('./models/CommunityPost');
 const Favorite = require('./models/Favorite');
 const SavedPlan = require('./models/SavedPlan');
+const UserChallenge = require('./models/UserChallenge');
+
+// =====================
+// ASSOCIATIONS
+// =====================
+User.belongsToMany(Challenge, { through: UserChallenge, foreignKey: 'user_id' });
+Challenge.belongsToMany(User, { through: UserChallenge, foreignKey: 'challenge_id' });
+User.hasMany(UserChallenge, { foreignKey: 'user_id' });
+Challenge.hasMany(UserChallenge, { foreignKey: 'challenge_id' });
+UserChallenge.belongsTo(User, { foreignKey: 'user_id' });
+UserChallenge.belongsTo(Challenge, { foreignKey: 'challenge_id' });
 
 // Routes
 const authRoutes = require('./routes/auth');

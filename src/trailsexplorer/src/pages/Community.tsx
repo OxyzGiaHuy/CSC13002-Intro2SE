@@ -2,8 +2,10 @@
 import ReactDOM from 'react-dom';
 import type { View } from '../types/view';
 import { SocialPost, MarketplaceItem, Group, Challenge } from '../types/index';
-import { getPosts, createPost, getMarketplaceItems, createMarketplaceItem, getGroups, getChallenges, likePost, sharePost, getNotifications, markNotificationAsRead, joinGroup, getGroupMessages, sendGroupMessage } from '../services/communityService';
-import { ArrowRight, MessageSquare, Heart, Share2, Users, ShoppingBag, Trophy, Image as ImageIcon, Search, Filter, Plus, ShoppingCart, Bold, Italic, Link as LinkIcon, List, LayoutGrid, Activity, Bell, X, Send } from 'lucide-react';
+import { getPosts, createPost, getMarketplaceItems, createMarketplaceItem, getGroups, getChallenges, likePost, sharePost, getNotifications, markNotificationAsRead, joinGroup, getGroupMessages, sendGroupMessage, joinChallenge } from '../services/communityService';
+import { ArrowRight, MessageSquare, Heart, Share2, Users, ShoppingBag, Trophy, Image as ImageIcon, Search, Filter, Plus, ShoppingCart, Bold, Italic, Link as LinkIcon, List, LayoutGrid, Activity, Bell, X, Send, BookOpen, Check } from 'lucide-react';
+import { MOCK_GUIDEBOOK_ARTICLES } from '../data/constants';
+import { GuidebookArticle } from '../types/index';
 import ReactMarkdown from 'react-markdown';
 
 export interface CommunityProps {
@@ -88,7 +90,7 @@ const SIMULATED_USERS = [
 ];
 
 export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => {
-    const [view, setView] = useState<'FEED' | 'MARKET' | 'GROUPS' | 'CHALLENGES'>('FEED');
+    const [view, setView] = useState<'FEED' | 'MARKET' | 'GROUPS' | 'CHALLENGES' | 'GUIDEBOOK'>('FEED');
     const [posts, setPosts] = useState<SocialPost[]>([]);
     const [marketItems, setMarketItems] = useState<MarketplaceItem[]>([]);
     const [groups, setGroups] = useState<Group[]>([]);
@@ -127,6 +129,9 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
     const [currentChatGroup, setCurrentChatGroup] = useState<Group | null>(null);
     const [chatMessages, setChatMessages] = useState<any[]>([]);
     const [chatInput, setChatInput] = useState('');
+
+    // Guidebook State
+    const [selectedArticle, setSelectedArticle] = useState<GuidebookArticle | null>(null);
 
     // Marketplace Filters
     const [marketCategory, setMarketCategory] = useState('ALL');
@@ -643,24 +648,65 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                 <button onClick={() => setShowChallengesModal(true)} className="text-sm font-bold text-sage-green bg-sage-green/5 py-2 px-4 rounded-xl">View All</button>
                             </div>
                             <div className="space-y-4">
-                                {challenges.map(challenge => (
-                                    <div key={challenge.challenge_id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all group relative overflow-hidden">
-                                        <div className="flex justify-between items-start mb-4 relative z-10">
-                                            <div>
-                                                <h4 className="font-bold text-lg text-gray-900 mb-1">{challenge.name}</h4>
-                                                <p className="text-sm text-gray-500 max-w-lg">{challenge.description}</p>
+                                {challenges.filter(c => c.is_joined).length > 0 ? (
+                                    challenges.filter(c => c.is_joined).map(challenge => (
+                                        <div key={challenge.challenge_id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all group relative overflow-hidden">
+                                            <div className="flex justify-between items-start mb-4 relative z-10">
+                                                <div>
+                                                    <h4 className="font-bold text-lg text-gray-900 mb-1">{challenge.name}</h4>
+                                                    <p className="text-sm text-gray-500 max-w-lg">{challenge.description}</p>
+                                                </div>
+                                                <div className="flex flex-col items-end gap-2">
+                                                    <div className="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-xl text-xs font-bold ring-1 ring-orange-100">
+                                                        {challenge.target_value} {challenge.unit}
+                                                    </div>
+                                                    <span className="text-xs font-black text-forest-green bg-green-50 px-2 py-1 rounded">JOINED</span>
+                                                </div>
                                             </div>
-                                            <div className="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-xl text-xs font-bold ring-1 ring-orange-100">
-                                                {challenge.target_value} {challenge.unit}
+                                            <div className="flex items-center gap-4 relative z-10 min-h-[1.5rem]">
+                                                <div className="flex-1 h-3 bg-gray-50 rounded-full overflow-hidden border">
+                                                    <div className="h-full bg-gradient-to-r from-sage-green to-forest-green rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, ((Number(challenge.progress || 0) / Number(challenge.target_value)) * 100))}%` }}></div>
+                                                </div>
+                                                <span className="text-sm font-black text-forest-green">{Math.round((Number(challenge.progress || 0) / Number(challenge.target_value)) * 100)}%</span>
+                                            </div>
+                                            <Trophy className="absolute -right-6 -bottom-6 w-32 h-32 text-gray-50/30 group-hover:rotate-12 transition-transform" />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                                        <Trophy className="w-12 h-12 text-gray-300 mb-2" />
+                                        <p className="text-gray-500 font-bold">No active challenges</p>
+                                        <button onClick={() => setShowChallengesModal(true)} className="mt-4 text-sage-green font-bold text-sm hover:underline">Browse Challenges</button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {view === 'GUIDEBOOK' && (
+                        <div className="animate-fade-in">
+                            <h3 className="text-2xl font-display font-bold text-forest-green mb-6 flex items-center gap-2"><BookOpen /> Hiking Guidebook</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {MOCK_GUIDEBOOK_ARTICLES.map(article => (
+                                    <div key={article.id} onClick={() => setSelectedArticle(article)} className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col overflow-hidden h-full">
+                                        <div className="h-48 overflow-hidden relative">
+                                            <img src={article.imageUrl || `https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-forest-green shadow-sm">
+                                                {article.category || 'Guide'}
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-4 relative z-10">
-                                            <div className="flex-1 h-3 bg-gray-50 rounded-full overflow-hidden border">
-                                                <div className="h-full bg-gradient-to-r from-sage-green to-forest-green rounded-full transition-all duration-1000" style={{ width: `${Math.min(100, ((Number(challenge.progress || 0) / Number(challenge.target_value)) * 100))}%` }}></div>
+                                        <div className="p-6 flex flex-col flex-1">
+                                            <h4 className="font-bold text-xl text-gray-900 mb-2 leading-tight group-hover:text-forest-green transition-colors">{article.title}</h4>
+                                            <div className="flex items-center gap-2 text-xs text-gray-400 mb-4 font-medium">
+                                                <span>{article.author}</span>
+                                                <span>•</span>
+                                                <span>{article.date}</span>
                                             </div>
-                                            <span className="text-sm font-black text-forest-green">{Math.round((Number(challenge.progress || 0) / Number(challenge.target_value)) * 100)}%</span>
+                                            <p className="text-sm text-gray-500 line-clamp-3 mb-4 flex-1">{article.content.replace(/#/g, '').substring(0, 150)}...</p>
+                                            <div className="flex items-center gap-2 text-sage-green text-sm font-bold mt-auto">
+                                                Read Article <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                            </div>
                                         </div>
-                                        <Trophy className="absolute -right-6 -bottom-6 w-32 h-32 text-gray-50/30 group-hover:rotate-12 transition-transform" />
                                     </div>
                                 ))}
                             </div>
@@ -682,6 +728,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                 { id: 'MARKET', label: 'Gear Market', icon: ShoppingBag, color: 'text-earth-brown', bg: 'bg-earth-brown/10', count: 'Hot' },
                                 { id: 'GROUPS', label: 'Groups', icon: Users, color: 'text-forest-green', bg: 'bg-forest-green/10', count: groups.length },
                                 { id: 'CHALLENGES', label: '2026 Quests', icon: Trophy, color: 'text-orange-500', bg: 'bg-orange-50', count: 'Active' },
+                                { id: 'GUIDEBOOK', label: 'Guidebook', icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-50', count: 'New' },
                             ].map(tab => (
                                 <button
                                     key={tab.id}
@@ -760,12 +807,37 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                             <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">{challenge.challenge_type}</div>
                                         </div>
                                         <div className="mb-2">
-                                            <div className="flex justify-between text-sm font-medium text-gray-600 mb-1"><span>Progress</span><span>{Number(challenge.progress || 0)} / {challenge.target_value} {challenge.unit}</span></div>
-                                            <div className="h-3 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-forest-green rounded-full" style={{ width: `${Math.min(100, ((Number(challenge.progress || 0) / Number(challenge.target_value)) * 100))}%` }}></div></div>
+                                            {challenge.is_joined ? (
+                                                <>
+                                                    <div className="flex justify-between text-sm font-medium text-gray-600 mb-1"><span>Progress</span><span>{Number(challenge.progress || 0)} / {challenge.target_value} {challenge.unit}</span></div>
+                                                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden"><div className="h-full bg-forest-green rounded-full" style={{ width: `${Math.min(100, ((Number(challenge.progress || 0) / Number(challenge.target_value)) * 100))}%` }}></div></div>
+                                                </>
+                                            ) : (
+                                                <div className="py-2 text-sm text-gray-400 italic bg-gray-50 rounded-lg text-center border border-dashed">Join this challenge to track your progress</div>
+                                            )}
                                         </div>
                                         <div className="flex justify-between items-center text-[10px] text-gray-400 mt-3 pt-3 border-t">
                                             <div className="flex gap-4 font-bold uppercase"><span>Start: {formatDate(challenge.start_date)}</span><span>End: {formatDate(challenge.end_date)}</span></div>
-                                            <button className="text-forest-green font-black">Join now</button>
+                                            {challenge.is_joined ? (
+                                                <button className="text-gray-400 font-bold cursor-default flex items-center gap-1"><Check className="w-4 h-4" /> Joined</button>
+                                            ) : (
+                                                <button
+                                                    onClick={async (e) => {
+                                                        e.stopPropagation();
+                                                        try {
+                                                            await joinChallenge(challenge.challenge_id);
+                                                            // Refresh challenges
+                                                            const res = await getChallenges();
+                                                            setChallenges(Array.isArray(res) ? res : res.data || []);
+                                                        } catch (err: any) {
+                                                            alert("Failed to join: " + (err.response?.data?.message || err.message));
+                                                        }
+                                                    }}
+                                                    className="text-forest-green font-black hover:underline"
+                                                >
+                                                    Join now
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -773,62 +845,102 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                         </div>
                         <div className="p-6 bg-gray-50 border-t flex justify-end"><button onClick={() => setShowChallengesModal(false)} className="px-8 py-3 bg-white border font-bold rounded-2xl hover:bg-gray-100 transition-all">Close</button></div>
                     </div>
-                </Modal>
+                </Modal >
             )}
 
-            {showChatModal && currentChatGroup && (
-                <Modal onClose={() => setShowChatModal(false)}>
-                    <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col h-[600px]">
-                        <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <img src={currentChatGroup.avatar_url} className="w-10 h-10 rounded-full object-cover" />
-                                <div>
-                                    <h3 className="font-bold text-gray-900">{currentChatGroup.name}</h3>
-                                    <p className="text-xs text-gray-500">{currentChatGroup.member_count} members</p>
+            {/* Guidebook Modal */}
+            {
+                selectedArticle && (
+                    <Modal onClose={() => setSelectedArticle(null)}>
+                        <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+                            <div className="relative h-64 shrink-0">
+                                <img src={selectedArticle.imageUrl || `https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80`} className="w-full h-full object-cover" />
+                                <button onClick={() => setSelectedArticle(null)} className="absolute top-4 right-4 p-2 bg-black/20 backdrop-blur hover:bg-black/40 rounded-full text-white transition-colors"><X size={24} /></button>
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
+                                    <div className="flex items-center gap-2 text-white/80 text-sm font-bold mb-2">
+                                        <span className="bg-sage-green px-2 py-0.5 rounded text-white">{selectedArticle.category || 'Guide'}</span>
+                                        <span>•</span>
+                                        <span>{selectedArticle.date}</span>
+                                    </div>
+                                    <h3 className="text-3xl font-bold text-white leading-tight">{selectedArticle.title}</h3>
+                                    <p className="text-white/80 mt-1 font-medium">By {selectedArticle.author}</p>
                                 </div>
                             </div>
-                            <button onClick={() => setShowChatModal(false)}><X className="text-gray-400 hover:text-gray-600" /></button>
+                            <div className="p-8 overflow-y-auto">
+                                <div className="prose prose-lg prose-sage max-w-none text-gray-600">
+                                    <ReactMarkdown>{selectedArticle.content}</ReactMarkdown>
+                                </div>
+                                <div className="mt-12 p-6 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
+                                    <div>
+                                        <h5 className="font-bold text-gray-900 mb-1">Was this guide helpful?</h5>
+                                        <p className="text-sm text-gray-500">Your feedback helps us improve.</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:bg-forest-green hover:text-white transition-colors">Yes, thanks!</button>
+                                        <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:text-red-500 transition-colors">Not really</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/30">
-                            {chatMessages.length === 0 ? (
-                                <div className="text-center text-gray-400 mt-10">No messages yet. Start the conversation!</div>
-                            ) : (
-                                chatMessages.map((msg: any) => {
-                                    const isMe = msg.user_id === 1; // Assuming user ID 1 for now or check sender
-                                    // ideally we check msg.sender.username === 'You' or actual logic
-                                    // For now simple display
-                                    return (
-                                        <div key={msg.message_id} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}>
-                                            <img src={msg.sender?.avatar_url || 'https://ui-avatars.com/api/?name=User'} className="w-8 h-8 rounded-full" />
-                                            <div className="max-w-[80%]">
-                                                <div className={`p-3 rounded-2xl text-sm ${isMe ? 'bg-forest-green text-white rounded-tr-none' : 'bg-white border rounded-tl-none'}`}>
-                                                    {!isMe && <p className="text-[10px] font-bold opacity-50 mb-1">{msg.sender?.username}</p>}
-                                                    {msg.content}
+                    </Modal>
+                )
+            }
+
+            {
+                showChatModal && currentChatGroup && (
+                    <Modal onClose={() => setShowChatModal(false)}>
+                        <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col h-[600px]">
+                            <div className="p-4 border-b bg-gray-50 flex justify-between items-center">
+                                <div className="flex items-center gap-3">
+                                    <img src={currentChatGroup.avatar_url} className="w-10 h-10 rounded-full object-cover" />
+                                    <div>
+                                        <h3 className="font-bold text-gray-900">{currentChatGroup.name}</h3>
+                                        <p className="text-xs text-gray-500">{currentChatGroup.member_count} members</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => setShowChatModal(false)}><X className="text-gray-400 hover:text-gray-600" /></button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/30">
+                                {chatMessages.length === 0 ? (
+                                    <div className="text-center text-gray-400 mt-10">No messages yet. Start the conversation!</div>
+                                ) : (
+                                    chatMessages.map((msg: any) => {
+                                        const isMe = msg.user_id === 1; // Assuming user ID 1 for now or check sender
+                                        // ideally we check msg.sender.username === 'You' or actual logic
+                                        // For now simple display
+                                        return (
+                                            <div key={msg.message_id} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}>
+                                                <img src={msg.sender?.avatar_url || 'https://ui-avatars.com/api/?name=User'} className="w-8 h-8 rounded-full" />
+                                                <div className="max-w-[80%]">
+                                                    <div className={`p-3 rounded-2xl text-sm ${isMe ? 'bg-forest-green text-white rounded-tr-none' : 'bg-white border rounded-tl-none'}`}>
+                                                        {!isMe && <p className="text-[10px] font-bold opacity-50 mb-1">{msg.sender?.username}</p>}
+                                                        {msg.content}
+                                                    </div>
+                                                    <p className="text-[10px] text-gray-400 mt-1 text-right">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                                                 </div>
-                                                <p className="text-[10px] text-gray-400 mt-1 text-right">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                                             </div>
-                                        </div>
-                                    );
-                                })
-                            )}
+                                        );
+                                    })
+                                )}
+                            </div>
+                            <div className="p-4 bg-white border-t">
+                                <form onSubmit={handleSendMessage} className="flex gap-2">
+                                    <input
+                                        value={chatInput}
+                                        onChange={e => setChatInput(e.target.value)}
+                                        placeholder="Type a message..."
+                                        className="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 focus:ring-2 focus:ring-forest-green outline-none"
+                                    />
+                                    <button type="submit" disabled={!chatInput.trim()} className="bg-forest-green text-white p-2 rounded-full hover:bg-sage-green transition-colors disabled:opacity-50">
+                                        <Send size={20} />
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        <div className="p-4 bg-white border-t">
-                            <form onSubmit={handleSendMessage} className="flex gap-2">
-                                <input
-                                    value={chatInput}
-                                    onChange={e => setChatInput(e.target.value)}
-                                    placeholder="Type a message..."
-                                    className="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 focus:ring-2 focus:ring-forest-green outline-none"
-                                />
-                                <button type="submit" disabled={!chatInput.trim()} className="bg-forest-green text-white p-2 rounded-full hover:bg-sage-green transition-colors disabled:opacity-50">
-                                    <Send size={20} />
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </Modal>
-            )}
-        </div>
+                    </Modal>
+                )
+            }
+        </div >
     );
 };
 
