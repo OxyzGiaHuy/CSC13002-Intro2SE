@@ -21,8 +21,11 @@ describe('Test 2: Generate Plan (AI Planner)', () => {
       cy.contains('button', 'Generate').click();
   
       // 4. KIỂM TRA KẾT QUẢ
-      // Vì AI chạy hơi lâu, nên bảo Robot chờ tối đa 15 giây (timeout: 15000)
-      // Kiểm tra xem có hiện ra chữ "Lịch trình" hoặc "Plan" không
-      cy.contains('Plan', { timeout: 15000 }).should('be.visible');
+      // Thay vì tìm "Day 1", hãy tìm tiêu đề lớn "Your Itinerary"
+      // (Cho nó chờ 20s luôn cho chắc ăn vì AI đôi khi lag)
+      cy.contains('Your Itinerary', { timeout: 20000 }).should('be.visible');
+      // Sau khi thấy tiêu đề rồi, kiểm tra xem có chữ "Day" nào xuất hiện bên dưới không
+      // Tìm lỏng hơn (chỉ tìm chữ "Day") để tránh lỗi khoảng trắng
+      cy.contains('Day', { timeout: 20000 }).should('be.visible');
     });
   });
