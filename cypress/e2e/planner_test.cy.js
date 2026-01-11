@@ -3,8 +3,8 @@ describe('Test 2: Generate Plan (AI Planner)', () => {
     beforeEach(() => {
       cy.visit('http://localhost:3000');
       // Đăng nhập nhanh (nhớ sửa email/pass nếu ông đổi)
-      cy.get('input[type="email"]').type('admin@trailsexplorer.com');
-      cy.get('input[type="password"]').type('password123');
+      cy.get('input[type="email"]').type('hktn2403@gmail.com');
+      cy.get('input[type="password"]').type('kimtris123');
       cy.get('button[type="submit"]').click();
       cy.url().should('not.include', '/login');
     });

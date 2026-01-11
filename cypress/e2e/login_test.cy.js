@@ -5,29 +5,31 @@ describe('Test 1: Login & View Trails', () => {
   });
 
   it('Đăng nhập và xem danh sách Trails thành công', () => {
-    // --- PHẦN 1: ĐĂNG NHẬP (Như cũ) ---
-    cy.get('input[type="email"]').type('admin@trailsexplorer.com'); 
-    cy.get('input[type="password"]').type('password123');
+    // --- PHẦN 1: ĐĂNG NHẬP ---
+    // (Lưu ý: Ông dùng đúng email/pass mà ông vừa đăng nhập được trên web nhé)
+    cy.get('input[type="email"]').type('hktn2403@gmail.com'); 
+    cy.get('input[type="password"]').type('kimtris123');
     cy.get('button[type="submit"]').click();
 
     // Kiểm tra đã qua được màn hình login chưa
     cy.url().should('not.include', '/login');
 
-    // --- PHẦN 2: VIEW TRAILS (BỔ SUNG) ---
+    // --- PHẦN 2: VIEW TRAILS (ĐÃ SỬA CHO KHỚP HÌNH) ---
     
-    // 1. Tìm và bấm vào menu "Discover" trên thanh điều hướng
+    // 1. Tìm và bấm vào menu "Discover" (Cái nút màu xanh lá trên cùng)
+    // Dùng class hoặc text cụ thể để tránh bấm nhầm
     cy.contains('Discover').click();
+    // Hoặc nếu không có thẻ a thì giữ nguyên: cy.contains('Discover').click();
 
-    // 2. Kiểm tra xem trang Discover đã hiện ra chưa
-    // (Dựa vào hình ông gửi: Phải hiện chữ "Discover Trails" to đùng)
-    cy.contains('Discover Trails').should('be.visible');
+    // 2. Kiểm tra tiêu đề trang (SỬA LẠI KHỚP VỚI HÌNH)
+    // Trên hình ông gửi là dòng chữ này:
+    cy.contains('Explore the Great Outdoors').should('be.visible');
 
-    // 3. Kiểm tra xem danh sách các địa điểm có load lên không
-    // Robot sẽ chờ (mặc định 4s) để tìm chữ "Tà Năng - Phan Dũng" hoặc "Fansipan"
-    // Nếu thấy nghĩa là API đã trả về dữ liệu thành công
-    cy.contains('Tà Năng - Phan Dũng').should('be.visible');
+    // 3. Kiểm tra xem danh sách trails có hiện cái đầu tiên không
+    // Trên hình thấy rõ "Đỉnh Fansipan", nên mình bắt nó tìm cái này
+    cy.contains('Đỉnh Fansipan - Nóc nhà Đông Dương').should('be.visible');
     
-    // (Tùy chọn) Kiểm tra luôn cái nút "View Details" có hiện không cho chắc
-    cy.contains('View Details').should('be.visible');
+    // 4. Kiểm tra các thẻ tag (Ví dụ thẻ "HARD" màu đỏ trong hình)
+    cy.contains('HARD').should('be.visible');
   });
 });
