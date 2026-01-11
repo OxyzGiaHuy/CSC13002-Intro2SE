@@ -6,8 +6,8 @@ describe('Test 1: Login & View Trails', () => {
 
   it('Đăng nhập và xem danh sách Trails thành công', () => {
     // --- PHẦN 1: ĐĂNG NHẬP (Như cũ) ---
-    cy.get('input[type="email"]').type('testuser@gmail.com'); 
-    cy.get('input[type="password"]').type('123456');
+    cy.get('input[type="email"]').type('admin@trailsexplorer.com'); 
+    cy.get('input[type="password"]').type('password123');
     cy.get('button[type="submit"]').click();
 
     // Kiểm tra đã qua được màn hình login chưa

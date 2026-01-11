@@ -2,8 +2,8 @@ describe('Test 4: Community Post Flow', () => {
     beforeEach(() => {
       cy.visit('http://localhost:3000');
       // Đăng nhập trước
-      cy.get('input[type="email"]').type('testuser@gmail.com');
-      cy.get('input[type="password"]').type('123456');
+      cy.get('input[type="email"]').type('admin@trailsexplorer.com');
+      cy.get('input[type="password"]').type('password123');
       cy.get('button[type="submit"]').click();
     });
   
