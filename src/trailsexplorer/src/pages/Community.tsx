@@ -2,11 +2,12 @@
 import ReactDOM from 'react-dom';
 import type { View } from '../types/view';
 import { SocialPost, MarketplaceItem, Group, Challenge } from '../types/index';
-import { getPosts, createPost, getMarketplaceItems, createMarketplaceItem, getGroups, getChallenges, likePost, sharePost, getNotifications, markNotificationAsRead, joinGroup, getGroupMessages, sendGroupMessage, joinChallenge } from '../services/communityService';
-import { ArrowRight, MessageSquare, Heart, Share2, Users, ShoppingBag, Trophy, Image as ImageIcon, Search, Filter, Plus, ShoppingCart, Bold, Italic, Link as LinkIcon, List, LayoutGrid, Activity, Bell, X, Send, BookOpen, Check } from 'lucide-react';
+import { getPosts, createPost, likePost, sharePost, getComments, addComment, getMarketplaceItems, createMarketplaceItem, getGroups, getChallenges, getNotifications, markNotificationAsRead, joinGroup, getGroupMessages, sendGroupMessage, joinChallenge } from '../services/communityService';
+import { ArrowRight, MessageSquare, Heart, Share2, Users, ShoppingBag, Trophy, Image as ImageIcon, Search, Filter, Plus, ShoppingCart, Bold, Italic, Link as LinkIcon, List, LayoutGrid, Activity, Bell, X, Send, BookOpen, Check, MessageCircle, CheckCircle } from 'lucide-react';
 import { MOCK_GUIDEBOOK_ARTICLES } from '../data/constants';
 import { GuidebookArticle } from '../types/index';
 import ReactMarkdown from 'react-markdown';
+import { useAuth } from '../context/AuthContext';
 
 export interface CommunityProps {
     setView: (view: View) => void;
@@ -21,8 +22,8 @@ const Modal: React.FC<{ onClose: () => void; children: React.ReactNode }> = ({ o
 
     if (typeof document === 'undefined') return null;
     return ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm" onClick={onClose}>
-            <div onClick={e => e.stopPropagation()} className="relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm p-4" onClick={onClose}>
+            <div onClick={e => e.stopPropagation()} className="relative w-full max-w-6xl">
                 {children}
             </div>
         </div>,
@@ -89,14 +90,67 @@ const SIMULATED_USERS = [
     }
 ];
 
+const MediaGallery = ({ images }: { images: string[] }) => {
+    if (!images || images.length === 0) return null;
+    const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80'; };
+    if (images.length === 1) return <div className="overflow-hidden"><img src={images[0]} onError={handleImgError} className="w-full h-auto max-h-[500px] object-cover" /></div>;
+    if (images.length === 2) return <div className="grid grid-cols-2 gap-1 h-64">{images.map((img, i) => <img key={i} src={img} onError={handleImgError} className="w-full h-full object-cover" alt={`media ${i + 1}`} />)}</div>;
+    return (
+        <div className="grid grid-cols-2 grid-rows-2 gap-1 h-80">
+            <div className="row-span-2"><img src={images[0]} onError={handleImgError} className="w-full h-full object-cover" /></div>
+            <div className="h-full"><img src={images[1]} onError={handleImgError} className="w-full h-full object-cover" /></div>
+            <div className="h-full relative overflow-hidden group/more">
+                <img src={images[2]} onError={handleImgError} className="w-full h-full object-cover" />
+                {images.length > 3 && <div className="absolute inset-0 bg-black/50 flex items-center justify-center"><span className="text-white font-black text-xl">+{images.length - 3}</span></div>}
+            </div>
+        </div>
+    );
+};
+
+const SkeletonPulse = () => (
+    <div className="animate-pulse flex space-x-4">
+        <div className="flex-1 space-y-4 py-1">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="space-y-2"><div className="h-4 bg-gray-200 rounded"></div><div className="h-4 bg-gray-200 rounded w-5/6"></div></div>
+        </div>
+    </div>
+);
+
+const PostSkeleton = () => (
+    <div className="bg-white rounded-2xl shadow-sm border p-4 mb-6 min-h-[400px] animate-pulse">
+        <div className="flex items-center gap-3 mb-4"><div className="w-10 h-10 bg-gray-200 rounded-full"></div><div className="h-4 bg-gray-200 rounded w-1/4"></div></div>
+        <div className="space-y-2"><div className="h-4 bg-gray-200 rounded w-3/4"></div><div className="h-3 bg-gray-100 rounded"></div></div>
+        <div className="h-64 bg-gray-100 rounded mt-4"></div>
+    </div>
+);
+
+const MarketItemSkeleton = () => (
+    <div className="bg-white rounded-2xl shadow-sm border p-4 animate-pulse">
+        <div className="h-48 bg-gray-100 rounded mb-4"></div>
+        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+        <div className="h-3 bg-gray-100 rounded w-1/4"></div>
+    </div>
+);
+
+const ChevronRight = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6"></polyline></svg>
+);
+
 export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => {
-    const [view, setView] = useState<'FEED' | 'MARKET' | 'GROUPS' | 'CHALLENGES' | 'GUIDEBOOK'>('FEED');
+    const [view, setView] = useState<'FEED' | 'MARKET' | 'GROUPS' | 'CHALLENGES' | 'GUIDEBOOK' | 'LEADERBOARD'>('FEED');
     const [posts, setPosts] = useState<SocialPost[]>([]);
     const [marketItems, setMarketItems] = useState<MarketplaceItem[]>([]);
     const [groups, setGroups] = useState<Group[]>([]);
     const [challenges, setChallenges] = useState<Challenge[]>([]);
     const [notifications, setNotifications] = useState<any[]>([]);
     const [showNotifications, setShowNotifications] = useState(false);
+    const { user } = useAuth();
+
+    // Post Detail Modal State
+    const [selectedPost, setSelectedPost] = useState<SocialPost | null>(null);
+    const [comments, setComments] = useState<any[]>([]);
+    const [newComment, setNewComment] = useState('');
+    const [isLoadingComments, setIsLoadingComments] = useState(false);
 
     // New Post State
     const [newPostText, setNewPostText] = useState('');
@@ -157,12 +211,52 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
+    const loadPosts = async (reset = true) => {
+        setLoadingPosts(true);
+        try {
+            const currentPage = reset ? 1 : page + 1;
+            const postsData = await getPosts(currentPage, 10, filterType, debouncedSearchQuery, user?.id);
+            const postsArr = Array.isArray(postsData) ? postsData : (postsData.data || []);
+
+            if (reset) {
+                setPosts(postsArr);
+                setPage(1);
+            } else {
+                setPosts(prev => {
+                    const existingIds = new Set(prev.map(p => p.post_id));
+                    const newPosts = postsArr.filter((p: any) => !existingIds.has(p.post_id));
+                    return [...prev, ...newPosts];
+                });
+                setPage(currentPage);
+            }
+            setHasMore(postsArr.length >= 10);
+        } catch (err) {
+            console.error("Error loading posts:", err);
+        } finally {
+            setLoadingPosts(false);
+        }
+    };
+
+    const loadMarketplaceItems = async () => {
+        try {
+            const items = await getMarketplaceItems({
+                category: marketCategory,
+                condition,
+                price_min: debouncedPriceRange.min ? Number(debouncedPriceRange.min) : undefined,
+                price_max: debouncedPriceRange.max ? Number(debouncedPriceRange.max) : undefined,
+                search: debouncedSearchQuery
+            });
+            setMarketItems(Array.isArray(items) ? items : (items.data || []));
+        } catch (err) {
+            console.error("Market filter error:", err);
+        }
+    };
+
     // Initial Fetch (Page 1 + Other Data)
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const results = await Promise.allSettled([
-                    getMarketplaceItems(),
                     getGroups(),
                     getChallenges(),
                     getNotifications()
@@ -174,9 +268,8 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                     return [];
                 };
 
-                if (results[0].status === 'fulfilled') setMarketItems(getArray(results[0].value));
-                if (results[1].status === 'fulfilled') setGroups(getArray(results[1].value));
-                if (results[2].status === 'fulfilled') setChallenges(getArray(results[2].value));
+                if (results[0].status === 'fulfilled') setGroups(getArray(results[0].value));
+                if (results[1].status === 'fulfilled') setChallenges(getArray(results[1].value));
 
             } catch (error) {
                 console.error("Critical error fetching community data:", error);
@@ -185,6 +278,14 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
         fetchData();
     }, []);
 
+    useEffect(() => {
+        loadPosts();
+    }, [filterType, debouncedSearchQuery, user?.id]);
+
+    useEffect(() => {
+        loadMarketplaceItems();
+    }, [marketCategory, condition, debouncedPriceRange, debouncedSearchQuery]);
+
     const formatDate = (date: any) => {
         if (!date) return 'N/A';
         const d = new Date(date);
@@ -192,34 +293,24 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
     };
 
     const getSimulatedUser = (postId: any) => {
+        if (!postId) {
+            return SIMULATED_USERS[0];
+        }
         const str = String(postId);
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
             hash = ((hash << 5) - hash) + str.charCodeAt(i);
             hash |= 0;
         }
-        return SIMULATED_USERS[Math.abs(hash) % SIMULATED_USERS.length];
+        const index = Math.abs(hash) % SIMULATED_USERS.length;
+        return SIMULATED_USERS[index];
     };
+
+
 
     const loadMorePosts = async () => {
         if (loadingPosts || !hasMore) return;
-        setLoadingPosts(true);
-        try {
-            const nextPage = page + 1;
-            const newPostsData = await getPosts(nextPage, 10, filterType, debouncedSearchQuery);
-            const newPosts = Array.isArray(newPostsData) ? newPostsData : (newPostsData.data || []);
-            if (newPosts.length === 0) {
-                setHasMore(false);
-            } else {
-                setPosts(prev => [...prev, ...newPosts]);
-                setPage(nextPage);
-                if (newPosts.length < 10) setHasMore(false);
-            }
-        } catch (err) {
-            console.error("Error loading more posts:", err);
-        } finally {
-            setLoadingPosts(false);
-        }
+        await loadPosts(false);
     };
 
     useEffect(() => {
@@ -237,7 +328,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
         return () => {
             if (observerTarget.current) observer.unobserve(observerTarget.current);
         };
-    }, [observerTarget, hasMore, loadingPosts]);
+    }, [observerTarget, hasMore, loadingPosts, filterType, debouncedSearchQuery, user?.id]);
 
     const handlePost = async () => {
         if (!newPostText.trim()) return;
@@ -251,8 +342,8 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
             const postWithUser = {
                 ...newPost,
                 user: {
-                    username: 'You',
-                    avatar_url: 'https://ui-avatars.com/api/?name=You&background=random'
+                    username: user?.name || 'You',
+                    avatar_url: user?.avatarUrl || 'https://ui-avatars.com/api/?name=You&background=random'
                 }
             };
             setPosts(prev => [postWithUser, ...prev]);
@@ -279,6 +370,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
 
     const handleAddToCart = (item: MarketplaceItem) => {
         setCart(prev => [...prev, item]);
+        alert(`Added ${item.title} to your bag!`);
     };
 
     const handleSellSubmit = async (e: React.FormEvent) => {
@@ -355,18 +447,27 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
     };
 
     const handleLike = async (postId: number) => {
+        const post = posts.find(p => p.post_id === postId);
+        if (!post) return;
+
+        const isLiked = post.is_liked;
+        const newLikeCount = isLiked ? (post.like_count || 1) - 1 : (post.like_count || 0) + 1;
+
+        // Optimistic Update
+        setPosts(prev => prev.map(p =>
+            p.post_id === postId
+                ? { ...p, like_count: newLikeCount, is_liked: !isLiked }
+                : p
+        ));
+
         try {
-            setPosts(prev => prev.map(p =>
-                p.post_id === postId
-                    ? { ...p, like_count: (p.like_count || 0) + 1, is_liked: true }
-                    : p
-            ));
             await likePost(postId);
         } catch (error) {
             console.error("Like failed:", error);
+            // Revert on failure
             setPosts(prev => prev.map(p =>
                 p.post_id === postId
-                    ? { ...p, like_count: (p.like_count || 0) - 1, is_liked: false }
+                    ? { ...p, like_count: isLiked ? newLikeCount + 1 : newLikeCount - 1, is_liked: isLiked }
                     : p
             ));
         }
@@ -378,12 +479,116 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                 p.post_id === postId ? { ...p, share_count: (p.share_count || 0) + 1 } : p
             ));
             await sharePost(postId);
-            const postUrl = `${window.location.origin}/community/post/${postId}`;
+            const postUrl = `${window.location.origin}/community?post=${postId}`;
             await navigator.clipboard.writeText(postUrl);
             alert("Post link copied to clipboard!");
+
+            // Open the post detail modal
+            const post = posts.find(p => p.post_id === postId);
+            if (post) handleOpenPostDetail(post);
+
         } catch (error) {
-            console.error("Share failed", error);
+            console.error("Share failed:", error);
             alert("Failed to copy link. Please try again.");
+        }
+    };
+
+    const getSimulatedComments = (count: number) => {
+        const texts = [
+            "Tuyệt vời quá bác ơi! 😍",
+            "View đỉnh của chóp luôn!",
+            "Chuyến này đi hết bao nhiêu lúa vậy ạ?",
+            "Cảm giác đứng trên đó chắc phê lắm nhỉ.",
+            "Thèm đi quá đi...",
+            "Ảnh đẹp xuất sắc!",
+            "Cung này có khó đi không bác?",
+            "Lên plan đi anh em ơi 🚀",
+            "Xin info lịch trình với ạ.",
+            "Quá đã!",
+            "Thời tiết đẹp thật.",
+            "Ước gì được ở đó ngay bây giờ.",
+            "10 điểm không có nhưng.",
+            "Bác chụp bằng máy gì thế?",
+            "Nhìn mê chữ ê kéo dài...",
+            "Đẹp như tranh vẽ.",
+            "Hóng bài review chi tiết ạ.",
+            "Chất lượng quá!",
+            "Nhìn chill phết.",
+            "Tuyệt phẩm nhân gian!"
+        ];
+
+        return Array.from({ length: count }).map((_, i) => ({
+            comment_id: `mock-${Date.now()}-${i}`,
+            content: texts[i % texts.length],
+            created_at: new Date(Date.now() - Math.random() * 86400000 * 5).toISOString(),
+            User: SIMULATED_USERS[i % SIMULATED_USERS.length]
+        }));
+    };
+
+    const handleOpenPostDetail = async (post: SocialPost) => {
+        if (!post) {
+            return;
+        }
+
+        // Ensure user object is preserved when opening modal
+        setSelectedPost(post);
+        setIsLoadingComments(true);
+        // Reset comments to empty array to prevent stale data or render errors
+        setComments([]);
+        try {
+            const data = await getComments(post.post_id);
+            if (Array.isArray(data) && data.length > 0) {
+                setComments(data);
+                // Update selected post comment count to match fetched data
+                setSelectedPost(prev => prev ? { ...prev, comment_count: data.length } : null);
+            } else if ((post.comment_count || 0) > 0) {
+                // Fallback to simulated comments if API returns empty but count > 0
+                const mockComments = getSimulatedComments(post.comment_count || 5);
+                setComments(mockComments);
+            } else {
+                setComments([]);
+            }
+        } catch (error) {
+            console.error("Failed to load comments", error);
+            // Fallback on error if count > 0
+            if ((post.comment_count || 0) > 0) {
+                const mockComments = getSimulatedComments(post.comment_count || 5);
+                setComments(mockComments);
+            } else {
+                setComments([]);
+            }
+        } finally {
+            setIsLoadingComments(false);
+        }
+    };
+
+    const handleAddComment = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedPost || !newComment.trim()) return;
+
+        try {
+            // @ts-ignore
+            const comment = await addComment(selectedPost.post_id, newComment);
+
+            // Optimistically add comment to list with current user details
+            const optimisticComment = {
+                ...comment,
+                User: {
+                    username: user?.name || 'You',
+                    avatar_url: user?.avatarUrl || 'https://ui-avatars.com/api/?name=You'
+                }
+            };
+
+            setComments(prev => [...prev, optimisticComment]);
+            setNewComment('');
+
+            // Update comment count in BOTH the modal post and the main list
+            setSelectedPost(prev => prev ? { ...prev, comment_count: (prev.comment_count || 0) + 1 } : null);
+            setPosts(prev => prev.map(p => p.post_id === selectedPost.post_id ? { ...p, comment_count: (p.comment_count || 0) + 1 } : p));
+
+        } catch (error) {
+            console.error("Failed to add comment", error);
+            alert("Failed to send comment. Please try again.");
         }
     };
 
@@ -425,42 +630,6 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
         }, 0);
     };
 
-    useEffect(() => {
-        const fetchFiltered = async () => {
-            setLoadingPosts(true);
-            try {
-                const data = await getPosts(1, 10, filterType, debouncedSearchQuery);
-                const postsArr = Array.isArray(data) ? data : (data.data || []);
-                setPosts(postsArr);
-                setPage(1);
-                setHasMore(postsArr.length >= 10);
-            } catch (err) {
-                console.error("Filter error:", err);
-            } finally {
-                setLoadingPosts(false);
-            }
-        };
-        fetchFiltered();
-    }, [filterType, debouncedSearchQuery]);
-
-    useEffect(() => {
-        const fetchMarket = async () => {
-            try {
-                const items = await getMarketplaceItems({
-                    category: marketCategory,
-                    condition,
-                    price_min: debouncedPriceRange.min ? Number(debouncedPriceRange.min) : undefined,
-                    price_max: debouncedPriceRange.max ? Number(debouncedPriceRange.max) : undefined,
-                    search: debouncedSearchQuery
-                });
-                setMarketItems(Array.isArray(items) ? items : (items.data || []));
-            } catch (err) {
-                console.error("Market filter error:", err);
-            }
-        };
-        fetchMarket();
-    }, [marketCategory, condition, debouncedPriceRange, debouncedSearchQuery]);
-
     return (
         <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
             <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
@@ -470,7 +639,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                         <>
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 max-w-2xl mx-auto">
                                 <div className="flex gap-4 mb-4">
-                                    <img src="https://ui-avatars.com/api/?name=You&background=random" className="w-10 h-10 rounded-full flex-shrink-0" alt="Your avatar" />
+                                    <img src={user?.avatarUrl || "https://ui-avatars.com/api/?name=You&background=random"} className="w-10 h-10 rounded-full flex-shrink-0" alt="Your avatar" />
                                     <div className="flex-1">
                                         <div className="flex gap-2 mb-2">
                                             <button onClick={() => insertFormat('bold')} className="p-1 hover:bg-gray-100 rounded text-gray-500"><Bold size={16} /></button>
@@ -520,14 +689,19 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                             </div>
 
                             <div className="columns-1 md:columns-2 gap-6 space-y-6">
-                                {posts.filter(p => (p.content || '').length > 8).map(post => (
-                                    <div key={post.post_id} className="break-inside-avoid bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group">
+                                {posts.map(post => (
+                                    <div key={post.post_id} className="break-inside-avoid bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
                                         <div className="p-4 flex items-center justify-between">
                                             <div className="flex items-center gap-3 relative group/user">
                                                 {(() => {
                                                     const simUser = getSimulatedUser(post.post_id);
-                                                    const username = post.user?.username || simUser.username;
-                                                    const avatar = post.user?.avatar_url || simUser.avatar;
+                                                    // Debug log to check user data structure
+                                                    if (!post.user && !(post as any).User) {
+                                                        console.log("Missing user for post:", post);
+                                                    }
+
+                                                    const username = post.user?.username || (post as any).User?.username || simUser.username;
+                                                    const avatar = post.user?.avatar_url || (post as any).User?.avatar_url || simUser.avatar;
                                                     return (
                                                         <>
                                                             <img src={avatar} className="w-10 h-10 rounded-full object-cover" alt="avatar" />
@@ -562,15 +736,30 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                             </div>
                                         </div>
                                         {post.media_urls && post.media_urls.length > 0 && <MediaGallery images={post.media_urls} />}
-                                        <div className="p-4 bg-gray-50/50 flex items-center justify-between border-t border-gray-100">
-                                            <div className="flex items-center gap-4">
-                                                <button onClick={() => handleLike(post.post_id)} className={`flex items-center gap-1 ${post.is_liked ? 'text-red-500' : 'text-gray-400'}`}>
-                                                    <Heart size={18} fill={post.is_liked ? 'currentColor' : 'none'} />
-                                                    <span className="text-sm font-bold">{post.like_count || 0}</span>
+                                        <div className="p-4 bg-gray-50/50 flex items-center justify-between border-t border-gray-100 rounded-b-2xl">
+                                            <div className="flex items-center gap-6 pt-2">
+                                                <button
+                                                    onClick={() => handleLike(post.post_id)}
+                                                    className={`flex items-center gap-2 ${post.is_liked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'} transition-colors`}
+                                                >
+                                                    <Heart size={20} className={post.is_liked ? 'fill-current' : ''} />
+                                                    <span className="text-sm font-medium">{post.like_count || 0}</span>
                                                 </button>
-                                                <button className="text-gray-400 flex items-center gap-1"><MessageSquare size={18} /><span className="text-sm font-bold">{post.comment_count || 0}</span></button>
+                                                <button
+                                                    onClick={() => handleOpenPostDetail(post)}
+                                                    className="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition-colors"
+                                                >
+                                                    <MessageCircle size={20} />
+                                                    <span className="text-sm font-medium">{post.comment_count || 0}</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => handleShare(post.post_id)}
+                                                    className="flex items-center gap-2 text-gray-500 hover:text-green-500 transition-colors"
+                                                >
+                                                    <Share2 size={20} />
+                                                    <span className="text-sm font-medium">{post.share_count || 0}</span>
+                                                </button>
                                             </div>
-                                            <button onClick={() => handleShare(post.post_id)} className="text-gray-400 flex items-center gap-1"><Share2 size={18} /><span className="text-sm font-bold">{post.share_count || 0}</span></button>
                                         </div>
                                     </div>
                                 ))}
@@ -707,6 +896,30 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                                 Read Article <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                                             </div>
                                         </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {view === 'LEADERBOARD' && (
+                        <div>
+                            <h3 className="text-2xl font-display font-bold text-forest-green flex items-center gap-2 mb-6"><Trophy /> Leaderboard</h3>
+                            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                {/* Mock Leaderboard */}
+                                <div className="p-4 border-b bg-gray-50 flex font-bold text-gray-500 text-sm uppercase">
+                                    <div className="w-12 text-center">Rank</div>
+                                    <div className="flex-1">User</div>
+                                    <div className="w-24 text-center">Score</div>
+                                </div>
+                                {[1, 2, 3, 4, 5].map((rank) => (
+                                    <div key={rank} className="p-4 border-b flex items-center hover:bg-gray-50">
+                                        <div className="w-12 text-center font-black text-xl text-sage-green">#{rank}</div>
+                                        <div className="flex-1 flex items-center gap-3">
+                                            <img src={`https://i.pravatar.cc/150?u=${rank}`} className="w-10 h-10 rounded-full" />
+                                            <span className="font-bold text-gray-900">User {rank}</span>
+                                        </div>
+                                        <div className="w-24 text-center font-bold text-gray-600">{1000 - rank * 50} pts</div>
                                     </div>
                                 ))}
                             </div>
@@ -876,8 +1089,10 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                         <p className="text-sm text-gray-500">Your feedback helps us improve.</p>
                                     </div>
                                     <div className="flex gap-2">
-                                        <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:bg-forest-green hover:text-white transition-colors">Yes, thanks!</button>
-                                        <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:text-red-500 transition-colors">Not really</button>
+                                        <button onClick={() => alert("Thanks for your feedback!")} className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:bg-forest-green hover:text-white hover:border-forest-green transition-colors flex items-center gap-2">
+                                            <CheckCircle size={16} /> Yes, thanks!
+                                        </button>
+                                        <button onClick={() => alert("Thanks, we'll try to improve.")} className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors">Not really</button>
                                     </div>
                                 </div>
                             </div>
@@ -895,99 +1110,150 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                     <img src={currentChatGroup.avatar_url} className="w-10 h-10 rounded-full object-cover" />
                                     <div>
                                         <h3 className="font-bold text-gray-900">{currentChatGroup.name}</h3>
-                                        <p className="text-xs text-gray-500">{currentChatGroup.member_count} members</p>
+                                        <p className="text-xs text-green-600 font-bold flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Online</p>
                                     </div>
                                 </div>
-                                <button onClick={() => setShowChatModal(false)}><X className="text-gray-400 hover:text-gray-600" /></button>
+                                <button onClick={() => setShowChatModal(false)} className="p-2 hover:bg-gray-200 rounded-full"><X size={20} /></button>
                             </div>
-                            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/30">
-                                {chatMessages.length === 0 ? (
-                                    <div className="text-center text-gray-400 mt-10">No messages yet. Start the conversation!</div>
-                                ) : (
-                                    chatMessages.map((msg: any) => {
-                                        const isMe = msg.user_id === 1; // Assuming user ID 1 for now or check sender
-                                        // ideally we check msg.sender.username === 'You' or actual logic
-                                        // For now simple display
-                                        return (
-                                            <div key={msg.message_id} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : ''}`}>
-                                                <img src={msg.sender?.avatar_url || 'https://ui-avatars.com/api/?name=User'} className="w-8 h-8 rounded-full" />
-                                                <div className="max-w-[80%]">
-                                                    <div className={`p-3 rounded-2xl text-sm ${isMe ? 'bg-forest-green text-white rounded-tr-none' : 'bg-white border rounded-tl-none'}`}>
-                                                        {!isMe && <p className="text-[10px] font-bold opacity-50 mb-1">{msg.sender?.username}</p>}
-                                                        {msg.content}
-                                                    </div>
-                                                    <p className="text-[10px] text-gray-400 mt-1 text-right">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                                                </div>
-                                            </div>
-                                        );
-                                    })
-                                )}
+                            <div className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4">
+                                {chatMessages.map((msg, idx) => (
+                                    <div key={msg.id || idx} className={`flex gap-3 ${msg.sender === (user?.name || 'You') ? 'flex-row-reverse' : ''}`}>
+                                        <img src={msg.sender_avatar || `https://ui-avatars.com/api/?name=${msg.sender}`} className="w-8 h-8 rounded-full self-end" />
+                                        <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${msg.sender === (user?.name || 'You') ? 'bg-forest-green text-white rounded-br-none' : 'bg-white border border-gray-100 rounded-bl-none'}`}>
+                                            <p className="font-bold text-[10px] mb-1 opacity-70">{msg.sender}</p>
+                                            <p>{msg.content}</p>
+                                            <p className="text-[10px] mt-1 opacity-50 text-right">{new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                            <div className="p-4 bg-white border-t">
-                                <form onSubmit={handleSendMessage} className="flex gap-2">
-                                    <input
-                                        value={chatInput}
-                                        onChange={e => setChatInput(e.target.value)}
-                                        placeholder="Type a message..."
-                                        className="flex-1 bg-gray-100 border-none rounded-full px-4 py-2 focus:ring-2 focus:ring-forest-green outline-none"
-                                    />
-                                    <button type="submit" disabled={!chatInput.trim()} className="bg-forest-green text-white p-2 rounded-full hover:bg-sage-green transition-colors disabled:opacity-50">
-                                        <Send size={20} />
-                                    </button>
-                                </form>
-                            </div>
+                            <form onSubmit={handleSendMessage} className="p-4 bg-white border-t flex gap-2">
+                                <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Type a message..." className="flex-1 bg-gray-50 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-sage-green" />
+                                <button type="submit" disabled={!chatInput.trim()} className="p-3 bg-forest-green text-white rounded-xl hover:bg-green-800 disabled:opacity-50"><Send size={20} /></button>
+                            </form>
                         </div>
                     </Modal>
                 )
             }
-        </div >
+
+            {/* Post Detail Modal */}
+            {selectedPost && (
+                <Modal onClose={() => setSelectedPost(null)}>
+                    <div className="bg-white rounded-2xl w-full shadow-2xl overflow-hidden flex flex-col md:flex-row h-[90vh]">
+                        {/* Left: Image/Content */}
+                        <div className="w-full md:w-2/3 bg-black flex items-center justify-center relative">
+                            {selectedPost.media_urls && selectedPost.media_urls.length > 0 ? (
+                                <img src={selectedPost.media_urls[0]} className="max-w-full max-h-full object-contain" />
+                            ) : (
+                                <div className="p-8 text-white text-center">
+                                    <p className="text-lg font-medium">{selectedPost.content || "No content"}</p>
+                                </div>
+                            )}
+                            <button onClick={() => setSelectedPost(null)} className="absolute top-4 left-4 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white md:hidden"><X /></button>
+                        </div>
+
+                        {/* Right: Comments */}
+                        <div className="w-full md:w-1/3 flex flex-col bg-white border-l h-full">
+                            {/* Header */}
+                            <div className="p-4 border-b flex items-center justify-between flex-shrink-0">
+                                <div className="flex items-center gap-3">
+                                    {(() => {
+                                        const simUser = getSimulatedUser(selectedPost.post_id);
+                                        const username = selectedPost.user?.username || (selectedPost as any).User?.username || simUser.username;
+                                        const avatar = selectedPost.user?.avatar_url || (selectedPost as any).User?.avatar_url || simUser.avatar;
+                                        return (
+                                            <>
+                                                <img src={avatar} className="w-10 h-10 rounded-full" alt={username} />
+                                                <div>
+                                                    <h3 className="font-bold text-gray-900">{username}</h3>
+                                                    <p className="text-xs text-gray-500">{formatDate(selectedPost.created_at)}</p>
+                                                </div>
+                                            </>
+                                        );
+                                    })()}
+                                </div>
+                                <button onClick={() => setSelectedPost(null)} className="p-2 hover:bg-gray-100 rounded-full">
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            {/* Post Content (if text only or caption) */}
+                            <div className="p-4 border-b overflow-y-auto max-h-32 flex-shrink-0">
+                                <div className="prose prose-sm"><ReactMarkdown>{selectedPost.content}</ReactMarkdown></div>
+                            </div>
+
+                            <hr className="border-gray-100" />
+
+                            {/* Comments List */}
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                <h4 className="font-bold text-gray-900 mb-2">Comments ({isLoadingComments ? (selectedPost.comment_count || 0) : comments.length})</h4>
+                                {isLoadingComments ? (
+                                    <div className="flex justify-center p-4"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-forest-green"></div></div>
+                                ) : !Array.isArray(comments) || comments.length === 0 ? (
+                                    <p className="text-gray-500 text-center py-4">No comments yet. Be the first!</p>
+                                ) : (
+                                    comments.map((comment: any, idx: number) => (
+                                        <div key={comment.comment_id || idx} className="flex gap-3">
+                                            <img src={comment.User?.avatar_url || "https://ui-avatars.com/api/?name=User"} className="w-8 h-8 rounded-full flex-shrink-0" alt="Avatar" />
+                                            <div className="bg-gray-50 p-3 rounded-lg flex-1">
+                                                <div className="flex justify-between items-start">
+                                                    <span className="font-semibold text-sm">{comment.User?.username}</span>
+                                                    <span className="text-xs text-gray-400">{new Date(comment.created_at).toLocaleDateString()}</span>
+                                                </div>
+                                                <p className="text-sm text-gray-700 mt-1">{comment.content}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+
+                            {/* Footer: Actions & Input */}
+                            <div className="p-4 border-t bg-white flex-shrink-0">
+                                <div className="flex items-center gap-6 mb-4">
+                                    <button
+                                        onClick={() => {
+                                            handleLike(selectedPost.post_id);
+                                            // Optimistic update for modal
+                                            setSelectedPost(prev => prev ? { ...prev, is_liked: !prev.is_liked, like_count: (prev.like_count || 0) + (prev.is_liked ? -1 : 1) } : null);
+                                        }}
+                                        className={`flex items-center gap-2 ${selectedPost.is_liked ? 'text-red-500' : 'text-gray-500 hover:text-red-500'}`}
+                                    >
+                                        <Heart size={24} className={selectedPost.is_liked ? 'fill-current' : ''} />
+                                        <span className="font-bold">{selectedPost.like_count} likes</span>
+                                    </button>
+                                    <button className="flex items-center gap-2 text-gray-500">
+                                        <MessageCircle size={24} />
+                                        <span>Reply</span>
+                                    </button>
+                                    <button className="flex items-center gap-2 text-gray-500 hover:text-green-500">
+                                        <Share2 size={24} />
+                                    </button>
+                                </div>
+
+                                <form onSubmit={handleAddComment} className="flex gap-2 items-center">
+                                    <input
+                                        type="text"
+                                        placeholder="Add a comment..."
+                                        className="flex-1 border border-gray-200 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-forest-green/20"
+                                        value={newComment}
+                                        onChange={(e) => setNewComment(e.target.value)}
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={!newComment.trim()}
+                                        className="p-3 bg-forest-green text-white rounded-full hover:bg-forest-green/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0 flex items-center justify-center"
+                                    >
+                                        <Send size={18} />
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
+            )}      </div >
     );
 };
 
-const MediaGallery = ({ images }: { images: string[] }) => {
-    if (!images || images.length === 0) return null;
-    const handleImgError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80'; };
-    if (images.length === 1) return <div className="overflow-hidden"><img src={images[0]} onError={handleImgError} className="w-full h-auto max-h-[500px] object-cover" /></div>;
-    if (images.length === 2) return <div className="grid grid-cols-2 gap-1 h-64">{images.map((img, i) => <img key={i} src={img} onError={handleImgError} className="w-full h-full object-cover" alt={`media ${i + 1}`} />)}</div>;
-    return (
-        <div className="grid grid-cols-2 grid-rows-2 gap-1 h-80">
-            <div className="row-span-2"><img src={images[0]} onError={handleImgError} className="w-full h-full object-cover" /></div>
-            <div className="h-full"><img src={images[1]} onError={handleImgError} className="w-full h-full object-cover" /></div>
-            <div className="h-full relative overflow-hidden group/more">
-                <img src={images[2]} onError={handleImgError} className="w-full h-full object-cover" />
-                {images.length > 3 && <div className="absolute inset-0 bg-black/50 flex items-center justify-center"><span className="text-white font-black text-xl">+{images.length - 3}</span></div>}
-            </div>
-        </div>
-    );
-};
 
-const SkeletonPulse = () => (
-    <div className="animate-pulse flex space-x-4">
-        <div className="flex-1 space-y-4 py-1">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="space-y-2"><div className="h-4 bg-gray-200 rounded"></div><div className="h-4 bg-gray-200 rounded w-5/6"></div></div>
-        </div>
-    </div>
-);
-
-const PostSkeleton = () => (
-    <div className="bg-white rounded-2xl shadow-sm border p-4 mb-6 min-h-[400px] animate-pulse">
-        <div className="flex items-center gap-3 mb-4"><div className="w-10 h-10 bg-gray-200 rounded-full"></div><div className="h-4 bg-gray-200 rounded w-1/4"></div></div>
-        <div className="space-y-2"><div className="h-4 bg-gray-200 rounded w-3/4"></div><div className="h-3 bg-gray-100 rounded"></div></div>
-        <div className="h-64 bg-gray-100 rounded mt-4"></div>
-    </div>
-);
-
-const MarketItemSkeleton = () => (
-    <div className="bg-white rounded-2xl shadow-sm border p-4 animate-pulse">
-        <div className="h-48 bg-gray-100 rounded mb-4"></div>
-        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-        <div className="h-3 bg-gray-100 rounded w-1/4"></div>
-    </div>
-);
-
-const ChevronRight = ({ className }: { className?: string }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6"></polyline></svg>
-);
 
 export default Community;

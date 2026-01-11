@@ -172,12 +172,58 @@ const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void 
 // --- MAIN APP COMPONENT ---
 
 const App: React.FC = () => {
-    const [view, setView] = useState<View>('home');
+    // --- ROUTING UTILS ---
+    const getViewFromPath = (path: string): View => {
+        if (path.startsWith('/community')) return 'community';
+        if (path.startsWith('/discover')) return 'discover';
+        if (path.startsWith('/planner')) return 'planner';
+        if (path.startsWith('/profile')) return 'profile';
+        if (path.startsWith('/admin')) {
+            if (path.includes('/users')) return 'admin_users';
+            return 'admin_dashboard';
+        }
+        return 'home';
+    };
+
+    const getPathFromView = (view: View): string => {
+        if (typeof view === 'string') {
+            switch (view) {
+                case 'community': return '/community';
+                case 'discover': return '/discover';
+                case 'planner': return '/planner';
+                case 'profile': return '/profile';
+                case 'admin_dashboard': return '/admin/dashboard';
+                case 'admin_users': return '/admin/users';
+                case 'home': return '/';
+                default: return '/';
+            }
+        }
+        return '/'; // Complex views like trailDetail not fully supported in simple router yet
+    };
+
+    const [view, setView] = useState<View>(() => getViewFromPath(window.location.pathname));
     const [trails, setTrails] = useState<Trail[]>([]);
     const [isLoadingTrails, setIsLoadingTrails] = useState(true);
     const [authView, setAuthView] = useState<AuthView>('login');
     const { user, isAuthenticated } = useAuth();
     const prevAuth = useRef(isAuthenticated);
+
+    // Sync View to URL
+    useEffect(() => {
+        const path = getPathFromView(view);
+        if (window.location.pathname !== path) {
+            window.history.pushState(null, '', path);
+        }
+    }, [view]);
+
+    // Handle Browser Back/Forward
+    useEffect(() => {
+        const handlePopState = () => {
+            setView(getViewFromPath(window.location.pathname));
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
 
     useEffect(() => {
         console.log('[App] auth change', { user, isAuthenticated });
@@ -186,10 +232,25 @@ const App: React.FC = () => {
         if (!prevAuth.current && isAuthenticated) {
             console.log('User just logged in. Role:', user?.role);
             if (user?.role === 'admin') {
-                console.log('Redirecting to Admin Dashboard');
-                setView('admin_dashboard');
+                // If initializing from URL (e.g. reload on community), don't force dashboard unless explicit login action
+                // But simplified here: admins usually go to dashboard on login.
+                // To preserve "Reload on Community" behavior for admins, strictly check if view is 'home' or 'login' related.
+                // For now, let's allow preserving current view if it's not home/login.
+                if (view === 'home') {
+                    setView('admin_dashboard');
+                }
             } else {
-                setView('home');
+                // Regular users stay on current view if valid, else home
+                if (view === 'home' && window.location.pathname !== '/') {
+                    // Do nothing, let the initial state take precedence
+                } else if (view === 'home') {
+                    // Explicit login action usually redirects home, but reload shouldn't.
+                }
+                // Actually the main issue is that `view` is already set by initial state.
+                // We only want to redirect if the user performs a LOGIN ACTION, not just on re-hydration.
+                // Re-hydration happens with prevAuth=false (initial ref) -> isAuthenticated=true (localstorage).
+                // So we need to distinguish "Initial Load" from "User Clicked Login".
+                // A simple way is to check if we are already on a specific page.
             }
         }
         prevAuth.current = isAuthenticated;

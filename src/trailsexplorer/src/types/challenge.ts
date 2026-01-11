@@ -2,7 +2,7 @@ export interface Challenge {
     challenge_id: number;
     name: string;
     description: string;
-    challenge_type: 'DISTANCE' | 'ELEVATION' | 'TRAIL_COUNT' | 'DURATION' | 'STREAK';
+    challenge_type: 'DISTANCE' | 'ELEVATION' | 'TRAIL_COUNT' | 'DURATION' | 'STREAK' | 'OTHER';
     target_value: number;
     unit: string;
     start_date: string;

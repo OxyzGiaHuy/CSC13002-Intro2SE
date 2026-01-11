@@ -13,10 +13,11 @@ const getAuthHeader = () => {
 };
 
 // --- Posts ---
-export const getPosts = async (page = 1, limit = 10, type?: string, search?: string) => {
+export const getPosts = async (page = 1, limit = 10, type?: string, search?: string, userId?: string) => {
     const params: any = { page, limit };
     if (type && type !== 'ALL') params.type = type;
     if (search) params.search = search;
+    if (userId) params.userId = userId;
 
     const response = await axios.get(`${API_URL}/community/posts`, {
         params,
@@ -41,6 +42,20 @@ export const likePost = async (postId: number) => {
 
 export const sharePost = async (postId: number) => {
     const response = await axios.post(`${API_URL}/community/posts/${postId}/share`, {}, {
+        headers: getAuthHeader()
+    });
+    return response.data;
+};
+
+export const getComments = async (postId: number) => {
+    const response = await axios.get(`${API_URL}/community/posts/${postId}/comments`, {
+        headers: getAuthHeader()
+    });
+    return response.data;
+};
+
+export const addComment = async (postId: number, content: string) => {
+    const response = await axios.post(`${API_URL}/community/posts/${postId}/comments`, { content }, {
         headers: getAuthHeader()
     });
     return response.data;

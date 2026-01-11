@@ -10,7 +10,13 @@ import {
     LightningBoltIcon
 } from '../data/constants';
 import { MOCK_WEATHER } from '../data/constants';
-import { Zap, Activity, Flame, Star, Map as LucideMap } from 'lucide-react';
+import { Zap, Activity, Flame, Star, Map as LucideMap, X, Navigation, Bed, AlertTriangle } from 'lucide-react';
+
+const MOCK_HOMESTAYS = [
+    { id: 1, name: "Sunset Hill Homestay", price: "450k/night", distance: "0.5km from end", image: "https://picsum.photos/seed/home1/300/200" },
+    { id: 2, name: "Forest Edge Cabin", price: "600k/night", distance: "1.2km from end", image: "https://picsum.photos/seed/home2/300/200" },
+    { id: 3, name: "Trailblazer Dorm", price: "150k/bed", distance: "200m from start", image: "https://picsum.photos/seed/home3/300/200" },
+];
 
 export interface TrailDetailProps {
     trailId: number;
@@ -24,6 +30,11 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
     // Initial trail from props (might have partial data)
     const initialTrail = trails.find(t => t.id === trailId);
     const [trail, setTrail] = React.useState<Trail | undefined>(initialTrail);
+    // Demo States
+    const [show3DMap, setShow3DMap] = React.useState(false);
+    const [showNavigation, setShowNavigation] = React.useState(false);
+    const [isOffTrail, setIsOffTrail] = React.useState(false);
+    const [simProgress, setSimProgress] = React.useState(0); // 0-100 for navigation sim
 
     React.useEffect(() => {
         const fetchDetail = async () => {
@@ -81,10 +92,13 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                 <img src={trail.imageUrl} alt={trail.name} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30"></div>
 
-                {/* Navbar Placeholder/Back Button */}
-                <div className="absolute top-0 left-0 p-6 z-10">
+                <div className="absolute top-0 left-0 right-0 p-6 z-10 flex justify-between">
                     <button onClick={onBack} className="flex items-center gap-2 text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-full transition-all backdrop-blur-sm">
                         <ArrowLeftIcon className="w-5 h-5" /> Back
+                    </button>
+                    <button onClick={() => setShow3DMap(true)} className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full transition-all backdrop-blur-sm shadow-lg border border-white/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" /><path d="M12 12l8-4.5" /><path d="M12 12v9" /><path d="M12 12L4 7.5" /></svg>
+                        <span className="font-bold text-sm">View 3D Map</span>
                     </button>
                 </div>
 
@@ -139,11 +153,12 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                 </div>
                             </div>
                             <button
-                                onClick={() => onSelectMap(trail.id)}
-                                className="bg-forest-green hover:bg-green-900 text-white p-6 rounded-2xl shadow-xl shadow-green-900/20 flex flex-col items-center justify-center transition-all transform hover:scale-[1.02] active:scale-95"
+                                onClick={() => setShowNavigation(true)}
+                                className="bg-forest-green hover:bg-green-900 text-white p-6 rounded-2xl shadow-xl shadow-green-900/20 flex flex-col items-center justify-center transition-all transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
                             >
-                                <LucideMap className="w-6 h-6 mb-2" />
-                                <span className="font-black text-xs uppercase tracking-widest">View Map</span>
+                                <div className="absolute inset-0 bg-[url('https://img.freepik.com/free-vector/abstract-topographic-map-lines-background_23-2148508734.jpg')] opacity-20 mix-blend-overlay"></div>
+                                <Navigation className="w-6 h-6 mb-2" />
+                                <span className="font-black text-xs uppercase tracking-widest text-center">Start Navigation</span>
                             </button>
                         </div>
 
@@ -225,6 +240,28 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                             </div>
                         </div>
 
+                        {/* Nearby Stays (Test Case 21) */}
+                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                            <h3 className="text-xl font-display font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <Bed className="w-5 h-5 text-forest-green" /> Nearby Stays
+                            </h3>
+                            <div className="space-y-4">
+                                {MOCK_HOMESTAYS.map(home => (
+                                    <div key={home.id} className="flex gap-3 items-center group cursor-pointer hover:bg-gray-50 p-2 rounded-xl transition-colors">
+                                        <img src={home.image} alt={home.name} className="w-16 h-16 rounded-lg object-cover" />
+                                        <div className="flex-1">
+                                            <h4 className="font-bold text-gray-900 text-sm leading-tight group-hover:text-forest-green">{home.name}</h4>
+                                            <p className="text-xs text-gray-500 mt-1">{home.distance}</p>
+                                            <p className="text-xs font-bold text-sage-green mt-1">{home.price}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <button className="w-full mt-4 text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest">
+                                View All Listings
+                            </button>
+                        </div>
+
                         {/* CTA Box */}
                         <div className="bg-earth-brown/5 p-6 rounded-3xl border border-earth-brown/10">
                             <h3 className="text-xl font-display font-bold text-earth-brown mb-2">Ready to go?</h3>
@@ -240,9 +277,90 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                     </div>
                 </div>
             </div>
-        </div>
+            {/* 3D Map Modal (Test Case 20) */}
+            {show3DMap && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="relative w-[90vw] h-[80vh] bg-gray-900 rounded-3xl overflow-hidden shadow-2xl border border-gray-800">
+                        <button onClick={() => setShow3DMap(false)} className="absolute top-4 right-4 z-20 p-2 bg-black/50 text-white rounded-full hover:bg-black/80 transition-colors"><X /></button>
+                        <div className="absolute top-4 left-4 z-20 bg-black/50 backdrop-blur px-4 py-2 rounded-xl text-white font-bold border border-white/10 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> 3D Terrain View
+                        </div>
+                        {/* Fake 3D Content */}
+                        <div className="w-full h-full flex items-center justify-center perspective-[1000px] overflow-hidden bg-gradient-to-b from-blue-900/20 to-black">
+                            <div className="relative w-full h-full group">
+                                <img
+                                    src="https://images.unsplash.com/photo-1549880181-56a44cf4a9a5?q=80&w=2070&auto=format&fit=crop"
+                                    className="w-full h-full object-cover opacity-80 transition-transform duration-[2s] ease-in-out scale-110 group-hover:scale-125 group-hover:rotate-x-12"
+                                    style={{ transform: "perspective(1000px) rotateX(20deg) scale(1.2)" }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
+                            </div>
+                        </div>
+                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-4">
+                            <button className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl backdrop-blur border border-white/10 font-bold transition-all">Reset View</button>
+                            <button className="bg-sage-green hover:bg-forest-green text-white px-6 py-3 rounded-xl shadow-lg shadow-green-900/50 font-bold transition-all">Flyover Mode</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Navigation Modal (Test Case 27) */}
+            {showNavigation && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="relative w-full h-full sm:w-[400px] sm:h-[800px] bg-gray-900 sm:rounded-[3rem] overflow-hidden shadow-2xl border-4 border-gray-800 ring-4 ring-black">
+                        {/* Header */}
+                        <div className="absolute top-0 left-0 right-0 p-6 pt-10 bg-gradient-to-b from-black/80 to-transparent z-20 flex justify-between items-start">
+                            <div className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-2xl text-white border border-white/10">
+                                <p className="text-xs text-gray-400 uppercase font-black">Dist. Remaining</p>
+                                <p className="text-2xl font-display font-bold">3.2 km</p>
+                            </div>
+                            <button onClick={() => setShowNavigation(false)} className="p-2 bg-black/40 text-white rounded-full hover:bg-red-500/20 hover:text-red-400 transition-colors"><X /></button>
+                        </div>
+
+                        {/* Map View */}
+                        <div className="absolute inset-0 bg-gray-800">
+                            <img src="https://images.unsplash.com/photo-1624026676760-5896a84f332d?q=80&w=2664&auto=format&fit=crop" className="w-full h-full object-cover opacity-60 grayscale-[0.3]" />
+                            {/* Trail Path */}
+                            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ filter: 'drop-shadow(0 0 10px rgba(74, 222, 128, 0.5))' }}>
+                                <path d="M 100 800 C 150 700, 100 500, 200 400 S 300 200, 200 0" stroke="#4ade80" strokeWidth="6" fill="none" strokeDasharray="10 5" />
+                            </svg>
+                            {/* User Marker */}
+                            <div
+                                className={`absolute transition-all duration-1000 ease-in-out flex flex-col items-center justify-center ${isOffTrail ? 'top-[400px] left-[320px]' : 'top-[390px] left-[190px]'}`}
+                            >
+                                <div className={`w-6 h-6 rounded-full border-4 shadow-xl ${isOffTrail ? 'bg-red-500 border-red-200 animate-ping' : 'bg-blue-500 border-white'}`}></div>
+                                {isOffTrail && (
+                                    <div className="absolute w-6 h-6 bg-red-500/50 rounded-full animate-ping"></div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Warnings Overlay */}
+                        {isOffTrail && (
+                            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-red-500/10 pointer-events-none backdrop-blur-[2px] animate-pulse">
+                                <div className="bg-red-600 text-white p-6 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-[80%] mx-auto animate-bounce-short border-2 border-red-400">
+                                    <AlertTriangle className="w-12 h-12 mb-2" />
+                                    <h3 className="text-2xl font-black uppercase">Wrong Way!</h3>
+                                    <p className="opacity-90 mt-1">You have deviated 50m from the trail.</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Controls */}
+                        <div className="absolute bottom-0 left-0 right-0 p-6 pb-10 bg-gradient-to-t from-black via-black/80 to-transparent z-20 space-y-4">
+                            <button
+                                onClick={() => setIsOffTrail(!isOffTrail)}
+                                className={`w-full py-4 rounded-2xl font-bold shadow-xl transition-all active:scale-95 border-b-4 ${isOffTrail ? 'bg-blue-600 border-blue-800 text-white' : 'bg-red-600 border-red-800 text-white'
+                                    }`}
+                            >
+                                {isOffTrail ? 'Return to Trail (Simulate)' : 'Simulate Off-Trail Deviation'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div >
     );
 };
 
 export default TrailDetail;
-
