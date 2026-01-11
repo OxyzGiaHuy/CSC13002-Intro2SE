@@ -4,6 +4,7 @@ const Favorite = require('../models/Favorite');
 const SavedPlan = require('../models/SavedPlan');
 const Trail = require('../models/Trail'); // Needed to fetch trail details in favorites
 const authenticateToken = require('../middleware/authMiddleware');
+const { deleteUser } = require('../controllers/userController');
 
 // 1. GET /api/user/saved-plans
 router.get('/saved-plans', authenticateToken, async (req, res) => {
@@ -72,25 +73,6 @@ router.post('/favorites/:trailId', authenticateToken, async (req, res) => {
 });
 
 // 6. DELETE /api/user/favorites/:trailId
-router.delete('/favorites/:trailId', authenticateToken, async (req, res) => {
-    try {
-        const { trailId } = req.params;
-        const deleted = await Favorite.destroy({
-            where: {
-                user_id: req.user.id,
-                favorite_type: 'TRAIL',
-                target_id: trailId
-            }
-        });
-
-        if (deleted) {
-            res.json({ message: "Removed from favorites" });
-        } else {
-            res.status(404).json({ message: "Favorite not found" });
-        }
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+router.delete('/:id', deleteUser);
 
 module.exports = router;

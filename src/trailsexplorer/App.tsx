@@ -341,9 +341,9 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-cream">
+        <div className="min-h-screen bg-cream flex flex-col">
             <Header setView={setView} currentView={view} userRole={user?.role} />
-            <main>{renderContent()}</main>
+            <main className="flex-grow">{renderContent()}</main>
             <footer className="bg-forest-green text-cream mt-8 py-4">
                 <div className="container mx-auto text-center text-sm">
                     <p>&copy; {new Date().getFullYear()} TrailsExplorer. Adventure Awaits.</p>

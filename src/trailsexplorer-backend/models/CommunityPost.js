@@ -22,6 +22,8 @@ const CommunityPost = sequelize.define('CommunityPost', {
         allowNull: true
     },
     like_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+    comment_count: { type: DataTypes.INTEGER, defaultValue: 0 },
+    share_count: { type: DataTypes.INTEGER, defaultValue: 0 },
     visibility: {
         type: DataTypes.ENUM('PUBLIC', 'PRIVATE', 'FRIENDS_ONLY', 'GROUP'),
         defaultValue: 'PUBLIC'

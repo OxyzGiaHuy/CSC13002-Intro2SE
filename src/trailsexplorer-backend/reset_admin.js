@@ -13,13 +13,22 @@ async function resetAdminPassword() {
         const admin = await User.findOne({ where: { email: adminEmail } });
 
         if (!admin) {
-            console.log('Admin user not found!');
+            console.log('Admin user not found! Creating new admin user...');
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            await User.create({
+                username: 'admin',
+                email: adminEmail,
+                password: hashedPassword,
+                role: 'ADMIN'
+            });
+            console.log(`\n✅ Admin user created with email: ${adminEmail} and password: ${newPassword}\n`);
             return;
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         admin.password = hashedPassword;
+        admin.role = 'ADMIN'; // Ensure role is ADMIN
         await admin.save();
 
         console.log(`\n✅ Password for ${adminEmail} has been reset to: ${newPassword}\n`);

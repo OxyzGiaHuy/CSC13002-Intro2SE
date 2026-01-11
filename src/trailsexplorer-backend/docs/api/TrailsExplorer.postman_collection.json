@@ -1,0 +1,137 @@
+{
+	"info": {
+		"_postman_id": "1d08ee0e-2127-4b97-bbe1-1808b947f9aa",
+		"name": "TrailsExplorer API Testing",
+		"description": "Collection kiểm thử các endpoint cơ bản của hệ thống TrailsExplorer.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "51336425",
+		"_collection_link": "https://actrinh-8302826.postman.co/workspace/Andra-Crista's-Workspace~019fdb12-2c5f-4df1-8c8f-55ccbba652c5/collection/51336425-1d08ee0e-2127-4b97-bbe1-1808b947f9aa?action=share&source=collection_link&creator=51336425"
+	},
+	"item": [
+		{
+			"name": "General",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response body has status OK\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 200ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"health"
+							]
+						},
+						"description": "Kiểm tra trạng thái server."
+					},
+					"response": []
+				},
+				{
+					"name": "Root Endpoint",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Body contains welcome message\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"TrailsExplorer API is running\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								""
+							]
+						},
+						"description": "Trang chủ API."
+					},
+					"response": []
+				},
+				{
+					"name": "Test Error Handling",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 (Bad Request)\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Error message is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Đây là lỗi thử nghiệm từ TrailsExplorer!\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/test-error",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"test-error"
+							]
+						},
+						"description": "Endpoint giả lập lỗi để test middleware xử lý lỗi."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
