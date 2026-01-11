@@ -1,5 +1,11 @@
 const { Pool } = require('pg');
-require('dotenv').config();
+
+if (!process.env.DB_HOST) {
+    const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+    require('dotenv').config({ path: envFile, override: true });
+}
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -7,17 +13,18 @@ const pool = new Pool({
   database: process.env.DB_NAME,
   password: process.env.DB_PASS,
   port: process.env.DB_PORT,
-  ssl: {
+  
+  // Chỉ bật SSL nếu là Production
+  ssl: isProduction ? {
     rejectUnauthorized: false
-  }
+  } : false 
 });
 
-// Kiểm tra kết nối
 pool.connect((err, client, release) => {
     if (err) {
-        return console.error('Lỗi kết nối Database:', err.stack);
+        return console.error('[pg] Lỗi kết nối:', err.message);
     }
-    console.log('Đã kết nối thành công tới PostgreSQL: trailsexplorer');
+    console.log(`[pg] Đã kết nối thành công tới: ${process.env.DB_NAME}`);
     release();
 });
 
