@@ -25,8 +25,8 @@ const User = sequelize.define('User', {
     total_trails_conquered: { type: DataTypes.INTEGER, defaultValue: 0 },
 
     // Sign-up verification fields
-    is_email_verified: { type: DataTypes.BOOLEAN, defaultValue: false },
-    is_active: { type: DataTypes.BOOLEAN, defaultValue: true }
+    is_email_verified: { type: DataTypes.BOOLEAN, defaultValue: false, field: 'is_email_verified' },
+    is_active: { type: DataTypes.BOOLEAN, defaultValue: true, field: 'is_active' }
 }, {
     tableName: 'users',
     timestamps: true,
