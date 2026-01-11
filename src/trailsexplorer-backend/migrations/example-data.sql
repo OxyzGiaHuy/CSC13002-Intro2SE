@@ -315,28 +315,23 @@ INSERT INTO trail_images (trail_id, uploaded_by, image_url, caption, is_featured
 -- Hải Vân (Đường đèo, biển)
 (9, 9, 'https://images.unsplash.com/photo-1663856449506-a009e27878a9?q=80&w=1200&h=800&auto=format&fit=crop', 'Cung đường đèo Hải Vân', TRUE, '2024-07-22 14:00:00', ST_SetSRID(ST_MakePoint(108.202, 16.185), 4326)),
 -- Hạ Long
-(10, 6, 'https://images.unsplash.com/photo-1692731797626-fa37b7fbfd91?q=80&w=1200&h=800&auto=format&fit=crop', 'Vịnh Hạ Long buổi hoàng hôn', TRUE, '2024-11-30 10:00:00', ST_SetSRID(ST_MakePoint(107.087, 20.952), 4326)),
+(10, 6, 'https://images.unsplash.com/photo-1528127269322-539801943592?q=80&w=1200&h=800&auto=format&fit=crop', 'Vịnh Hạ Long buổi hoàng hôn', TRUE, '2024-11-30 10:00:00', ST_SetSRID(ST_MakePoint(107.087, 20.952), 4326)),
+(11, 2, 'https://images.unsplash.com/photo-1678099006439-dba9e4d3f9f5?q=80&w=1200&h=800&auto=format&fit=crop', 'Đỉnh Lang Bian', TRUE, '2024-11-20 07:00:00', ST_SetSRID(ST_MakePoint(108.4333, 12.0500), 4326)),
+(12, 7, 'https://images.unsplash.com/photo-1761218963784-39ef992a6da3?q=80&w=1200&h=800&auto=format&fit=crop', 'Đèo Ô Quy Hồ', TRUE, '2024-12-25 08:00:00', ST_SetSRID(ST_MakePoint(103.6667, 22.4167), 4326)),
+(13, 6, 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1200&h=800&auto=format&fit=crop', 'Rừng Trà Sư', TRUE, '2024-10-15 09:00:00', ST_SetSRID(ST_MakePoint(105.0833, 10.4167), 4326)),
 -- Bà Đen (Chùa, núi)
 (14, 4, 'https://images.unsplash.com/photo-1695442443973-40067c5f3d7a?q=80&w=1200&h=800&auto=format&fit=crop', 'Chùa Bà Đen Tây Ninh', FALSE, '2024-04-15 13:00:00', ST_SetSRID(ST_MakePoint(106.201, 11.367), 4326)),
+(15, 10, 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?q=80&w=1200&h=800&auto=format&fit=crop', 'Vịnh Bái Tử Long', TRUE, '2024-10-20 10:00:00', ST_SetSRID(ST_MakePoint(107.4167, 21.0833), 4326)),
 -- Bidoup
-(16, 3, 'https://images.unsplash.com/photo-1686242228254-ca3bedc1db57?q=80&w=1200&h=800&auto=format&fit=crop', 'Rừng già Bidoup Núi Bà', TRUE, '2024-12-01 09:30:00', ST_SetSRID(ST_MakePoint(108.5, 12.1), 4326));
+(16, 3, 'https://images.unsplash.com/photo-1686242228254-ca3bedc1db57?q=80&w=1200&h=800&auto=format&fit=crop', 'Rừng già Bidoup Núi Bà', TRUE, '2024-12-01 09:30:00', ST_SetSRID(ST_MakePoint(108.5, 12.1), 4326)),
+(17, 3, 'https://images.unsplash.com/photo-1562920618-c427d9252d7a?q=80&w=1200&h=800&auto=format&fit=crop', 'Núi Tây Côn Lĩnh sương mù', TRUE, '2024-11-05 07:45:00', ST_SetSRID(ST_MakePoint(104.8, 22.7), 4326)),
+(18, 8, 'https://images.unsplash.com/photo-1686755660203-55781dbc2f24?q=80&w=1200&h=800&auto=format&fit=crop', 'Cổng Trời Quản Bạ', TRUE, '2024-09-15 08:20:00', ST_SetSRID(ST_MakePoint(104.9, 23.0), 4326)),
+(19, 2, 'https://images.unsplash.com/photo-1595634840658-26e8575ded94?q=80&w=1200&h=800&auto=format&fit=crop', 'Hồ Ba Bể bình minh', TRUE, '2024-10-22 06:50:00', ST_SetSRID(ST_MakePoint(105.6, 22.4), 4326)),
+(20, 4, 'https://images.unsplash.com/photo-1462688681110-15bc88b1497c?q=80&w=1200&h=800&auto=format&fit=crop', 'Núi Dinh khung cảnh sớm mai', TRUE, '2024-11-11 07:10:00', ST_SetSRID(ST_MakePoint(107.1, 10.5), 4326));
 
 -- ==========================================
 -- 6. OFFLINE MAPS - 5 regions
 -- ==========================================
-
--- ==========================================
--- Additional featured images for trails that were missing (17-20)
--- ==========================================
-INSERT INTO trail_images (trail_id, uploaded_by, image_url, caption, is_featured, taken_at, location) VALUES
-(11, 2, 'https://images.unsplash.com/photo-1626017367352-8780373e9111?q=80&w=1200&h=800&auto=format&fit=crop', 'Đỉnh Lang Bian', TRUE, '2024-11-20 07:00:00', ST_SetSRID(ST_MakePoint(108.4333, 12.0500), 4326)),
-(12, 7, 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?q=80&w=1200&h=800&auto=format&fit=crop', 'Đèo Ô Quy Hồ', TRUE, '2024-12-25 08:00:00', ST_SetSRID(ST_MakePoint(103.6667, 22.4167), 4326)),
-(13, 6, 'https://images.unsplash.com/photo-1583344697392-5d46152a5ca4?q=80&w=1200&h=800&auto=format&fit=crop', 'Rừng Trà Sư', TRUE, '2024-10-15 09:00:00', ST_SetSRID(ST_MakePoint(105.0833, 10.4167), 4326)),
-(15, 10, 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?q=80&w=1200&h=800&auto=format&fit=crop', 'Vịnh Bái Tử Long', TRUE, '2024-10-20 10:00:00', ST_SetSRID(ST_MakePoint(107.4167, 21.0833), 4326)),
-(17, 3, 'https://images.unsplash.com/photo-1552394459-917cbbffbc84?q=80&w=1200&h=800&auto=format&fit=crop', 'Núi Tây Côn Lĩnh sương mù', TRUE, '2024-11-05 07:45:00', ST_SetSRID(ST_MakePoint(104.8, 22.7), 4326)),
-(18, 8, 'https://images.unsplash.com/photo-1686755660203-55781dbc2f24?q=80&w=1200&h=800&auto=format&fit=crop', 'Cổng Trời Quản Bạ', TRUE, '2024-09-15 08:20:00', ST_SetSRID(ST_MakePoint(104.9, 23.0), 4326)),
-(19, 2, 'https://images.unsplash.com/photo-1595634840658-26e8575ded94?q=80&w=1200&h=800&auto=format&fit=crop', 'Hồ Ba Bể bình minh', TRUE, '2024-10-22 06:50:00', ST_SetSRID(ST_MakePoint(105.6, 22.4), 4326)),
-(20, 4, 'https://images.unsplash.com/photo-1462688681110-15bc88b1497c?q=80&w=1200&h=800&auto=format&fit=crop', 'Núi Dinh khung cảnh sớm mai', TRUE, '2024-11-11 07:10:00', ST_SetSRID(ST_MakePoint(107.1, 10.5), 4326));
 
 INSERT INTO offline_map_regions (region_id, name, description, bounding_box, zoom_levels, size_mb, version, is_active) VALUES
 (1, 'Tây Bắc Việt Nam', 'Bản đồ offline khu vực Tây Bắc bao gồm Sapa, Fansipan, Mù Cang Chải', 

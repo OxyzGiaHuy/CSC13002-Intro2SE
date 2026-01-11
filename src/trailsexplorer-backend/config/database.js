@@ -19,7 +19,6 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: 'postgres',
     logging: false,
-<<<<<<< HEAD
     dialectOptions: isProduction ? {
       // Chỉ bật SSL nếu là Production (AWS)
       ssl: {
