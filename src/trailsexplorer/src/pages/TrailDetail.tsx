@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Trail } from '../types/index';
 import { getTrailById } from '../services/trailService';
+import { useAuth } from '../context/AuthContext';
 import {
     ArrowLeftIcon,
     HeartIcon,
@@ -27,9 +28,69 @@ export interface TrailDetailProps {
 }
 
 const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onToggleFavorite, onSelectMap }) => {
-    // Initial trail from props (might have partial data)
-    const initialTrail = trails.find(t => t.id === trailId);
-    const [trail, setTrail] = React.useState<Trail | undefined>(initialTrail);
+    const { user, token } = useAuth(); // Get auth context
+
+    // Derived state for favorite status from the parent trails prop (source of truth for favorites)
+    // accessible even if local detailed trail isn't fully loaded or is stale regarding favorites
+    const parentTrailState = trails.find(t => t.id === trailId);
+    const isFavorited = parentTrailState?.isFavorited ?? false;
+
+    // Local state for detailed trail info (description, reviews, images)
+    // We initialize with the basic info we have
+    const [trail, setTrail] = React.useState<Trail | undefined>(parentTrailState);
+
+    // Sync local trail state with prop updates (optional, but good for consistency if other props change)
+    React.useEffect(() => {
+        if (parentTrailState) {
+            setTrail(prev => prev ? { ...prev, ...parentTrailState } : parentTrailState);
+        }
+    }, [parentTrailState]);
+
+    // Review Form State
+    const [reviewRating, setReviewRating] = React.useState(5);
+    const [reviewContent, setReviewContent] = React.useState('');
+    const [isSubmittingReview, setIsSubmittingReview] = React.useState(false);
+    const [reviewStatus, setReviewStatus] = React.useState<{ type: 'success' | 'error', message: string } | null>(null);
+
+    // Filter Reviews State (Removed if unused, or handled locally later)
+
+    const handleSubmitReview = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!user || !token) return;
+
+        setIsSubmittingReview(true);
+        setReviewStatus(null);
+
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+            const response = await fetch(`${API_URL}/api/trails/${trailId}/reviews`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    overall_rating: reviewRating,
+                    content: reviewContent // difficulty_rating removed
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to submit review');
+            }
+
+            setReviewStatus({ type: 'success', message: 'Review submitted successfully! It will appear after admin approval.' });
+            setReviewContent('');
+            setReviewRating(5);
+        } catch (err: any) {
+            console.error(err);
+            setReviewStatus({ type: 'error', message: err.message });
+        } finally {
+            setIsSubmittingReview(false);
+        }
+    };
+
     // Demo States
     const [show3DMap, setShow3DMap] = React.useState(false);
     const [showNavigation, setShowNavigation] = React.useState(false);
@@ -37,6 +98,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
     const [simProgress, setSimProgress] = React.useState(0); // 0-100 for navigation sim
 
     React.useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to top
         const fetchDetail = async () => {
             if (trailId) {
                 const detailedTrail = await getTrailById(trailId);
@@ -96,9 +158,14 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                     <button onClick={onBack} className="flex items-center gap-2 text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-full transition-all backdrop-blur-sm">
                         <ArrowLeftIcon className="w-5 h-5" /> Back
                     </button>
-                    <button onClick={() => setShow3DMap(true)} className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full transition-all backdrop-blur-sm shadow-lg border border-white/20">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z" /><path d="M12 12l8-4.5" /><path d="M12 12v9" /><path d="M12 12L4 7.5" /></svg>
-                        <span className="font-bold text-sm">View 3D Map</span>
+                    <button
+                        onClick={() => onToggleFavorite(trail.id)}
+                        className={`p-3 rounded-full backdrop-blur-md transition-all ${isFavorited
+                            ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30'
+                            : 'bg-black/30 text-white hover:bg-black/50'
+                            }`}
+                    >
+                        <HeartIcon className={`w-6 h-6 ${isFavorited ? 'fill-current' : ''}`} />
                     </button>
                 </div>
 
@@ -121,13 +188,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                 </div>
 
                 {/* Favorite Button (Floating) */}
-                <button
-                    onClick={(e) => { e.stopPropagation(); onToggleFavorite(trail.id); }}
-                    className="absolute bottom-[-28px] right-8 md:right-16 bg-white rounded-full p-4 shadow-2xl hover:scale-110 transition-transform z-20"
-                    aria-label={trail.isFavorited ? "Remove from favorites" : "Add to favorites"}
-                >
-                    <HeartIcon className={`w-8 h-8 ${trail.isFavorited ? 'text-red-500 fill-current' : 'text-gray-400'}`} filled={trail.isFavorited} />
-                </button>
+
             </div>
 
             {/* Main Content Info */}
@@ -153,12 +214,11 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                 </div>
                             </div>
                             <button
-                                onClick={() => setShowNavigation(true)}
-                                className="bg-forest-green hover:bg-green-900 text-white p-6 rounded-2xl shadow-xl shadow-green-900/20 flex flex-col items-center justify-center transition-all transform hover:scale-[1.02] active:scale-95 relative overflow-hidden"
+                                onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(trail.name + ' ' + trail.location)}`, '_blank')}
+                                className="bg-[#3A6D3E] hover:bg-[#2F5A32] text-white p-6 rounded-3xl border-2 border-black/80 shadow-[0_4px_0_0_rgba(0,0,0,0.8)] flex flex-col items-center justify-center transition-all transform hover:translate-y-1 hover:shadow-none active:translate-y-1 list-none group"
                             >
-                                <div className="absolute inset-0 bg-[url('https://img.freepik.com/free-vector/abstract-topographic-map-lines-background_23-2148508734.jpg')] opacity-20 mix-blend-overlay"></div>
-                                <Navigation className="w-6 h-6 mb-2" />
-                                <span className="font-black text-xs uppercase tracking-widest text-center">Start Navigation</span>
+                                <MapIcon className="w-8 h-8 mb-3 stroke-[2.5]" />
+                                <span className="font-black text-sm uppercase tracking-[0.2em] text-center font-display">Google Map</span>
                             </button>
                         </div>
 
@@ -170,44 +230,93 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                             </p>
                         </div>
 
-                        {/* Scenery Tags */}
-                        <div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-3">Highlights</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {trail.scenery.map(s => (
-                                    <span key={s} className="px-4 py-2 bg-sage-green/10 text-sage-green rounded-full text-sm font-medium border border-sage-green/20">
-                                        {s}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
+                        {/* Scenery Tags (Highlights) Removed */}
 
                         {/* Reviews */}
                         <div>
-                            <h3 className="text-2xl font-display font-bold text-gray-900 mb-6">Community Reviews ({trail.reviews.length})</h3>
-                            <div className="space-y-6">
-                                {trail.reviews.map((r, idx) => (
-                                    <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <img
-                                                src={r.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${r.username}`}
-                                                alt={r.full_name}
-                                                className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100 bg-gray-100"
-                                            />
-                                            <div>
-                                                <p className="font-bold text-gray-900">
-                                                    {r.full_name} <span className="text-gray-500 font-normal text-sm">(@{r.username})</span>
-                                                </p>
-                                                <div className="flex text-yellow-400 text-sm">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <span key={i}>{i < r.rating ? "★" : "☆"}</span>
-                                                    ))}
-                                                </div>
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-2xl font-display font-bold text-gray-900">Community Reviews ({trail.reviews.length})</h3>
+                            </div>
+
+                            {/* Review Form */}
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+                                <h4 className="font-bold text-lg text-forest-green mb-4">Write a Review</h4>
+                                {user ? (
+                                    <form onSubmit={handleSubmitReview} className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                                            <div className="flex gap-1">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <button
+                                                        type="button"
+                                                        key={star}
+                                                        onClick={() => setReviewRating(star)}
+                                                        className={`text-2xl transition-colors ${reviewRating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                                                    >
+                                                        ★
+                                                    </button>
+                                                ))}
                                             </div>
                                         </div>
-                                        <p className="text-gray-600 leading-relaxed text-sm lg:text-base">"{r.comment}"</p>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Your detailed review</label>
+                                            <textarea
+                                                value={reviewContent}
+                                                onChange={(e) => setReviewContent(e.target.value)}
+                                                placeholder="Share your experience about the trail terrain, scenery, difficulty..."
+                                                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-forest-green focus:border-forest-green transition-all"
+                                                rows={4}
+                                                required
+                                            ></textarea>
+                                        </div>
+                                        {reviewStatus && (
+                                            <div className={`text-sm p-3 rounded-lg ${reviewStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                                                {reviewStatus.message}
+                                            </div>
+                                        )}
+                                        <button
+                                            type="submit"
+                                            disabled={isSubmittingReview}
+                                            className="px-6 py-2 bg-forest-green text-white font-bold rounded-xl hover:bg-forest-green/90 transition-all disabled:bg-gray-400"
+                                        >
+                                            {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                                        </button>
+                                        <p className="text-xs text-gray-500 mt-2">* Reviews require admin approval before appearing.</p>
+                                    </form>
+                                ) : (
+                                    <div className="bg-gray-50 p-6 rounded-xl text-center border border-dashed border-gray-300">
+                                        <p className="text-gray-600 mb-3">Authentication required to post reviews.</p>
                                     </div>
-                                ))}
+                                )}
+                            </div>
+
+                            <div className="space-y-6">
+                                {trail.reviews.length > 0 ? (
+                                    trail.reviews.map((r, idx) => (
+                                        <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <img
+                                                    src={r.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${r.username}`}
+                                                    alt={r.full_name}
+                                                    className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-100 bg-gray-100"
+                                                />
+                                                <div>
+                                                    <p className="font-bold text-gray-900">
+                                                        {r.full_name} <span className="text-gray-500 font-normal text-sm">(@{r.username})</span>
+                                                    </p>
+                                                    <div className="flex text-yellow-400 text-sm">
+                                                        {[...Array(5)].map((_, i) => (
+                                                            <span key={i}>{i < r.rating ? "★" : "☆"}</span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p className="text-gray-600 leading-relaxed text-sm lg:text-base">"{r.comment}"</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray-500 italic">No reviews yet. Be the first to share your experience!</p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -252,23 +361,10 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                     </div>
                                 ))}
                             </div>
-                            <button className="w-full mt-4 text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest">
-                                View All Listings
-                            </button>
+                            {/* View All Listings Button Removed */}
                         </div>
 
-                        {/* CTA Box */}
-                        <div className="bg-earth-brown/5 p-6 rounded-3xl border border-earth-brown/10">
-                            <h3 className="text-xl font-display font-bold text-earth-brown mb-2">Ready to go?</h3>
-                            <p className="text-sm text-gray-600 mb-4">Make sure you have all your gear ready. Check our AI planner for a custom packing list.</p>
-                            <button
-                                onClick={() => {
-                                    alert(`Generating AI Packing List for ${trail.name}...\n\n(This feature will be fully integrated with the Planner soon!)`);
-                                }}
-                                className="w-full py-3 bg-earth-brown text-white font-bold rounded-xl hover:bg-earth-brown/90 transition-colors shadow-lg shadow-orange-900/10">
-                                Generate Packing List
-                            </button>
-                        </div>
+                        {/* Ready to go? Section Removed */}
                     </div>
                 </div>
             </div>

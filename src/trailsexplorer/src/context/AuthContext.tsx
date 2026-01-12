@@ -7,6 +7,7 @@ import { MOCK_USER } from '../data/constants';
 
 interface AuthContextType {
     user: User | null;
+    token: string | null; // Added
     isAuthenticated: boolean;
     login: (email: string, password?: string) => Promise<void>;
     logout: () => void;
@@ -33,20 +34,24 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [token, setToken] = useState<string | null>(localStorage.getItem('token')); // Initialize from local storage
+    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token')); // Initialize from existence of token
 
-    // Check for existing token on mount
+    // Check for existing token on mount (validation)
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const savedToken = localStorage.getItem('token');
         const savedUser = localStorage.getItem('user');
-        if (token && savedUser) {
+        if (savedToken && savedUser) {
             try {
                 setUser(JSON.parse(savedUser));
+                setToken(savedToken);
                 setIsAuthenticated(true);
             } catch (e) {
                 console.error("Failed to parse saved user", e);
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
+                setToken(null);
+                setIsAuthenticated(false);
             }
         }
     }, []);
@@ -68,7 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             const response = await res.json();
             // Backend returns: { success: true, message: '...', data: { user_id, username, full_name, email, role, token } }
-            const { token, user_id, username, full_name, email: userEmail, role } = response.data;
+            const { token: newToken, user_id, username, full_name, email: userEmail, role } = response.data;
 
             // Map backend data to frontend User type
             const userData: User = {
@@ -79,10 +84,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 role: (role || 'user').toLowerCase() as 'admin' | 'user'
             };
 
-            localStorage.setItem('token', token);
+            localStorage.setItem('token', newToken);
             localStorage.setItem('user', JSON.stringify(userData));
 
             setUser(userData);
+            setToken(newToken); // Update state
             setIsAuthenticated(true);
         } catch (error) {
             console.error('[Auth] Login error:', error);
@@ -130,11 +136,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         setUser(null);
+        setToken(null); // Clear state
         setIsAuthenticated(false);
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, login, logout, register, updateProfile }}>
+        <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout, register, updateProfile }}>
             {children}
         </AuthContext.Provider>
     );

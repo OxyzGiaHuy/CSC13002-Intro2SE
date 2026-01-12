@@ -1,0 +1,20 @@
+INSERT INTO challenges (name, description, challenge_type, target_value, unit, start_date, end_date, reward_points, image_url) VALUES
+('Early Bird 2026', 'Complete 5 hikes starting before 6 AM.', 'COUNT', 5, 'hikes', '2026-01-01', '2026-03-31', 500, 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=800&q=80'),
+('Weekend Warrior', 'Hike 20km in a single weekend.', 'DISTANCE', 20, 'km', '2026-02-01', '2026-02-28', 300, 'https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=800&q=80'),
+('Peak Bagger', 'Summit 3 mountains above 2000m.', 'COUNT', 3, 'summits', '2026-01-01', '2026-12-31', 1000, 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80'),
+('Forest Bather', 'Spend 10 hours on forest trails.', 'DURATION', 10, 'hours', '2026-03-01', '2026-04-30', 400, 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80'),
+('Trail Guardian', 'Participate in 2 trail cleanup events.', 'COUNT', 2, 'events', '2026-04-01', '2026-06-30', 600, 'https://images.unsplash.com/photo-1595278069441-2cf29f52d921?w=800&q=80'),
+('Night Owl', 'Complete a night hike (with a guide).', 'COUNT', 1, 'hike', '2026-05-01', '2026-08-31', 300, 'https://images.unsplash.com/photo-1516939884455-1445c8652f83?w=800&q=80'),
+('Marathon Month', 'Hike a total of 42km in one month.', 'DISTANCE', 42, 'km', '2026-06-01', '2026-06-30', 800, 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80'),
+('Social Hiker', 'Join 3 group hikes via the app.', 'COUNT', 3, 'hikes', '2026-01-01', '2026-12-31', 400, 'https://images.unsplash.com/photo-1533240332313-0db49b459ad6?w=800&q=80'),
+('Gear Guru', 'Submit 5 detailed gear reviews.', 'COUNT', 5, 'reviews', '2026-01-15', '2026-12-31', 500, 'https://images.unsplash.com/photo-1504198458649-3128b932f49e?w=800&q=80'),
+('New Horizons', 'Visit 5 different trails you have never been to.', 'COUNT', 5, 'trails', '2026-02-01', '2026-11-30', 700, 'https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=800&q=80')
+ON CONFLICT (name) DO UPDATE SET 
+description = EXCLUDED.description,
+challenge_type = EXCLUDED.challenge_type,
+target_value = EXCLUDED.target_value,
+unit = EXCLUDED.unit,
+start_date = EXCLUDED.start_date,
+end_date = EXCLUDED.end_date,
+reward_points = EXCLUDED.reward_points,
+image_url = EXCLUDED.image_url;

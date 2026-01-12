@@ -93,7 +93,7 @@ const Planner: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-            <h2 className="text-3xl font-display text-forest-green mb-6 text-center">AI Trekking Planner</h2>
+            <h2 className="text-5xl font-bold font-display text-forest-green mb-8 text-center drop-shadow-sm">AI Trekking Planner</h2>
             {error && (
                 <div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                     <span className="block sm:inline">{error}</span>

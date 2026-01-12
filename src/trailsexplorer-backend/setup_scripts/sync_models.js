@@ -1,6 +1,7 @@
-const sequelize = require('./config/database');
-const Review = require('./models/Review');
-const CommunityPost = require('./models/CommunityPost');
+const sequelize = require('../config/database');
+const Review = require('../models/Review');
+const CommunityPost = require('../models/CommunityPost');
+const Challenge = require('../models/Challenge');
 
 async function syncModels() {
     try {
@@ -10,6 +11,10 @@ async function syncModels() {
         console.log('Syncing Review model...');
         await Review.sync({ alter: true });
         console.log('✅ Review model synced.');
+
+        console.log('Syncing Challenge model...');
+        await Challenge.sync({ alter: true });
+        console.log('✅ Challenge model synced.');
 
         console.log('Syncing CommunityPost model...');
 

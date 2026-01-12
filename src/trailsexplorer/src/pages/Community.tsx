@@ -339,14 +339,19 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                 content_type: 'TEXT',
                 media_urls: newPostImage ? [newPostImage] : []
             });
-            const postWithUser = {
-                ...newPost,
-                user: {
-                    username: user?.name || 'You',
-                    avatar_url: user?.avatarUrl || 'https://ui-avatars.com/api/?name=You&background=random'
-                }
-            };
-            setPosts(prev => [postWithUser, ...prev]);
+            if (newPost.is_approved) {
+                const postWithUser = {
+                    ...newPost,
+                    user: {
+                        username: user?.name || 'You',
+                        avatar_url: user?.avatarUrl || 'https://ui-avatars.com/api/?name=You&background=random'
+                    }
+                };
+                setPosts(prev => [postWithUser, ...prev]);
+            } else {
+                alert("Post submitted successfully! It will be visible after Admin approval.");
+            }
+            // Clear form
             setNewPostText('');
             setNewPostImage(null);
         } catch (error: any) {
@@ -940,7 +945,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                 { id: 'FEED', label: 'Activity Feed', icon: Activity, color: 'text-sage-green', bg: 'bg-sage-green/10', count: 'New' },
                                 { id: 'MARKET', label: 'Gear Market', icon: ShoppingBag, color: 'text-earth-brown', bg: 'bg-earth-brown/10', count: 'Hot' },
                                 { id: 'GROUPS', label: 'Groups', icon: Users, color: 'text-forest-green', bg: 'bg-forest-green/10', count: groups.length },
-                                { id: 'CHALLENGES', label: '2026 Quests', icon: Trophy, color: 'text-orange-500', bg: 'bg-orange-50', count: 'Active' },
+                                { id: 'CHALLENGES', label: 'Challenges', icon: Trophy, color: 'text-orange-500', bg: 'bg-orange-50', count: 'Active' },
                                 { id: 'GUIDEBOOK', label: 'Guidebook', icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-50', count: 'New' },
                             ].map(tab => (
                                 <button
@@ -954,7 +959,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                         </div>
                                         <div className="flex flex-col items-start leading-none">
                                             <span className="tracking-tight">{tab.label}</span>
-                                            {view !== tab.id && <span className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest">{tab.id === 'CHALLENGES' ? 'Join Quest' : 'Explore'}</span>}
+                                            {view !== tab.id && <span className="text-[10px] text-gray-400 mt-1 uppercase tracking-widest whitespace-nowrap">{tab.id === 'CHALLENGES' ? 'Join Challenge' : 'Explore'}</span>}
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3 relative z-10">

@@ -15,11 +15,10 @@ const Challenge = sequelize.define('Challenge', {
         type: DataTypes.ENUM('DISTANCE', 'ELEVATION', 'TRAIL_COUNT', 'DURATION', 'STREAK'),
         defaultValue: 'DISTANCE'
     },
+    start_date: { type: DataTypes.DATEONLY },
     end_date: { type: DataTypes.DATEONLY },
-    challenge_type: {
-        type: DataTypes.ENUM('DISTANCE', 'ELEVATION', 'TRAIL_COUNT', 'DURATION', 'STREAK'),
-        defaultValue: 'DISTANCE'
-    }
+    reward_points: { type: DataTypes.INTEGER, defaultValue: 0 },
+    image_url: { type: DataTypes.STRING }
 }, {
     tableName: 'challenges',
     timestamps: true,
