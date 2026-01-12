@@ -32,6 +32,8 @@ Render provides a free Web Service tier that spins down after inactivity but wor
     *   Add `JWT_SECRET`: Generate a random secure string.
     *   Add `GEMINI_API_KEY`: Your Google Gemini API Key.
     *   Add `PORT`: `10000` (Render default).
+    *   **Add `CLIENT_URL`**: The URL of your deployed Frontend (e.g., `https://your-frontend-project.vercel.app`).
+        *   *Note: You may need to deploy Frontend first to get this URL, or guess it based on project name. You can update this later in Render.*
 7.  Click **Deploy**.
 
 ## 3. Frontend (React/Vite) -> **Vercel**
@@ -50,8 +52,11 @@ Vercel is optimized for frontend frameworks and offers a seamless free tier.
 ## 4. Final Verification
 1.  Open your Vercel URL.
 2.  Try to Register/Login.
-    *   If it fails, check the Network tab. If it's hitting `localhost`, you missed step 3.6.
-3.  Test the AI features to ensure the Backend can talk to Gemini.
+3.  **Critical Check:** Open browser DevTools (F12) -> Network tab.
+    *   Perform an action (like login or generate plan).
+    *   Click the request.
+    *   **Verify the Request URL** starts with your Render backend URL (e.g., `https://trailsexplorer-api.onrender.com/...`), NOT `localhost`.
+4.  Test the AI features to ensure the Backend can talk to Gemini.
 
 ---
 **Note:** Render free instances spin down after 15 mins of inactivity. The first request might take 30-50s to wake it up. This is normal for the free tier.

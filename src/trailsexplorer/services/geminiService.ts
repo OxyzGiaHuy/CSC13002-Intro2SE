@@ -2,7 +2,7 @@ import type { ItineraryPlan } from '../src/types';
 
 // Use the backend URL (assuming it's running on localhost:5000)
 // Ideally, this should be in an environment variable VITE_API_URL
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const getAuthToken = () => {
   // Basic implementation: Retrieves token from localStorage
