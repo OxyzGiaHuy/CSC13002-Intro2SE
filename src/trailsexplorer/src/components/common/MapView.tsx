@@ -103,7 +103,7 @@ const MapView: React.FC<MapViewProps> = ({ trailId, onBack, trails }) => {
             // Start Marker
             const startIcon = L.divIcon({
                 className: 'custom-div-icon',
-                html: "<div style='background-color: #1A5D1A; width: 15px; height: 15px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);'></div>",
+                html: "<div style='background-color: #047857; width: 15px; height: 15px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);'></div>",
                 iconSize: [15, 15],
                 iconAnchor: [7, 7]
             });

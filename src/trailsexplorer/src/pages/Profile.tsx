@@ -117,11 +117,11 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
 
     if (isEditing) {
         return (
-            <div className="min-h-screen bg-[#F1F5E8] pb-20">
+            <div className="min-h-screen bg-[#F0FDF4] pb-20">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <button 
                         onClick={() => setIsEditing(false)}
-                        className="flex items-center gap-2 text-[#1A5D1A] hover:text-[#4E9F3D] font-semibold mb-8 transition-colors"
+                        className="flex items-center gap-2 text-[#047857] hover:text-[#10B981] font-semibold mb-8 transition-colors"
                     >
                         <ArrowRight className="w-4 h-4 rotate-180" /> {T.profile.back}
                     </button>
@@ -133,18 +133,18 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                         <div className="space-y-8">
                             {/* Avatar Section */}
                             <div>
-                                <label className="block text-sm font-bold uppercase tracking-wider text-[#1A5D1A] mb-4">{T.profile.profilePhoto}</label>
+                                <label className="block text-sm font-bold uppercase tracking-wider text-[#047857] mb-4">{T.profile.profilePhoto}</label>
                                 <div className="flex items-end gap-6">
                                     <div className="relative">
                                         <img 
                                             src={avatarPreview} 
                                             alt="preview" 
-                                            className="w-24 h-24 rounded-2xl object-cover ring-4 ring-[#1A5D1A]/20 shadow-lg" 
+                                            className="w-24 h-24 rounded-2xl object-cover ring-4 ring-[#047857]/20 shadow-lg" 
                                         />
                                     </div>
                                     <button
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="px-6 py-3 bg-gradient-to-r from-[#4E9F3D] to-[#1A5D1A] text-white rounded-xl hover:shadow-lg font-bold flex items-center gap-2 transition-all transform hover:-translate-y-0.5"
+                                        className="px-6 py-3 bg-gradient-to-r from-[#10B981] to-[#047857] text-white rounded-xl hover:shadow-lg font-bold flex items-center gap-2 transition-all transform hover:-translate-y-0.5"
                                     >
                                         <Upload className="w-5 h-5" /> {T.profile.changePhoto}
                                     </button>
@@ -165,7 +165,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                     <input 
                                         value={form.name} 
                                         onChange={e => setForm(f => ({ ...f, name: e.target.value }))} 
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-[#F1F5E8] focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-[#F1F5E8]/50"
+                                        className="w-full px-4 py-3 rounded-xl border-2 border-[#F0FDF4] focus:border-[#047857] focus:ring-2 focus:ring-[#DCFCE7] outline-none transition-all bg-[#F0FDF4]/50"
                                         placeholder={T.profile.nameLabel}
                                     />
                                 </div>
@@ -175,7 +175,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                     <input 
                                         value={form.phone} 
                                         onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} 
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-[#F1F5E8] focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-[#F1F5E8]/50"
+                                        className="w-full px-4 py-3 rounded-xl border-2 border-[#F0FDF4] focus:border-[#047857] focus:ring-2 focus:ring-[#DCFCE7] outline-none transition-all bg-[#F0FDF4]/50"
                                         placeholder="+84..."
                                     />
                                 </div>
@@ -185,7 +185,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                     <input 
                                         value={form.home_city} 
                                         onChange={e => setForm(f => ({ ...f, home_city: e.target.value }))} 
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-[#F1F5E8] focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-[#F1F5E8]/50"
+                                        className="w-full px-4 py-3 rounded-xl border-2 border-[#F0FDF4] focus:border-[#047857] focus:ring-2 focus:ring-[#DCFCE7] outline-none transition-all bg-[#F0FDF4]/50"
                                     />
                                 </div>
 
@@ -194,7 +194,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                     <input 
                                         value={form.home_country} 
                                         onChange={e => setForm(f => ({ ...f, home_country: e.target.value }))} 
-                                        className="w-full px-4 py-3 rounded-xl border-2 border-[#F1F5E8] focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-[#F1F5E8]/50"
+                                        className="w-full px-4 py-3 rounded-xl border-2 border-[#F0FDF4] focus:border-[#047857] focus:ring-2 focus:ring-[#DCFCE7] outline-none transition-all bg-[#F0FDF4]/50"
                                     />
                                 </div>
                             </div>
@@ -205,7 +205,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                 <textarea 
                                     value={form.bio} 
                                     onChange={e => setForm(f => ({ ...f, bio: e.target.value }))} 
-                                    className="w-full px-4 py-3 rounded-xl border-2 border-[#F1F5E8] focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all resize-none bg-[#F1F5E8]/50"
+                                    className="w-full px-4 py-3 rounded-xl border-2 border-[#F0FDF4] focus:border-[#047857] focus:ring-2 focus:ring-[#DCFCE7] outline-none transition-all resize-none bg-[#F0FDF4]/50"
                                     rows={4}
                                     placeholder={T.profile.bioPlaceholder}
                                 />
@@ -215,13 +215,13 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                             <div className="flex gap-4 pt-4">
                                 <button 
                                     onClick={handleSaveProfile} 
-                                    className="flex-1 px-6 py-4 bg-gradient-to-r from-[#4E9F3D] to-[#1A5D1A] text-white rounded-xl font-bold hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                                    className="flex-1 px-6 py-4 bg-gradient-to-r from-[#10B981] to-[#047857] text-white rounded-xl font-bold hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
                                 >
                                     <Check className="w-5 h-5" /> {T.profile.saveChanges}
                                 </button>
                                 <button 
                                     onClick={() => setIsEditing(false)} 
-                                    className="flex-1 px-6 py-4 bg-[#F1F5E8] text-[#1A5D1A] rounded-xl font-bold hover:bg-[#E8F0E0] transition-all"
+                                    className="flex-1 px-6 py-4 bg-[#F0FDF4] text-[#047857] rounded-xl font-bold hover:bg-[#DCFCE7] transition-all"
                                 >
                                     {T.profile.cancel}
                                 </button>
@@ -234,9 +234,9 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
     }
 
     return (
-        <div className="min-h-screen bg-[#F1F5E8]">
+        <div className="min-h-screen bg-[#F0FDF4]">
             {/* Hero Section - Profile Header */}
-            <div className="bg-gradient-to-br from-[#4E9F3D] via-[#1A5D1A] to-[#2D7A3D] pt-12 pb-24 relative overflow-hidden">
+            <div className="bg-gradient-to-br from-[#10B981] via-[#047857] to-[#059669] pt-12 pb-24 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-5">
                     <div className="absolute top-0 left-1/4 w-96 h-96 bg-white rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
                     <div className="absolute top-0 right-1/4 w-96 h-96 bg-white rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
@@ -284,7 +284,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                         <div className="flex flex-col gap-3 w-full sm:w-auto">
                             <button 
                                 onClick={() => setIsEditing(true)} 
-                                className="px-6 py-3 bg-white text-[#1A5D1A] rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 group"
+                                className="px-6 py-3 bg-white text-[#047857] rounded-xl font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 group"
                             >
                                 <Edit3 className="w-4 h-4 group-hover:scale-110 transition-transform" /> {T.profile.editProfile}
                             </button>
@@ -325,15 +325,15 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                     ].map((stat, idx) => (
                         <div 
                             key={idx}
-                            className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group border-l-4 border-[#1A5D1A]"
+                            className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group border-l-4 border-[#047857]"
                         >
                             <div className="flex items-center justify-between mb-4">
-                                <div className="p-3 bg-[#F1F5E8] rounded-xl group-hover:scale-110 transition-transform duration-300">
-                                    <div className="text-[#1A5D1A]">{stat.icon}</div>
+                                <div className="p-3 bg-[#F0FDF4] rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                    <div className="text-[#047857]">{stat.icon}</div>
                                 </div>
-                                <Zap className="w-5 h-5 text-[#1A5D1A]/20 group-hover:text-[#1A5D1A]/40 transition-colors" />
+                                <Zap className="w-5 h-5 text-[#047857]/20 group-hover:text-[#047857]/40 transition-colors" />
                             </div>
-                            <div className="text-3xl font-bold text-[#1A5D1A] mb-1">{stat.value}</div>
+                            <div className="text-3xl font-bold text-[#047857] mb-1">{stat.value}</div>
                             <div className="text-xs font-bold text-[#0F172A]/60 uppercase tracking-wide">{stat.label}</div>
                         </div>
                     ))}
@@ -348,8 +348,8 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                         {/* Groups Section */}
                         <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="p-3 bg-[#F1F5E8] rounded-xl">
-                                    <Users className="w-6 h-6 text-[#1A5D1A]" />
+                                <div className="p-3 bg-[#F0FDF4] rounded-xl">
+                                    <Users className="w-6 h-6 text-[#047857]" />
                                 </div>
                                 <h2 className="text-2xl font-bold text-[#0F172A]">{T.profile.myGroups}</h2>
                             </div>
@@ -360,11 +360,11 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                     value={newGroup}
                                     onChange={e => setNewGroup(e.target.value)}
                                     placeholder={T.profile.newGroupName}
-                                    className="flex-1 px-4 py-3 border-2 border-[#F1F5E8] rounded-lg focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-[#F1F5E8]/50"
+                                    className="flex-1 px-4 py-3 border-2 border-[#F0FDF4] rounded-lg focus:border-[#047857] focus:ring-2 focus:ring-[#DCFCE7] outline-none transition-all bg-[#F0FDF4]/50"
                                 />
                                 <button
                                     onClick={() => { if (newGroup.trim()) { setGroups(g => [newGroup.trim(), ...g]); setNewGroup(''); } }}
-                                    className="px-6 py-3 bg-gradient-to-r from-[#4E9F3D] to-[#1A5D1A] text-white rounded-lg hover:shadow-lg font-bold transition-all"
+                                    className="px-6 py-3 bg-gradient-to-r from-[#10B981] to-[#047857] text-white rounded-lg hover:shadow-lg font-bold transition-all"
                                 >
                                     {T.profile.create}
                                 </button>
@@ -373,14 +373,14 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                             {/* Groups List */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 {groups.map((g, i) => (
-                                    <div key={i} className="flex items-center justify-between p-4 bg-gradient-to-br from-[#F1F5E8] to-[#E8F0E0] rounded-xl hover:shadow-lg transition-all group border-l-4 border-[#4E9F3D]/50 hover:border-[#4E9F3D] cursor-pointer">
+                                    <div key={i} className="flex items-center justify-between p-4 bg-gradient-to-br from-[#F0FDF4] to-[#DCFCE7] rounded-xl hover:shadow-lg transition-all group border-l-4 border-[#10B981]/50 hover:border-[#10B981] cursor-pointer">
                                         <div className="flex items-center gap-3 min-w-0">
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#4E9F3D] to-[#1A5D1A] flex items-center justify-center text-white font-bold flex-shrink-0">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#10B981] to-[#047857] flex items-center justify-center text-white font-bold flex-shrink-0">
                                                 {g.charAt(0)}
                                             </div>
                                             <span className="font-semibold text-[#0F172A] truncate">{g}</span>
                                         </div>
-                                        <button onClick={() => setView({ view: 'group', name: g })} className="text-[#1A5D1A] opacity-0 group-hover:opacity-100 transition-opacity font-bold text-sm flex items-center gap-1 ml-2 flex-shrink-0">
+                                        <button onClick={() => setView({ view: 'group', name: g })} className="text-[#047857] opacity-0 group-hover:opacity-100 transition-opacity font-bold text-sm flex items-center gap-1 ml-2 flex-shrink-0">
                                             <ArrowRight className="w-4 h-4" />
                                         </button>
                                     </div>
@@ -397,22 +397,22 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                         <div 
                                             key={trail.id} 
                                             onClick={() => onSelectTrail(trail.id)} 
-                                            className="flex items-center gap-4 p-4 hover:bg-[#F1F5E8] rounded-xl transition-all cursor-pointer group border-l-4 border-transparent hover:border-[#1A5D1A]"
+                                            className="flex items-center gap-4 p-4 hover:bg-[#F0FDF4] rounded-xl transition-all cursor-pointer group border-l-4 border-transparent hover:border-[#047857]"
                                         >
                                             <img src={trail.imageUrl} alt={trail.name} className="w-16 h-16 rounded-lg object-cover shadow-md group-hover:shadow-lg transition-shadow flex-shrink-0" />
                                             <div className="flex-grow min-w-0">
-                                                <h4 className="font-bold text-[#0F172A] group-hover:text-[#1A5D1A] transition-colors">{trail.name}</h4>
+                                                <h4 className="font-bold text-[#0F172A] group-hover:text-[#047857] transition-colors">{trail.name}</h4>
                                                 <p className="text-sm text-[#0F172A]/60 flex items-center gap-1"><MapPin className="w-3 h-3 flex-shrink-0" /> {trail.location}</p>
                                             </div>
-                                            <span className="px-3 py-1 bg-[#F1F5E8] text-[#1A5D1A] text-xs font-bold rounded-full flex-shrink-0">{T.profile.completed}</span>
+                                            <span className="px-3 py-1 bg-[#F0FDF4] text-[#047857] text-xs font-bold rounded-full flex-shrink-0">{T.profile.completed}</span>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-12 bg-[#F1F5E8]/30 rounded-xl border-2 border-dashed border-[#1A5D1A]/20">
-                                    <Map className="w-12 h-12 text-[#1A5D1A]/30 mx-auto mb-3" />
+                                <div className="text-center py-12 bg-[#F0FDF4]/30 rounded-xl border-2 border-dashed border-[#047857]/20">
+                                    <Map className="w-12 h-12 text-[#047857]/30 mx-auto mb-3" />
                                     <p className="text-[#0F172A]/60 font-medium mb-3">{T.profile.noTrips}</p>
-                                    <button onClick={() => setView('discover')} className="text-[#1A5D1A] text-sm font-bold hover:underline">{T.profile.exploreLater}</button>
+                                    <button onClick={() => setView('discover')} className="text-[#047857] text-sm font-bold hover:underline">{T.profile.exploreLater}</button>
                                 </div>
                             )}
                         </div>
@@ -423,8 +423,8 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                         {/* Saved Plans */}
                         <div className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-xl transition-shadow">
                             <div className="flex items-center gap-3 mb-6">
-                                <div className="p-3 bg-[#F1F5E8] rounded-xl">
-                                    <Calendar className="w-6 h-6 text-[#1A5D1A]" />
+                                <div className="p-3 bg-[#F0FDF4] rounded-xl">
+                                    <Calendar className="w-6 h-6 text-[#047857]" />
                                 </div>
                                 <h3 className="text-xl font-bold text-[#0F172A]">{T.profile.savedPlans}</h3>
                             </div>
@@ -434,25 +434,25 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                     {savedPlans.slice(0, 5).map(plan => (
                                         <div 
                                             key={plan.id} 
-                                            className="bg-gradient-to-br from-[#F1F5E8] to-[#E8F0E0] p-4 rounded-xl hover:shadow-lg transition-all cursor-pointer group border-l-4 border-[#4E9F3D]/30 hover:border-[#4E9F3D]"
+                                            className="bg-gradient-to-br from-[#F0FDF4] to-[#DCFCE7] p-4 rounded-xl hover:shadow-lg transition-all cursor-pointer group border-l-4 border-[#10B981]/30 hover:border-[#10B981]"
                                             onClick={() => setSelectedPlan(plan)}
                                         >
                                             <div className="flex justify-between items-start gap-2 mb-2">
-                                                <h4 className="font-bold text-[#1A5D1A] group-hover:text-[#0F5A2F] text-sm">{plan.location || `Trip #${plan.id}`}</h4>
-                                                <span className="text-xs bg-white px-2 py-1 rounded-full border border-[#1A5D1A]/20 font-bold text-[#1A5D1A] flex-shrink-0">{plan.duration}d</span>
+                                                <h4 className="font-bold text-[#047857] group-hover:text-[#0F5A2F] text-sm">{plan.location || `Trip #${plan.id}`}</h4>
+                                                <span className="text-xs bg-white px-2 py-1 rounded-full border border-[#047857]/20 font-bold text-[#047857] flex-shrink-0">{plan.duration}d</span>
                                             </div>
                                             <p className="text-xs text-[#0F172A]/60 line-clamp-2 mb-2">
                                                 {plan.plan[0]?.highlights.slice(0, 2).join(', ')}...
                                             </p>
-                                            <button className="text-xs font-bold text-[#1A5D1A] uppercase tracking-wider hover:text-[#0F5A2F] transition-colors">{T.profile.viewDetails}</button>
+                                            <button className="text-xs font-bold text-[#047857] uppercase tracking-wider hover:text-[#0F5A2F] transition-colors">{T.profile.viewDetails}</button>
                                         </div>
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-center py-8 bg-[#F1F5E8]/30 rounded-xl border-2 border-dashed border-[#1A5D1A]/20">
-                                    <Calendar className="w-8 h-8 text-[#1A5D1A]/30 mx-auto mb-2" />
+                                <div className="text-center py-8 bg-[#F0FDF4]/30 rounded-xl border-2 border-dashed border-[#047857]/20">
+                                    <Calendar className="w-8 h-8 text-[#047857]/30 mx-auto mb-2" />
                                     <p className="text-xs text-[#0F172A]/60 mb-3 font-medium">{T.profile.noPlans}</p>
-                                    <button onClick={() => setView('planner')} className="text-[#1A5D1A] text-xs font-bold hover:underline">{T.profile.createPlan}</button>
+                                    <button onClick={() => setView('planner')} className="text-[#047857] text-xs font-bold hover:underline">{T.profile.createPlan}</button>
                                 </div>
                             )}
                         </div>
@@ -476,7 +476,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                         >
                                             <img src={trail.imageUrl} alt={trail.name} className="w-10 h-10 rounded-lg object-cover group-hover:shadow-md transition-shadow flex-shrink-0" />
                                             <div className="min-w-0 flex-grow">
-                                                <p className="font-semibold text-xs text-[#0F172A] truncate group-hover:text-[#1A5D1A]">{trail.name}</p>
+                                                <p className="font-semibold text-xs text-[#0F172A] truncate group-hover:text-[#047857]">{trail.name}</p>
                                                 <p className="text-xs text-[#0F172A]/50 truncate">{trail.location}</p>
                                             </div>
                                             <HeartIcon className="w-4 h-4 text-red-500 flex-shrink-0" filled />
@@ -500,32 +500,32 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
                         {/* Modal Header */}
-                        <div className="p-6 border-b-2 border-[#F1F5E8] flex justify-between items-start bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0]">
+                        <div className="p-6 border-b-2 border-[#F0FDF4] flex justify-between items-start bg-gradient-to-r from-[#F0FDF4] to-[#DCFCE7]">
                             <div>
-                                <h3 className="text-2xl font-bold text-[#1A5D1A]">{selectedPlan.location}</h3>
+                                <h3 className="text-2xl font-bold text-[#047857]">{selectedPlan.location}</h3>
                                 <p className="text-sm text-[#0F172A]/60 flex items-center gap-1 mt-1">
                                     <Calendar className="w-4 h-4" /> {selectedPlan.duration} {T.profile.days}
                                 </p>
                             </div>
                             <button onClick={() => setSelectedPlan(null)} className="p-2 hover:bg-white/50 rounded-full transition-colors flex-shrink-0">
-                                <X className="w-6 h-6 text-[#1A5D1A]" />
+                                <X className="w-6 h-6 text-[#047857]" />
                             </button>
                         </div>
 
                         {/* Modal Body */}
                         <div className="flex-1 overflow-y-auto p-6 space-y-6">
                             {selectedPlan.plan.map((day: ItineraryDay) => (
-                                <div key={day.day} className="relative pl-6 border-l-4 border-[#1A5D1A]/30 pb-6 last:border-0">
-                                    <div className="absolute -left-[9px] top-0 w-5 h-5 rounded-full bg-gradient-to-br from-[#4E9F3D] to-[#1A5D1A] border-2 border-white shadow-md"></div>
-                                    <h4 className="font-bold text-lg text-[#1A5D1A] mb-3">Day {day.day}: {day.title}</h4>
-                                    <div className="bg-gradient-to-br from-[#F1F5E8] to-[#E8F0E0] rounded-xl p-4 space-y-3 border-2 border-[#4E9F3D]/10">
+                                <div key={day.day} className="relative pl-6 border-l-4 border-[#047857]/30 pb-6 last:border-0">
+                                    <div className="absolute -left-[9px] top-0 w-5 h-5 rounded-full bg-gradient-to-br from-[#10B981] to-[#047857] border-2 border-white shadow-md"></div>
+                                    <h4 className="font-bold text-lg text-[#047857] mb-3">Day {day.day}: {day.title}</h4>
+                                    <div className="bg-gradient-to-br from-[#F0FDF4] to-[#DCFCE7] rounded-xl p-4 space-y-3 border-2 border-[#10B981]/10">
                                         <p className="text-sm text-[#0F172A] font-medium">📍 {day.route} ({day.distance_km} km)</p>
                                         {day.highlights.length > 0 && (
                                             <div>
                                                 <span className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">✨ {T.profile.highlights}</span>
                                                 <div className="flex flex-wrap gap-2 mt-2">
                                                     {day.highlights.map((h, i) => (
-                                                        <span key={i} className="text-xs bg-white border-2 border-[#1A5D1A]/20 px-3 py-1 rounded-lg text-[#0F172A] font-medium">{h}</span>
+                                                        <span key={i} className="text-xs bg-white border-2 border-[#047857]/20 px-3 py-1 rounded-lg text-[#0F172A] font-medium">{h}</span>
                                                     ))}
                                                 </div>
                                             </div>
@@ -539,8 +539,8 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="p-4 border-t-2 border-[#F1F5E8] bg-[#F1F5E8]/30 flex justify-end">
-                            <button onClick={() => setSelectedPlan(null)} className="px-6 py-2 bg-gradient-to-r from-[#4E9F3D] to-[#1A5D1A] text-white rounded-lg hover:shadow-lg font-bold transition-all">
+                        <div className="p-4 border-t-2 border-[#F0FDF4] bg-[#F0FDF4]/30 flex justify-end">
+                            <button onClick={() => setSelectedPlan(null)} className="px-6 py-2 bg-gradient-to-r from-[#10B981] to-[#047857] text-white rounded-lg hover:shadow-lg font-bold transition-all">
                                 {T.profile.close}
                             </button>
                         </div>
@@ -550,7 +550,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
 
             {/* Toast Notification */}
             {toast && (
-                <div className="fixed bottom-6 right-6 bg-gradient-to-r from-[#4E9F3D] to-[#1A5D1A] text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-slideUp">
+                <div className="fixed bottom-6 right-6 bg-gradient-to-r from-[#10B981] to-[#047857] text-white px-6 py-4 rounded-xl shadow-2xl font-semibold animate-slideUp">
                     ✓ {toast}
                 </div>
             )}

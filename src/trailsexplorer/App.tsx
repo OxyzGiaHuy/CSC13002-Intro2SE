@@ -101,7 +101,7 @@ const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void 
 
     return (
         <div className="container mx-auto p-4 sm:p-6 lg:p-8">
-            <button onClick={onBack} className="flex items-center gap-2 text-[#4E9F3D] mb-4 hover:underline">
+            <button onClick={onBack} className="flex items-center gap-2 text-[#10B981] mb-4 hover:underline">
                 <ArrowLeftIcon className="w-5 h-5" /> Back to Community
             </button>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -140,7 +140,7 @@ const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void 
                         {chatMessages.map(msg => (
                             <div key={msg.id} className={`flex items-end gap-2 mb-4 ${msg.isCurrentUser ? 'justify-end' : ''}`}>
                                 {!msg.isCurrentUser && <img src={msg.avatarUrl} alt={msg.author} className="w-8 h-8 rounded-full" />}
-                                <div className={`rounded-lg px-4 py-2 max-w-xs md:max-w-md ${msg.isCurrentUser ? 'bg-[#4E9F3D] text-white' : 'bg-gray-200 text-gray-800'}`}>
+                                <div className={`rounded-lg px-4 py-2 max-w-xs md:max-w-md ${msg.isCurrentUser ? 'bg-[#10B981] text-white' : 'bg-gray-200 text-gray-800'}`}>
                                     <p className="text-sm">{msg.text}</p>
                                     <p className={`text-xs mt-1 ${msg.isCurrentUser ? 'text-green-100' : 'text-gray-500'}`}>{msg.author}, {msg.timestamp}</p>
                                 </div>
@@ -155,9 +155,9 @@ const GroupView: React.FC<{ group: Group, currentUser: User, onBack: () => void 
                             value={newMessage}
                             onChange={e => setNewMessage(e.target.value)}
                             placeholder="Type a message..."
-                            className="flex-grow p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-[#4E9F3D] focus:border-[#4E9F3D]"
+                            className="flex-grow p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-[#10B981] focus:border-[#10B981]"
                         />
-                        <button type="submit" className="bg-[#4E9F3D] text-white p-3 rounded-full hover:bg-opacity-90 transition-colors">
+                        <button type="submit" className="bg-[#10B981] text-white p-3 rounded-full hover:bg-opacity-90 transition-colors">
                             <PaperAirplaneIcon className="w-5 h-5" />
                         </button>
                     </form>
@@ -355,7 +355,7 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-[#F0F9FF] flex flex-col">
             <Header setView={setView} currentView={view} userRole={user?.role} />
             <main className="flex-grow">{renderContent()}</main>
-            <footer className="bg-gradient-to-r from-[#4E9F3D] to-[#1A5D1A] text-white mt-8 py-6 shadow-lg">
+            <footer className="bg-gradient-to-r from-[#10B981] to-[#047857] text-white mt-8 py-6 shadow-lg">
                 <div className="container mx-auto text-center text-sm">
                     <p className="font-medium">&copy; {new Date().getFullYear()} TrailsExplorer. {T.footer.copyright}</p>
                 </div>

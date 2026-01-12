@@ -468,29 +468,29 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
     }, [marketCategory, condition, debouncedPriceRange, debouncedSearchQuery]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#F1F5E8] via-white to-[#F1F5E8] pb-8">
+        <div className="min-h-screen bg-gradient-to-br from-[#F0FDF4] via-white to-[#F0FDF4] pb-8">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
                 <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
                     {/* Main Content Area */}
                     <div className="xl:col-span-3">
                         {view === 'FEED' && (
                             <>
-                                <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F1F5E8] mb-8 max-w-2xl mx-auto">
+                                <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F0FDF4] mb-8 max-w-2xl mx-auto">
                                     <div className="flex gap-4 mb-4">
                                         <img src="https://ui-avatars.com/api/?name=You&background=random" className="w-10 h-10 rounded-full flex-shrink-0" alt="Your avatar" />
                                         <div className="flex-1">
                                             <div className="flex gap-2 mb-2">
-                                                <button onClick={() => insertFormat('bold')} className="p-1 hover:bg-[#F1F5E8] rounded text-[#1A5D1A]"><Bold size={16} /></button>
-                                                <button onClick={() => insertFormat('italic')} className="p-1 hover:bg-[#F1F5E8] rounded text-[#1A5D1A]"><Italic size={16} /></button>
-                                                <button onClick={() => insertFormat('link')} className="p-1 hover:bg-[#F1F5E8] rounded text-[#1A5D1A]"><LinkIcon size={16} /></button>
-                                                <button onClick={() => insertFormat('list')} className="p-1 hover:bg-[#F1F5E8] rounded text-[#1A5D1A]"><List size={16} /></button>
+                                                <button onClick={() => insertFormat('bold')} className="p-1 hover:bg-[#F0FDF4] rounded text-[#047857]"><Bold size={16} /></button>
+                                                <button onClick={() => insertFormat('italic')} className="p-1 hover:bg-[#F0FDF4] rounded text-[#047857]"><Italic size={16} /></button>
+                                                <button onClick={() => insertFormat('link')} className="p-1 hover:bg-[#F0FDF4] rounded text-[#047857]"><LinkIcon size={16} /></button>
+                                                <button onClick={() => insertFormat('list')} className="p-1 hover:bg-[#F0FDF4] rounded text-[#047857]"><List size={16} /></button>
                                             </div>
                                             <textarea
                                                 ref={textareaRef}
                                                 value={newPostText}
                                                 onChange={e => setNewPostText(e.target.value)}
                                                 placeholder={T.community.shareAdventure}
-                                                className="w-full p-4 bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0] rounded-xl border-2 border-[#F1F5E8] focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none resize-none min-h-[100px] transition-all"
+                                                className="w-full p-4 bg-gradient-to-r from-[#F0FDF4] to-[#DCFCE7] rounded-xl border-2 border-[#F0FDF4] focus:border-[#047857] focus:ring-2 focus:ring-[#DCFCE7] outline-none resize-none min-h-[100px] transition-all"
                                             />
                                         </div>
                                     </div>
@@ -501,7 +501,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                         </div>
                                     )}
                                     <div className="flex justify-between items-center ml-14">
-                                        <label className="cursor-pointer text-[#1A5D1A] hover:text-[#4E9F3D] flex items-center gap-2 text-sm font-medium">
+                                        <label className="cursor-pointer text-[#047857] hover:text-[#10B981] flex items-center gap-2 text-sm font-medium">
                                             <ImageIcon size={18} />
                                         <input type="file" accept="image/*" onChange={handleNewPostImageChange} className="hidden" />
                                         <span>Add Photo</span>
@@ -723,24 +723,24 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
 
                 {/* Sidebar */}
                 <div className="space-y-6 xl:sticky xl:top-24 h-fit">
-                    <div className="bg-white rounded-[2rem] shadow-xl shadow-[#1A5D1A]/10 border border-[#F1F5E8]/50 overflow-hidden">
-                        <div className="p-8 border-b border-[#F1F5E8]/50 relative overflow-hidden group/header bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0]">
-                            <h3 className="text-[11px] font-black text-[#1A5D1A]/40 uppercase tracking-[0.25em] mb-1">{T.community.explorerCentral}</h3>
-                            <p className="text-lg font-display font-bold text-[#1A5D1A]">{T.community.hub}</p>
-                            <div className="h-1 w-8 bg-[#1A5D1A] mt-3 rounded-full group-hover:w-16 transition-all"></div>
+                    <div className="bg-white rounded-[2rem] shadow-xl shadow-[#047857]/10 border border-[#F0FDF4]/50 overflow-hidden">
+                        <div className="p-8 border-b border-[#F0FDF4]/50 relative overflow-hidden group/header bg-gradient-to-r from-[#F0FDF4] to-[#DCFCE7]">
+                            <h3 className="text-[11px] font-black text-[#047857]/40 uppercase tracking-[0.25em] mb-1">{T.community.explorerCentral}</h3>
+                            <p className="text-lg font-display font-bold text-[#047857]">{T.community.hub}</p>
+                            <div className="h-1 w-8 bg-[#047857] mt-3 rounded-full group-hover:w-16 transition-all"></div>
                         </div>
                         <div className="p-4 space-y-2">
                             {[
-                                { id: 'FEED', label: T.community.activityFeed, icon: Activity, color: 'text-[#1A5D1A]', bg: 'bg-[#F1F5E8]', count: 'New' },
+                                { id: 'FEED', label: T.community.activityFeed, icon: Activity, color: 'text-[#047857]', bg: 'bg-[#F0FDF4]', count: 'New' },
                                 { id: 'MARKET', label: T.community.gearMarket, icon: ShoppingBag, color: 'text-[#10B981]', bg: 'bg-[#E0FDF4]', count: 'Hot' },
-                                { id: 'GROUPS', label: T.community.groups, icon: Users, color: 'text-[#1A5D1A]', bg: 'bg-[#F1F5E8]', count: groups.length },
+                                { id: 'GROUPS', label: T.community.groups, icon: Users, color: 'text-[#047857]', bg: 'bg-[#F0FDF4]', count: groups.length },
                                 { id: 'CHALLENGES', label: T.community.challenges, icon: Trophy, color: 'text-[#F59E0B]', bg: 'bg-[#FEF3C7]', count: 'Active' },
-                                { id: 'GUIDEBOOK', label: T.community.guidebook, icon: BookOpen, color: 'text-[#4E9F3D]', bg: 'bg-[#ECFDF5]', count: 'New' },
+                                { id: 'GUIDEBOOK', label: T.community.guidebook, icon: BookOpen, color: 'text-[#10B981]', bg: 'bg-[#ECFDF5]', count: 'New' },
                             ].map(tab => (
                                 <button
                                     key={tab.id}
                                     onClick={() => { setView(tab.id as any); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                    className={`group relative flex items-center justify-between px-5 py-4 rounded-2xl text-sm font-bold transition-all w-full ${view === tab.id ? 'bg-gradient-to-r from-[#1A5D1A] to-[#4E9F3D] text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50 hover:text-[#1A5D1A]'}`}
+                                    className={`group relative flex items-center justify-between px-5 py-4 rounded-2xl text-sm font-bold transition-all w-full ${view === tab.id ? 'bg-gradient-to-r from-[#047857] to-[#10B981] text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50 hover:text-[#047857]'}`}
                                 >
                                     <div className="flex items-center gap-4 relative z-10">
                                         <div className={`p-2.5 rounded-xl transition-all ${view === tab.id ? 'bg-white/20' : tab.bg}`}>
@@ -770,7 +770,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
             {showSellModal && (
                 <Modal onClose={() => setShowSellModal(false)}>
                     <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-2xl">
-                        <h3 className="text-2xl font-bold mb-6 text-[#1A5D1A]">{T.community.listItem}</h3>
+                        <h3 className="text-2xl font-bold mb-6 text-[#047857]">{T.community.listItem}</h3>
                         <form onSubmit={handleSellSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">{T.community.itemTitle}</label>
@@ -787,14 +787,14 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">{T.community.photo}</label>
-                                <div className="border-2 border-dashed rounded-xl p-4 text-center hover:border-[#1A5D1A] transition-colors cursor-pointer relative bg-gray-50">
+                                <div className="border-2 border-dashed rounded-xl p-4 text-center hover:border-[#047857] transition-colors cursor-pointer relative bg-gray-50">
                                     <input type="file" accept="image/*" onChange={handleSellImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
                                     {sellForm.imagePreview ? <img src={sellForm.imagePreview} className="mx-auto h-32 object-contain rounded" /> : <div className="text-gray-400"><ImageIcon className="mx-auto mb-2" /><span className="text-sm">{T.community.uploadPhoto}</span></div>}
                                 </div>
                             </div>
                             <div className="flex justify-end gap-3 pt-4">
                                 <button type="button" onClick={() => setShowSellModal(false)} className="px-5 py-2.5 text-gray-600">{T.common.cancel}</button>
-                                <button type="submit" className="px-5 py-2.5 bg-gradient-to-r from-[#1A5D1A] to-[#4E9F3D] text-white font-bold rounded-xl shadow-lg">{T.community.listItem}</button>
+                                <button type="submit" className="px-5 py-2.5 bg-gradient-to-r from-[#047857] to-[#10B981] text-white font-bold rounded-xl shadow-lg">{T.community.listItem}</button>
                             </div>
                         </form>
                     </div>

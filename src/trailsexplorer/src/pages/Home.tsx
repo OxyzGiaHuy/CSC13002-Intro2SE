@@ -17,9 +17,9 @@ const Home: React.FC<HomeProps> = ({ setView, trails, onSelectTrail, onToggleFav
     const lang = auth?.language || 'en';
     const T = useTranslations(lang);
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#F1F5E8] via-white to-[#F1F5E8]">
+        <div className="min-h-screen bg-gradient-to-br from-[#F0FDF4] via-white to-[#F0FDF4]">
             {/* Hero Section */}
-            <div className="relative h-[500px] flex items-center justify-center text-center px-4 bg-gradient-to-r from-[#1A5D1A] to-[#4E9F3D]">
+            <div className="relative h-[500px] flex items-center justify-center text-center px-4 bg-gradient-to-r from-[#047857] to-[#10B981]">
                 <div
                     className="absolute inset-0 z-0 opacity-60"
                     style={{
@@ -28,7 +28,7 @@ const Home: React.FC<HomeProps> = ({ setView, trails, onSelectTrail, onToggleFav
                         backgroundPosition: 'center'
                     }}
                 ></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-[#1A5D1A]/50 to-[#1A5D1A]/70 z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-white/40 z-10"></div>
 
                 <div className="relative z-20 max-w-4xl mx-auto space-y-6">
                     <h1 className="text-5xl md:text-7xl font-display font-bold text-white drop-shadow-lg tracking-tight">
@@ -40,7 +40,7 @@ const Home: React.FC<HomeProps> = ({ setView, trails, onSelectTrail, onToggleFav
                     <div className="flex items-center justify-center gap-4 pt-4">
                         <button
                             onClick={() => setView('planner')}
-                            className="bg-white text-[#1A5D1A] font-bold py-4 px-10 rounded-full hover:bg-[#F1F5E8] transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
+                            className="bg-white text-[#047857] font-bold py-4 px-10 rounded-full hover:bg-[#F0FDF4] transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
                         >
                             {T.home.explore}
                         </button>
@@ -56,12 +56,12 @@ const Home: React.FC<HomeProps> = ({ setView, trails, onSelectTrail, onToggleFav
 
             {/* Featured Section */}
             <div className="container mx-auto px-4 py-16">
-                <div className="flex items-end justify-between mb-10 border-b-2 border-[#1A5D1A]/20 pb-4">
+                <div className="flex items-end justify-between mb-10 border-b-2 border-[#047857]/20 pb-4">
                     <div>
-                        <h2 className="text-3xl font-display font-bold text-[#1A5D1A]">{T.home.featured}</h2>
-                        <p className="text-[#1A5D1A]/60 mt-2">{T.home.subtitle}</p>
+                        <h2 className="text-3xl font-display font-bold text-[#047857]">{T.home.featured}</h2>
+                        <p className="text-[#047857]/60 mt-2">{T.home.subtitle}</p>
                     </div>
-                    <button onClick={() => setView('discover')} className="text-[#4E9F3D] hover:text-[#1A5D1A] font-semibold hidden md:block transition-colors">
+                    <button onClick={() => setView('discover')} className="text-[#10B981] hover:text-[#047857] font-semibold hidden md:block transition-colors">
                         {T.home.viewMore} →
                     </button>
                 </div>

@@ -54,7 +54,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
     return (
         <div
             onClick={onSelect}
-            className="group relative bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex flex-col cursor-pointer transform hover:-translate-y-1"
+            className="group relative bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-[#DCFCE7]/40 flex flex-col cursor-pointer transform hover:-translate-y-2"
         >
             {/* Image Section */}
             <div className="relative h-56 overflow-hidden">
@@ -80,7 +80,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                             e.stopPropagation();
                             onToggleFavorite(trail.id);
                         }}
-                        className="p-2.5 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white text-gray-400 hover:text-rose-500 transition-all duration-300 shadow-lg active:scale-95 group/btn"
+                        className="p-2.5 rounded-full bg-white/95 backdrop-blur-sm hover:bg-white text-gray-400 hover:text-rose-500 transition-all duration-300 shadow-xl active:scale-95 group/btn"
                     >
                         <HeartIcon className={`w-5 h-5 ${trail.isFavorited ? 'text-rose-500 fill-current' : 'group-hover/btn:text-rose-500'}`} filled={trail.isFavorited} />
                     </button>
@@ -134,7 +134,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
             </div>
 
             {/* Hover Action Bar */}
-            <div className="bg-gradient-to-r from-[#1A5D1A] to-[#4E9F3D] text-white py-3 text-center text-sm font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <div className="bg-gradient-to-r from-[#047857] via-[#059669] to-[#10B981] text-white py-3 text-center text-sm font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 shadow-lg">
                 {T.common.viewDetails}
             </div>
         </div>

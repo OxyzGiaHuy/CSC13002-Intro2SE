@@ -1,22 +1,22 @@
 /* Global Brand Colors and Theme */
 :root {
   /* Primary Brand Colors - Modern & Beautiful */
-  --color-primary-bg: #F1F5E8;      /* Sage Green 50 - Light & Clean */
+  --color-primary-bg: #F0FDF4;      /* Green 50 - Light & Clean */
   --color-primary-text: #0F172A;    /* Slate 900 - Dark & Readable */
   
   /* Primary Colors */
-  --color-primary: #4E9F3D;         /* Sage Green 500 - Bright & Modern */
-  --color-primary-dark: #1A5D1A;    /* Forest Green 700 - Deep */
+  --color-primary: #10B981;         /* Emerald 500 - Bright & Modern */
+  --color-primary-dark: #047857;    /* Emerald 700 - Deep */
   
   /* Secondary & Accent */
-  --color-secondary: #66BB6A;       /* Green 400 - Light & Vibrant */
-  --color-accent: #4E9F3D;          /* Sage Green 500 - Light & Airy */
+  --color-secondary: #34D399;       /* Emerald 400 - Light & Vibrant */
+  --color-accent: #059669;          /* Emerald 600 - Light & Airy */
   
   /* Status Colors */
-  --color-success: #10B981;         /* Green */
+  --color-success: #10B981;         /* Emerald Green */
   --color-warning: #F59E0B;         /* Amber */
   --color-error: #EF4444;           /* Red */
-  --color-info: #4E9F3D;            /* Sage Green */
+  --color-info: #10B981;            /* Emerald */
   
   /* Neutral Colors */
   --color-dark: #1F2937;            /* Gray 800 */
@@ -40,7 +40,7 @@ html, body {
 .btn-primary:hover {
   background-color: var(--color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 8px 12px rgba(78, 159, 61, 0.25);
+  box-shadow: 0 12px 20px rgba(4, 120, 87, 0.35);
 }
 
 .btn-secondary {
@@ -83,22 +83,23 @@ html, body {
   background-color: white;
   border: 2px solid var(--color-primary-bg);
   border-radius: 0.75rem;
-  box-shadow: 0 2px 8px rgba(38, 6, 168, 0.08);
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.08);
   transition: all 0.3s ease;
 }
 
 .card-brand:hover {
-  box-shadow: 0 8px 16px rgba(38, 6, 168, 0.12);
+  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.16);
   border-color: var(--color-accent);
+  transform: translateY(-2px);
 }
 
 /* Gradient Utilities */
 .gradient-brand {
-  background: linear-gradient(135deg, #E8F5E9 0%, rgba(232, 245, 233, 0.6) 100%);
+  background: linear-gradient(135deg, #DCFCE7 0%, rgba(220, 252, 231, 0.6) 100%);
 }
 
 .gradient-brand-dark {
-  background: linear-gradient(135deg, #1A5D1A 0%, #4E9F3D 100%);
+  background: linear-gradient(135deg, #047857 0%, #10B981 100%);
 }
 
 /* Animation for smooth transitions */

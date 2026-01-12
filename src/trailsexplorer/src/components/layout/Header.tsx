@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, userRole }) => {
 
         return (
             <button onClick={() => { setView(view); setIsMenuOpen(false); }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${isActive ? 'bg-[#1A5D1A] text-white shadow-md shadow-[#1A5D1A]/20' : 'text-[#0F172A] hover:bg-[#F1F5E8] hover:text-[#1A5D1A]'}`}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${isActive ? 'bg-[#047857] text-white shadow-lg shadow-[#047857]/30' : 'text-[#0F172A] hover:bg-[#F0FDF4] hover:text-[#047857] hover:shadow-md'}`}
             >
                 {name}
             </button>
@@ -48,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, userRole }) => {
     };
 
     return (
-        <header className="bg-white/90 backdrop-blur-md border-b border-[#F1F5E8] sticky top-0 z-50 transition-all duration-300 shadow-sm">
+        <header className="bg-white/95 backdrop-blur-lg border-b border-[#DCFCE7]/40 sticky top-0 z-50 transition-all duration-300 shadow-lg shadow-[#047857]/5">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="cursor-pointer" onClick={() => setView('home')}>
@@ -60,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, userRole }) => {
                         </div>
                     </div>
                     <div className="md:hidden flex items-center">
-                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-[#1A5D1A] hover:text-[#4E9F3D] focus:outline-none">
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-lg text-[#047857] hover:text-[#10B981] hover:bg-[#F0FDF4] focus:outline-none transition-colors">
                             {isMenuOpen ? <XIcon className="h-6 w-6" /> : <MenuIcon className="h-6 w-6" />}
                         </button>
                     </div>

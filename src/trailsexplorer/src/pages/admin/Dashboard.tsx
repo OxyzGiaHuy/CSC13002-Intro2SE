@@ -386,7 +386,7 @@ const Dashboard: React.FC = () => {
                                     className="flex items-center gap-4 p-4 hover:bg-green-50/50 rounded-xl transition-all duration-300 group cursor-pointer border border-transparent hover:border-green-200"
                                 >
                                     <div className="flex-shrink-0">
-                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-[#4E9F3D] flex items-center justify-center text-white font-bold">
+                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-[#10B981] flex items-center justify-center text-white font-bold">
                                             #{trail.id}
                                         </div>
                                     </div>

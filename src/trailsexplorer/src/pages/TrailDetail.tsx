@@ -48,9 +48,9 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
         switch (difficulty.toLowerCase()) {
             case 'easy':
                 return {
-                    badge: 'bg-[#E8F0E0] text-[#1A5D1A] border-[#1A5D1A]',
-                    icon: <Zap className="w-4 h-4 text-[#1A5D1A] fill-[#1A5D1A]" />,
-                    text: 'text-[#1A5D1A]'
+                    badge: 'bg-[#DCFCE7] text-[#047857] border-[#047857]',
+                    icon: <Zap className="w-4 h-4 text-[#047857] fill-[#047857]" />,
+                    text: 'text-[#047857]'
                 };
             case 'hard':
                 return {
@@ -80,7 +80,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#F1F5E8] via-white to-[#F1F5E8] pb-16">
+        <div className="min-h-screen bg-gradient-to-br from-[#F0FDF4] via-white to-[#F0FDF4] pb-16">
             {/* Immersive Hero Section */}
             <div className="relative h-[60vh] w-full">
                 <img src={trail.imageUrl} alt={trail.name} className="w-full h-full object-cover" />
@@ -105,7 +105,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                                 {trail.name}
                             </h1>
                             <p className="text-lg md:text-xl text-gray-200 flex items-center gap-2">
-                                <MapIcon className="w-5 h-5 text-[#1A5D1A]" /> {trail.location}
+                                <MapIcon className="w-5 h-5 text-[#047857]" /> {trail.location}
                             </p>
                         </div>
                     </div>
@@ -128,24 +128,24 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                     <div className="lg:col-span-2 space-y-10">
                         {/* Key Stats Grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F1F5E8] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
-                                <span className="text-xs text-[#1A5D1A] uppercase font-bold tracking-widest mb-2">{T.trailDetail.distance || 'Distance'}</span>
-                                <span className="text-2xl font-bold text-[#1A5D1A]">{trail.length_km} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">km</span></span>
+                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F0FDF4] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
+                                <span className="text-xs text-[#047857] uppercase font-bold tracking-widest mb-2">{T.trailDetail.distance || 'Distance'}</span>
+                                <span className="text-2xl font-bold text-[#047857]">{trail.length_km} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">km</span></span>
                             </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F1F5E8] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
-                                <span className="text-xs text-[#1A5D1A] uppercase font-bold tracking-widest mb-2">{T.trailDetail.duration || 'Duration'}</span>
-                                <span className="text-2xl font-bold text-[#1A5D1A]">{trail.duration_hr} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">hr</span></span>
+                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F0FDF4] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
+                                <span className="text-xs text-[#047857] uppercase font-bold tracking-widest mb-2">{T.trailDetail.duration || 'Duration'}</span>
+                                <span className="text-2xl font-bold text-[#047857]">{trail.duration_hr} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">hr</span></span>
                             </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F1F5E8] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
-                                <span className="text-xs text-[#1A5D1A] uppercase font-bold tracking-widest mb-2">{T.trailDetail.rating || 'Rating'}</span>
+                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F0FDF4] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
+                                <span className="text-xs text-[#047857] uppercase font-bold tracking-widest mb-2">{T.trailDetail.rating || 'Rating'}</span>
                                 <div className="flex items-center gap-1.5">
                                     <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                                    <span className="text-2xl font-bold text-[#1A5D1A]">{trail.rating > 0 ? trail.rating.toFixed(1) : (4.5).toFixed(1)} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">/5</span></span>
+                                    <span className="text-2xl font-bold text-[#047857]">{trail.rating > 0 ? trail.rating.toFixed(1) : (4.5).toFixed(1)} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">/5</span></span>
                                 </div>
                             </div>
                             <button
                                 onClick={() => onSelectMap(trail.id)}
-                                className="bg-gradient-to-r from-[#1A5D1A] to-[#4E9F3D] hover:shadow-lg text-white p-6 rounded-2xl shadow-xl flex flex-col items-center justify-center transition-all transform hover:scale-[1.02] active:scale-95 font-bold"
+                                className="bg-gradient-to-r from-[#047857] to-[#10B981] hover:shadow-lg text-white p-6 rounded-2xl shadow-xl flex flex-col items-center justify-center transition-all transform hover:scale-[1.02] active:scale-95 font-bold"
                             >
                                 <LucideMap className="w-6 h-6 mb-2" />
                                 <span className="text-xs uppercase tracking-widest">{T.trailDetail.map || 'Map'}</span>
@@ -154,7 +154,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
 
                         {/* Description */}
                         <div>
-                            <h2 className="text-2xl font-bold text-[#1A5D1A] mb-4">{T.trailDetail.description || 'About the Trail'}</h2>
+                            <h2 className="text-2xl font-bold text-[#047857] mb-4">{T.trailDetail.description || 'About the Trail'}</h2>
                             <p className="text-[#0F172A]/70 leading-relaxed text-lg">
                                 {trail.description}
                             </p>
