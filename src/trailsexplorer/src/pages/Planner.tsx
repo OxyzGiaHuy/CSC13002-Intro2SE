@@ -22,6 +22,24 @@ const Planner: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setPlan(null);
+
+        // Validation
+        if (!location.trim()) {
+            setError('Please enter a valid location.');
+            setIsLoading(false);
+            return;
+        }
+        if (!duration || duration < 1) {
+            setError('Duration must be at least 1 day.');
+            setIsLoading(false);
+            return;
+        }
+        if (!interests.trim()) {
+            setError('Please enter your interests.');
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const result = await generateTrekkingPlan(location, duration, difficulty, interests);
             if (result) {
