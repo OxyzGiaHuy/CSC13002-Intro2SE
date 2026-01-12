@@ -1,138 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Search, CheckCircle, XCircle, Trash2, Eye, AlertTriangle, Clock, MessageSquare } from 'lucide-react';
+import { Search, CheckCircle, XCircle, Trash2, Eye, AlertTriangle, Clock, MessageSquare, X as XIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
-// Mock Data for Posts
-const MOCK_POSTS: Post[] = [
-    {
-        post_id: 1,
-        title: 'Best time to visit Mount Fansipan?',
-        content: 'I\'m planning to trek Mount Fansipan next month. What\'s the best time of year for good weather and clear views? Also, any tips for first-timers would be appreciated!',
-        content_type: 'DISCUSSION',
-        created_at: '2024-01-15T10:30:00Z',
-        is_approved: true,
-        is_published: true,
-        report_count: 0,
-        like_count: 24,
-        User: {
-            user_id: 1,
-            username: 'sarah_chen',
-            full_name: 'Sarah Chen',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
-            email: 'sarah.chen@example.com'
-        },
-        Trail: {
-            trail_id: 1,
-            name: 'Mount Fansipan Summit'
-        }
-    },
-    {
-        post_id: 2,
-        title: 'Found amazing wild orchids on Ba Vi trail',
-        content: 'Just completed the Ba Vi loop and discovered some beautiful wild orchids along the path near the summit. Photos attached! Nature is amazing 🌸',
-        content_type: 'PHOTO_SHARE',
-        created_at: '2024-01-14T16:45:00Z',
-        is_approved: false,
-        is_published: true,
-        report_count: 0,
-        like_count: 15,
-        User: {
-            user_id: 2,
-            username: 'mike_nguyen',
-            full_name: 'Mike Nguyen',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
-            email: 'mike.nguyen@example.com'
-        },
-        Trail: {
-            trail_id: 2,
-            name: 'Ba Vi National Park Loop'
-        }
-    },
-    {
-        post_id: 3,
-        title: 'URGENT: Click here for free trail gear!!!',
-        content: 'Amazing discount on trail equipment. Visit our website now and get 90% off. Limited time offer. Click link in bio.',
-        content_type: 'NEWS',
-        created_at: '2024-01-13T09:20:00Z',
-        is_approved: false,
-        is_published: true,
-        report_count: 8,
-        like_count: 0,
-        User: {
-            user_id: 3,
-            username: 'spammer_bot',
-            full_name: 'Spam Bot',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Spam',
-            email: 'spam@example.com'
-        }
-    },
-    {
-        post_id: 4,
-        title: 'Sunrise at Tam Dao was breathtaking',
-        content: 'Woke up at 4 AM to catch the sunrise from Tam Dao peak. The clouds below and colorful sky made every early minute worth it! Highly recommend doing the night trek.',
-        content_type: 'EXPERIENCE',
-        created_at: '2024-01-12T18:30:00Z',
-        is_approved: true,
-        is_published: true,
-        report_count: 0,
-        like_count: 42,
-        User: {
-            user_id: 4,
-            username: 'emma_tran',
-            full_name: 'Emma Tran',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma',
-            email: 'emma.tran@example.com'
-        },
-        Trail: {
-            trail_id: 3,
-            name: 'Tam Dao Loop'
-        }
-    },
-    {
-        post_id: 5,
-        title: 'Warning: Trail conditions deteriorating',
-        content: 'Recent heavy rains have made the Cat Ba Peak trail very slippery and dangerous. Several landslides reported. Please avoid until authorities clear the path.',
-        content_type: 'WARNING',
-        created_at: '2024-01-11T14:15:00Z',
-        is_approved: true,
-        is_published: true,
-        report_count: 0,
-        like_count: 67,
-        User: {
-            user_id: 5,
-            username: 'david_le',
-            full_name: 'David Le',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
-            email: 'david.le@example.com'
-        },
-        Trail: {
-            trail_id: 4,
-            name: 'Cat Ba Peak'
-        }
-    },
-    {
-        post_id: 6,
-        title: 'Inappropriate content reported',
-        content: 'This post contains inappropriate language and offensive content that violates community guidelines.',
-        content_type: 'DISCUSSION',
-        created_at: '2024-01-10T11:00:00Z',
-        is_approved: false,
-        is_published: false,
-        report_count: 12,
-        like_count: 2,
-        User: {
-            user_id: 6,
-            username: 'troublemaker',
-            full_name: 'Trouble Maker',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Trouble',
-            email: 'trouble@example.com'
-        },
-        Trail: {
-            trail_id: 5,
-            name: 'Sapa Rice Terraces'
-        }
-    }
-];
+// Types
+interface User {
+    user_id: number;
+    username: string;
+    full_name: string;
+    avatar_url: string;
+    email: string;
+}
+
+interface Trail {
+    trail_id: number;
+    name: string;
+}
 
 interface Post {
     post_id: number;
@@ -144,18 +26,11 @@ interface Post {
     is_published: boolean;
     report_count: number;
     like_count: number;
-    User: {
-        user_id: number;
-        username: string;
-        full_name: string;
-        avatar_url: string;
-        email: string;
-    };
-    Trail?: {
-        trail_id: number;
-        name: string;
-    };
+    User: User;
+    Trail?: Trail;
 }
+
+// --- Modals ---
 
 interface ConfirmDialogProps {
     isOpen: boolean;
@@ -210,7 +85,7 @@ const ViewPostModal: React.FC<ViewPostModalProps> = ({ isOpen, post, onClose }) 
                         onClick={onClose}
                         className="text-gray-500 hover:text-gray-700"
                     >
-                        <XCircle className="w-6 h-6" />
+                        <XIcon className="w-6 h-6" />
                     </button>
                 </div>
 
@@ -253,7 +128,6 @@ const ViewPostModal: React.FC<ViewPostModalProps> = ({ isOpen, post, onClose }) 
 };
 
 const PostsModeration: React.FC = () => {
-    const [allPosts] = useState<Post[]>(MOCK_POSTS);
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'reported'>('all');
@@ -261,10 +135,13 @@ const PostsModeration: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+    // Modals
     const [viewModal, setViewModal] = useState<{ isOpen: boolean; post: Post | null }>({
         isOpen: false,
         post: null
     });
+
     const [confirmDialog, setConfirmDialog] = useState<{
         isOpen: boolean;
         postId: number | null;
@@ -282,53 +159,72 @@ const PostsModeration: React.FC = () => {
         setTimeout(() => setToast(null), 3000);
     };
 
-    const loadPosts = () => {
+    const getAuthHeader = () => {
+        const token = localStorage.getItem('token');
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+    };
+
+    const loadPosts = async () => {
         setLoading(true);
+        try {
+            const queryParams = new URLSearchParams({
+                page: currentPage.toString(),
+                limit: '10',
+                status: filter,
+                search: searchTerm
+            });
 
-        // Filter posts based on filter and search
-        let filtered = [...allPosts];
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/posts?${queryParams}`, {
+                headers: getAuthHeader()
+            });
 
-        // Apply status filter
-        if (filter === 'pending') {
-            filtered = filtered.filter(p => !p.is_approved);
-        } else if (filter === 'approved') {
-            filtered = filtered.filter(p => p.is_approved && p.is_published);
-        } else if (filter === 'reported') {
-            filtered = filtered.filter(p => p.report_count > 0);
+            if (!res.ok) throw new Error('Failed to fetch posts');
+
+            const data = await res.json();
+            setPosts(data.data);
+            setTotalPages(data.pages);
+        } catch (error) {
+            console.error(error);
+            showToast('Failed to load posts', 'error');
+            setPosts([]);
+        } finally {
+            setLoading(false);
         }
-
-        // Apply search filter
-        if (searchTerm) {
-            filtered = filtered.filter(p =>
-                p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                p.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                p.User?.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-
-        setPosts(filtered);
-        setTotalPages(1); // Single page for mock data
-        setLoading(false);
     };
 
     useEffect(() => {
         loadPosts();
     }, [filter, currentPage]);
 
-    const handleApprove = (postId: number) => {
-        const updatedPosts = allPosts.map(p =>
-            p.post_id === postId ? { ...p, is_approved: true, is_published: true } : p
-        );
-        showToast('Post approved successfully', 'success');
-        loadPosts();
+    const handleApprove = async (postId: number) => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/posts/${postId}/approve`, {
+                method: 'PUT',
+                headers: getAuthHeader()
+            });
+            if (!res.ok) throw new Error('Failed to approve');
+            showToast('Post approved successfully', 'success');
+            loadPosts();
+        } catch (error) {
+            showToast('Error approving post', 'error');
+        }
     };
 
-    const handleUnapprove = (postId: number) => {
-        const updatedPosts = allPosts.map(p =>
-            p.post_id === postId ? { ...p, is_approved: false } : p
-        );
-        showToast('Post unapproved successfully', 'success');
-        loadPosts();
+    const handleUnapprove = async (postId: number) => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/posts/${postId}/unapprove`, {
+                method: 'PUT',
+                headers: getAuthHeader()
+            });
+            if (!res.ok) throw new Error('Failed to unapprove');
+            showToast('Post unapproved successfully', 'success');
+            loadPosts();
+        } catch (error) {
+            showToast('Error unapproving post', 'error');
+        }
     };
 
     const handleDeleteClick = (postId: number) => {
@@ -340,15 +236,21 @@ const PostsModeration: React.FC = () => {
         });
     };
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = async () => {
         if (confirmDialog.postId) {
-            const index = allPosts.findIndex(p => p.post_id === confirmDialog.postId);
-            if (index !== -1) {
-                allPosts.splice(index, 1);
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/posts/${confirmDialog.postId}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeader()
+                });
+                if (!res.ok) throw new Error('Failed to delete');
+                showToast('Post deleted successfully', 'success');
+                loadPosts();
+            } catch (error) {
+                showToast('Error deleting post', 'error');
+            } finally {
+                setConfirmDialog({ isOpen: false, postId: null, title: '', message: '' });
             }
-            showToast('Post deleted successfully', 'success');
-            setConfirmDialog({ isOpen: false, postId: null, title: '', message: '' });
-            loadPosts();
         }
     };
 
@@ -415,8 +317,8 @@ const PostsModeration: React.FC = () => {
                             setCurrentPage(1);
                         }}
                         className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === status
-                                ? 'bg-forest-green text-white shadow-md'
-                                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                            ? 'bg-forest-green text-white shadow-md'
+                            : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                             }`}
                     >
                         {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -465,7 +367,7 @@ const PostsModeration: React.FC = () => {
                     ) : posts.length === 0 ? (
                         <div className="text-center py-12">
                             <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                            <p className="text-gray-500">No posts found</p>
+                            <p className="text-gray-500">No posts found matching your criteria</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">

@@ -17,6 +17,7 @@ router.use(adminMiddleware);
 // GET /api/admin/reviews - Fetch all reviews with filtering
 router.get('/reviews', async (req, res) => {
     try {
+        console.log('Review Associations:', Object.keys(Review.associations));
         const { status = 'all', page = 1, limit = 20, search } = req.query;
         const offset = (page - 1) * limit;
 
@@ -62,7 +63,11 @@ router.get('/reviews', async (req, res) => {
         });
     } catch (err) {
         console.error('Admin fetch reviews error:', err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({
+            error: err.message,
+            associations: Object.keys(Review.associations),
+            modelName: Review.name
+        });
     }
 });
 

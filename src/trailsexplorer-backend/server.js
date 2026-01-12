@@ -57,6 +57,18 @@ User.hasMany(Comment, { foreignKey: 'user_id' });
 Comment.belongsTo(CommunityPost, { foreignKey: 'post_id' });
 CommunityPost.hasMany(Comment, { foreignKey: 'post_id' });
 
+// Review Associations (Fix for Admin Dashboard 500 Error)
+Review.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(Review, { foreignKey: 'user_id' });
+Review.belongsTo(Trail, { foreignKey: 'trail_id' });
+Trail.hasMany(Review, { foreignKey: 'trail_id' });
+
+// CommunityPost Associations
+CommunityPost.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(CommunityPost, { foreignKey: 'user_id' });
+CommunityPost.belongsTo(Trail, { foreignKey: 'trail_id' });
+Trail.hasMany(CommunityPost, { foreignKey: 'trail_id' });
+
 // Routes
 const authRoutes = require('./routes/auth');
 const trailRoutes = require('./routes/trails');

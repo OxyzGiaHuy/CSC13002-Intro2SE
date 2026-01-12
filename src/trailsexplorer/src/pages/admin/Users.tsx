@@ -87,13 +87,45 @@ const MOCK_USERS_LIST: User[] = [
 ];
 
 const Users: React.FC = () => {
-    const [users, setUsers] = useState<User[]>(MOCK_USERS_LIST);
+    const [users, setUsers] = useState<User[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterRole, setFilterRole] = useState<'all' | 'admin' | 'user'>('all');
     const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+    React.useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user`);
+                const data = await res.json();
+
+                // Transform backend data to match frontend interface
+                const mappedUsers = data.map((u: any) => ({
+                    id: u.id,
+                    name: u.full_name || u.username,
+                    email: u.email,
+                    role: u.role === 'ADMIN' ? 'admin' : 'user',
+                    status: u.is_active ? 'active' : 'inactive',
+                    avatarUrl: u.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.username}`,
+                    totalKm: Math.floor(Math.random() * 500), // Random for demo as DB doesn't have this yet
+                    avgAltitude: Math.floor(Math.random() * 2000),
+                    avgTimeHr: Math.floor(Math.random() * 50),
+                    tripHistory: [],
+                    preferences: { difficulty: [], scenery: [] }
+                }));
+
+                setUsers(mappedUsers);
+            } catch (err) {
+                console.error("Failed to fetch users", err);
+                // Fallback to mock data if API fails to avoid empty screen
+                setUsers(MOCK_USERS_LIST);
+            }
+        };
+        fetchUsers();
+    }, []);
+
     const toggleStatus = (userId: string) => {
+        // Optimistic UI update - In real app, would call API PUT /api/user/:id here
         setUsers(users.map(user => {
             if (user.id === userId) {
                 return {
@@ -151,10 +183,7 @@ const Users: React.FC = () => {
                     <h2 className="text-3xl font-bold text-forest-green">User Management</h2>
                     <p className="text-gray-600 mt-1">Manage trekker accounts and track community activity</p>
                 </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-forest-green text-white rounded-lg hover:bg-opacity-90 transition-all shadow-md hover:shadow-lg">
-                    <Download className="w-4 h-4" />
-                    Export Data
-                </button>
+
             </div>
 
             {/* Stats Cards */}
@@ -374,8 +403,8 @@ const Users: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${user.role === 'admin'
-                                                    ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                                                    : 'bg-green-100 text-green-800 border border-green-200'
+                                                ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                                : 'bg-green-100 text-green-800 border border-green-200'
                                                 }`}>
                                                 {user.role === 'admin' ? <Shield className="w-3 h-3" /> : <UserCheck className="w-3 h-3" />}
                                                 {user.role}
@@ -383,8 +412,8 @@ const Users: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${user.status === 'active'
-                                                    ? 'bg-green-100 text-green-800 border border-green-200'
-                                                    : 'bg-red-100 text-red-800 border border-red-200'
+                                                ? 'bg-green-100 text-green-800 border border-green-200'
+                                                : 'bg-red-100 text-red-800 border border-red-200'
                                                 }`}>
                                                 <div className={`w-2 h-2 rounded-full mr-2 ${user.status === 'active' ? 'bg-green-600' : 'bg-red-600'
                                                     }`}></div>
@@ -397,8 +426,8 @@ const Users: React.FC = () => {
                                                     <button
                                                         onClick={() => user.id && toggleStatus(user.id)}
                                                         className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all shadow-sm hover:shadow ${user.status === 'active'
-                                                                ? 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200'
-                                                                : 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200'
+                                                            ? 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200'
+                                                            : 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200'
                                                             }`}
                                                     >
                                                         {user.status === 'active' ? 'Suspend' : 'Activate'}

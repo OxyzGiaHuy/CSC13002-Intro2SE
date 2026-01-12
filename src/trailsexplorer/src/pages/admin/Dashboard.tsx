@@ -63,12 +63,10 @@ interface PopularTrail {
 }
 
 const Dashboard: React.FC = () => {
-    // Stats with trekking theme
-    // Stats with trekking theme
     const [stats, setStats] = React.useState([
         {
             title: 'Active Trekkers',
-            value: '1,234',
+            value: '...',
             icon: <Users className="w-6 h-6" />,
             color: 'text-forest-green',
             bgColor: 'bg-green-600',
@@ -77,7 +75,7 @@ const Dashboard: React.FC = () => {
         },
         {
             title: 'Total Trails',
-            value: 'Loading...',
+            value: '...',
             icon: <Mountain className="w-6 h-6" />,
             color: 'text-sage-green',
             bgColor: 'bg-green-500',
@@ -86,7 +84,7 @@ const Dashboard: React.FC = () => {
         },
         {
             title: 'Active Groups',
-            value: '89',
+            value: '...',
             icon: <Compass className="w-6 h-6" />,
             color: 'text-amber-600',
             bgColor: 'bg-amber-500',
@@ -95,7 +93,7 @@ const Dashboard: React.FC = () => {
         },
         {
             title: 'Safety Reports',
-            value: '12',
+            value: '...',
             icon: <AlertTriangle className="w-6 h-6" />,
             color: 'text-red-600',
             bgColor: 'bg-red-500',
@@ -104,28 +102,123 @@ const Dashboard: React.FC = () => {
         },
     ]);
 
+    // Chart data - User growth over last 7 days
+    const [userGrowthData, setUserGrowthData] = React.useState([
+        { day: 'Mon', users: 0, groups: 0 },
+        { day: 'Tue', users: 0, groups: 0 },
+        { day: 'Wed', users: 0, groups: 0 },
+        { day: 'Thu', users: 0, groups: 0 },
+        { day: 'Fri', users: 0, groups: 0 },
+        { day: 'Sat', users: 0, groups: 0 },
+        { day: 'Sun', users: 0, groups: 0 },
+    ]);
+
+    // Trail difficulty distribution
+    const [difficultyData, setDifficultyData] = React.useState([
+        { name: 'Easy', value: 0, color: '#97BC62' }, // Sage Green
+        { name: 'Moderate', value: 0, color: '#F59E0B' }, // Amber/Gold
+        { name: 'Hard', value: 0, color: '#DC2626' }, // Red
+    ]);
+
+    const getAuthHeader = () => {
+        const token = localStorage.getItem('token');
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+    };
+
     React.useEffect(() => {
         const fetchStats = async () => {
             try {
-                // Fetch Trails Count
-                const trailRes = await fetch('/api/trails?limit=1');
+                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+                console.log('Fetching stats from:', apiUrl);
+
+                // Fetch Public Stats
+                const trailRes = await fetch(`${apiUrl}/api/trails/stats`);
                 const trailData = await trailRes.json();
 
-                if (trailData && trailData.total !== undefined) {
-                    setStats(prev => prev.map(s =>
-                        s.title === 'Total Trails' ? { ...s, value: trailData.total } : s
-                    ));
+                const userRes = await fetch(`${apiUrl}/api/user/stats`);
+                const userData = await userRes.json();
+
+                const growthRes = await fetch(`${apiUrl}/api/user/growth`);
+                const growthData = await growthRes.json();
+
+                // Fetch Admin Stats (Requires Auth)
+                let adminData = { reviews: { pending: 0 }, posts: { reported: 0 } };
+                try {
+                    const adminRes = await fetch(`${apiUrl}/api/admin/stats`, {
+                        headers: getAuthHeader()
+                    });
+                    if (adminRes.ok) {
+                        adminData = await adminRes.json();
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch admin stats", e);
                 }
+
+                if (growthRes.ok) {
+                    setUserGrowthData(growthData);
+                }
+
+                // Update Stats Cards
+                setStats(prev => prev.map(s => {
+                    if (s.title === 'Total Trails') {
+                        const val = trailData?.total !== undefined ? trailData.total : 0;
+                        return { ...s, value: val.toString() };
+                    }
+                    if (s.title === 'Active Trekkers') {
+                        const val = userData?.total_users !== undefined ? userData.total_users : 0;
+                        return { ...s, value: val.toString() };
+                    }
+                    if (s.title === 'Active Groups') {
+                        const val = userData?.total_groups !== undefined ? userData.total_groups : 0;
+                        return { ...s, value: val.toString() };
+                    }
+                    if (s.title === 'Safety Reports') {
+                        // Use reported posts count from admin stats
+                        const val = adminData?.posts?.reported !== undefined ? adminData.posts.reported : 0;
+                        return { ...s, value: val.toString(), trend: '0%', trendDirection: 'down' };
+                    }
+                    return s;
+                }));
+
+                // Update Difficulty Chart
+                if (trailData?.difficulty_distribution) {
+                    const dist = trailData.difficulty_distribution;
+                    const newDifficultyData = [
+                        { name: 'Easy', value: 0, color: '#97BC62' },
+                        { name: 'Moderate', value: 0, color: '#F59E0B' },
+                        { name: 'Hard', value: 0, color: '#DC2626' }
+                    ];
+
+                    dist.forEach((d: any) => {
+                        const difficulty = d.difficulty?.toUpperCase();
+                        const count = parseInt(d.count, 10);
+
+                        if (difficulty === 'EASY') newDifficultyData[0].value = count;
+                        if (difficulty === 'MODERATE') newDifficultyData[1].value = count;
+                        if (difficulty === 'HARD') newDifficultyData[2].value = count;
+                    });
+
+                    setDifficultyData(newDifficultyData);
+                }
+
             } catch (err) {
                 console.error("Failed to fetch dashboard stats", err);
-                // Keep default/mock values on error
-                setStats(prev => prev.map(s =>
-                    s.title === 'Total Trails' ? { ...s, value: '56' } : s
-                ));
             }
         };
         fetchStats();
     }, []);
+
+    // Completion rate by month
+    const completionData = [
+        { month: 'Sep', completions: 420 },
+        { month: 'Oct', completions: 580 },
+        { month: 'Nov', completions: 650 },
+        { month: 'Dec', completions: 720 },
+        { month: 'Jan', completions: 890 },
+    ];
 
     // Recent activities specific to trekking
     const recentActivities: ActivityItem[] = [
@@ -173,37 +266,10 @@ const Dashboard: React.FC = () => {
 
     // Popular trails data
     const popularTrails: PopularTrail[] = [
-        { id: 1, name: 'Mount Fansipan', difficulty: 'Hard', completions: 234, rating: 4.8, location: 'Sapa, Lào Cai' },
-        { id: 2, name: 'Ba Vi Summit Trail', difficulty: 'Moderate', completions: 456, rating: 4.6, location: 'Ba Vì, Hanoi' },
-        { id: 3, name: 'Tam Dao Loop', difficulty: 'Easy', completions: 589, rating: 4.7, location: 'Tam Đảo, Vĩnh Phúc' },
-        { id: 4, name: 'Cat Ba Peak', difficulty: 'Moderate', completions: 378, rating: 4.5, location: 'Cat Ba, Hải Phòng' },
-    ];
-
-    // Chart data - User growth over last 7 days
-    const userGrowthData = [
-        { day: 'Mon', users: 980, groups: 65 },
-        { day: 'Tue', users: 1050, groups: 72 },
-        { day: 'Wed', users: 1120, groups: 78 },
-        { day: 'Thu', users: 1080, groups: 75 },
-        { day: 'Fri', users: 1150, groups: 82 },
-        { day: 'Sat', users: 1200, groups: 87 },
-        { day: 'Sun', users: 1234, groups: 89 },
-    ];
-
-    // Trail difficulty distribution
-    const difficultyData = [
-        { name: 'Easy', value: 22, color: '#97BC62' }, // Sage Green
-        { name: 'Moderate', value: 20, color: '#F59E0B' }, // Amber/Gold
-        { name: 'Hard', value: 14, color: '#DC2626' }, // Red
-    ];
-
-    // Completion rate by month
-    const completionData = [
-        { month: 'Sep', completions: 420 },
-        { month: 'Oct', completions: 580 },
-        { month: 'Nov', completions: 650 },
-        { month: 'Dec', completions: 720 },
-        { month: 'Jan', completions: 890 },
+        { id: 1, name: 'Mount Fansipan', difficulty: 'Hard', completions: 234, rating: 4.8, location: 'Sapa, Lao Cai' },
+        { id: 2, name: 'Ba Vi Summit Trail', difficulty: 'Moderate', completions: 456, rating: 4.6, location: 'Ba Vi, Hanoi' },
+        { id: 3, name: 'Tam Dao Loop', difficulty: 'Easy', completions: 589, rating: 4.7, location: 'Tam Dao, Vinh Phuc' },
+        { id: 4, name: 'Cat Ba Peak', difficulty: 'Moderate', completions: 378, rating: 4.5, location: 'Cat Ba, Hai Phong' },
     ];
 
     const getDifficultyColor = (difficulty: string) => {
@@ -422,99 +488,6 @@ const Dashboard: React.FC = () => {
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Weather Overview & Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {/* Weather Cards */}
-                <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-blue-50 to-blue-100/50">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-2">
-                            <Sun className="w-8 h-8 text-amber-500" />
-                            <span className="text-2xl font-bold text-gray-900">28°C</span>
-                        </div>
-                        <p className="text-sm font-semibold text-gray-700">Sapa Valley</p>
-                        <p className="text-xs text-gray-600">Clear sky, Perfect hiking</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-gray-50 to-gray-100/50">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-2">
-                            <Cloud className="w-8 h-8 text-gray-500" />
-                            <span className="text-2xl font-bold text-gray-900">22°C</span>
-                        </div>
-                        <p className="text-sm font-semibold text-gray-700">Ba Vi Peak</p>
-                        <p className="text-xs text-gray-600">Cloudy, Moderate conditions</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-blue-100 to-blue-200/50">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-2">
-                            <Droplets className="w-8 h-8 text-blue-600" />
-                            <span className="text-2xl font-bold text-gray-900">18°C</span>
-                        </div>
-                        <p className="text-sm font-semibold text-gray-700">Cat Ba Island</p>
-                        <p className="text-xs text-gray-600">Light rain, Not recommended</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-green-50 to-green-100/50">
-                    <CardContent className="p-6">
-                        <div className="flex items-center justify-between mb-2">
-                            <Wind className="w-8 h-8 text-green-600" />
-                            <span className="text-2xl font-bold text-gray-900">25°C</span>
-                        </div>
-                        <p className="text-sm font-semibold text-gray-700">Tam Dao Loop</p>
-                        <p className="text-xs text-gray-600">Breezy, Great for trekking</p>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group bg-gradient-to-br from-white to-green-50/30">
-                    <CardContent className="p-6">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 rounded-xl bg-forest-green bg-opacity-10 group-hover:bg-opacity-20 transition-all">
-                                <Users className="w-6 h-6 text-forest-green" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-gray-900">Manage Users</h4>
-                                <p className="text-sm text-gray-600">View trekker profiles</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group bg-gradient-to-br from-white to-green-50/30">
-                    <CardContent className="p-6">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 rounded-xl bg-sage-green bg-opacity-10 group-hover:bg-opacity-20 transition-all">
-                                <Mountain className="w-6 h-6 text-sage-green" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-gray-900">Manage Trails</h4>
-                                <p className="text-sm text-gray-600">Add and edit routes</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group bg-gradient-to-br from-white to-amber-50/30">
-                    <CardContent className="p-6">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 rounded-xl bg-amber-500 bg-opacity-10 group-hover:bg-opacity-20 transition-all">
-                                <Navigation className="w-6 h-6 text-amber-600" />
-                            </div>
-                            <div>
-                                <h4 className="font-semibold text-gray-900">Safety Reports</h4>
-                                <p className="text-sm text-gray-600">Monitor trail conditions</p>
-                            </div>
                         </div>
                     </CardContent>
                 </Card>

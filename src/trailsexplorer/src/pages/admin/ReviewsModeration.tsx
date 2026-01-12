@@ -1,110 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, CheckCircle, EyeOff, Trash2, Eye, Star, AlertCircle, Clock, X as XIcon } from 'lucide-react';
+import { Search, Filter, CheckCircle, EyeOff, Trash2, Eye, Star, AlertCircle, Clock, X as XIcon, MessageSquare } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
-// Mock Data for Reviews
-const MOCK_REVIEWS: Review[] = [
-    {
-        review_id: 1,
-        content: 'Amazing trail! The views from the summit were breathtaking. Well-marked paths and moderate difficulty. Highly recommend for experienced hikers.',
-        overall_rating: 5,
-        created_at: '2024-01-15T08:30:00Z',
-        is_approved: true,
-        is_published: true,
-        User: {
-            user_id: 1,
-            username: 'sarah_chen',
-            full_name: 'Sarah Chen',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
-            email: 'sarah.chen@example.com'
-        },
-        Trail: {
-            trail_id: 1,
-            name: 'Mount Fansipan Summit',
-            location_province: 'Lào Cai'
-        }
-    },
-    {
-        review_id: 2,
-        content: 'Great trail for beginners. Nice scenery but can get crowded on weekends.',
-        overall_rating: 4,
-        created_at: '2024-01-14T14:20:00Z',
-        is_approved: false,
-        is_published: true,
-        User: {
-            user_id: 2,
-            username: 'mike_nguyen',
-            full_name: 'Mike Nguyen',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
-            email: 'mike.nguyen@example.com'
-        },
-        Trail: {
-            trail_id: 2,
-            name: 'Ba Vi National Park Loop',
-            location_province: 'Hanoi'
-        }
-    },
-    {
-        review_id: 3,
-        content: 'This is spam content that should be moderated. Buy cheap products online!',
-        overall_rating: 1,
-        created_at: '2024-01-13T10:15:00Z',
-        is_approved: false,
-        is_published: false,
-        User: {
-            user_id: 3,
-            username: 'spammer123',
-            full_name: 'Spam User',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Spam',
-            email: 'spam@example.com'
-        },
-        Trail: {
-            trail_id: 3,
-            name: 'Tam Dao Loop',
-            location_province: 'Vĩnh Phúc'
-        }
-    },
-    {
-        review_id: 4,
-        content: 'Beautiful scenery, challenging terrain. The sunrise view was worth the early start. Would definitely do it again!',
-        overall_rating: 5,
-        created_at: '2024-01-12T16:45:00Z',
-        is_approved: true,
-        is_published: true,
-        User: {
-            user_id: 4,
-            username: 'emma_tran',
-            full_name: 'Emma Tran',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma',
-            email: 'emma.tran@example.com'
-        },
-        Trail: {
-            trail_id: 4,
-            name: 'Cat Ba Peak',
-            location_province: 'Hải Phòng'
-        }
-    },
-    {
-        review_id: 5,
-        content: 'Trail conditions were poor. Needs better maintenance and clearer signage.',
-        overall_rating: 2,
-        created_at: '2024-01-11T09:00:00Z',
-        is_approved: false,
-        is_published: true,
-        User: {
-            user_id: 5,
-            username: 'david_le',
-            full_name: 'David Le',
-            avatar_url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
-            email: 'david.le@example.com'
-        },
-        Trail: {
-            trail_id: 5,
-            name: 'Sapa Rice Terraces',
-            location_province: 'Lào Cai'
-        }
-    }
-];
+// Types
+interface User {
+    user_id: number;
+    username: string;
+    full_name: string;
+    avatar_url: string;
+    email: string;
+}
+
+interface Trail {
+    trail_id: number;
+    name: string;
+    location_province: string;
+}
 
 interface Review {
     review_id: number;
@@ -113,19 +24,11 @@ interface Review {
     created_at: string;
     is_approved: boolean;
     is_published: boolean;
-    User: {
-        user_id: number;
-        username: string;
-        full_name: string;
-        avatar_url: string;
-        email: string;
-    };
-    Trail: {
-        trail_id: number;
-        name: string;
-        location_province: string;
-    };
+    User: User;
+    Trail: Trail;
 }
+
+// --- Modals ---
 
 interface ConfirmDialogProps {
     isOpen: boolean;
@@ -162,87 +65,81 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, title, message, o
     );
 };
 
-interface ViewTrailModalProps {
+interface ViewReviewModalProps {
     isOpen: boolean;
-    trail: {
-        trail_id: number;
-        name: string;
-        location_province: string;
-    } | null;
+    review: Review | null;
     onClose: () => void;
 }
 
-const ViewTrailModal: React.FC<ViewTrailModalProps> = ({ isOpen, trail, onClose }) => {
-    if (!isOpen || !trail) return null;
-
-    // Mock additional trail details
-    const trailDetails = {
-        difficulty: trail.trail_id === 1 ? 'Hard' : trail.trail_id === 2 ? 'Moderate' : 'Easy',
-        length_km: trail.trail_id === 1 ? 12.5 : trail.trail_id === 2 ? 8.3 : 5.2,
-        duration_hr: trail.trail_id === 1 ? 6 : trail.trail_id === 2 ? 4 : 2,
-        elevation_gain: trail.trail_id === 1 ? 1400 : trail.trail_id === 2 ? 800 : 350,
-        rating: trail.trail_id === 1 ? 4.8 : trail.trail_id === 2 ? 4.6 : 4.5,
-        total_reviews: trail.trail_id === 1 ? 234 : trail.trail_id === 2 ? 156 : 89,
-        description: trail.trail_id === 1
-            ? 'The highest peak in Indochina, offering spectacular views and challenging terrain.'
-            : trail.trail_id === 2
-                ? 'Beautiful loop through Ba Vi National Park with diverse flora and fauna.'
-                : 'Scenic trail through rice terraces with moderate difficulty.'
-    };
+const ViewReviewModal: React.FC<ViewReviewModalProps> = ({ isOpen, review, onClose }) => {
+    if (!isOpen || !review) return null;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-xl">
                 <div className="flex items-start justify-between mb-4">
-                    <h3 className="text-2xl font-bold text-gray-900">{trail.name}</h3>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700"
-                    >
+                    <h3 className="text-2xl font-bold text-gray-900">Review Details</h3>
+                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
                         <XIcon className="w-6 h-6" />
                     </button>
                 </div>
 
-                <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-6">
+                    {/* User & Trail Info */}
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                        <img
+                            src={review.User?.avatar_url || 'https://i.pravatar.cc/150'}
+                            alt={review.User?.username}
+                            className="w-16 h-16 rounded-full"
+                        />
                         <div>
-                            <p className="text-sm text-gray-500">Location</p>
-                            <p className="font-semibold text-gray-900">{trail.location_province}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Difficulty</p>
-                            <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${trailDetails.difficulty === 'Hard' ? 'bg-red-100 text-red-700' :
-                                trailDetails.difficulty === 'Moderate' ? 'bg-yellow-100 text-yellow-700' :
-                                    'bg-green-100 text-green-700'
-                                }`}>
-                                {trailDetails.difficulty}
-                            </span>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Length</p>
-                            <p className="font-semibold text-gray-900">{trailDetails.length_km} km</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Duration</p>
-                            <p className="font-semibold text-gray-900">{trailDetails.duration_hr} hours</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Elevation Gain</p>
-                            <p className="font-semibold text-gray-900">{trailDetails.elevation_gain}m</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Rating</p>
-                            <div className="flex items-center gap-1">
-                                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                <span className="font-semibold text-gray-900">{trailDetails.rating}/5</span>
-                                <span className="text-sm text-gray-500">({trailDetails.total_reviews} reviews)</span>
+                            <p className="font-bold text-lg">{review.User?.full_name}</p>
+                            <p className="text-gray-600">{review.User?.email}</p>
+                            <div className="mt-2 text-sm text-gray-500">
+                                Reviewed <span className="font-semibold text-forest-green">{review.Trail?.name}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="pt-4 border-t">
-                        <p className="text-sm text-gray-500 mb-2">Description</p>
-                        <p className="text-gray-700">{trailDetails.description}</p>
+                    {/* Rating & Date */}
+                    <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-1">
+                            <span className="font-semibold">Rating:</span>
+                            <div className="flex">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                        key={star}
+                                        className={`w-5 h-5 ${star <= review.overall_rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-gray-600">
+                            <Clock className="w-5 h-5" />
+                            <span>{new Date(review.created_at).toLocaleString()}</span>
+                        </div>
+                    </div>
+
+                    {/* Content */}
+                    <div>
+                        <h4 className="font-semibold mb-2">Content</h4>
+                        <div className="p-4 border rounded-lg bg-white text-gray-800 min-h-[100px]">
+                            {review.content}
+                        </div>
+                    </div>
+
+                    {/* Status */}
+                    <div>
+                        <h4 className="font-semibold mb-2">Status</h4>
+                        <div className="flex gap-2">
+                            {!review.is_published ? (
+                                <span className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm font-medium">Hidden</span>
+                            ) : review.is_approved ? (
+                                <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">Approved</span>
+                            ) : (
+                                <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">Pending Review</span>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -250,8 +147,8 @@ const ViewTrailModal: React.FC<ViewTrailModalProps> = ({ isOpen, trail, onClose 
     );
 };
 
+
 const ReviewsModeration: React.FC = () => {
-    const [allReviews] = useState<Review[]>(MOCK_REVIEWS);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'hidden'>('all');
@@ -259,10 +156,13 @@ const ReviewsModeration: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
-    const [viewTrailModal, setViewTrailModal] = useState<{ isOpen: boolean; trail: any | null }>({
+
+    // Modals
+    const [viewReviewModal, setViewReviewModal] = useState<{ isOpen: boolean; review: Review | null }>({
         isOpen: false,
-        trail: null
+        review: null
     });
+
     const [confirmDialog, setConfirmDialog] = useState<{
         isOpen: boolean;
         reviewId: number | null;
@@ -280,61 +180,87 @@ const ReviewsModeration: React.FC = () => {
         setTimeout(() => setToast(null), 3000);
     };
 
-    const loadReviews = () => {
+    const getAuthHeader = () => {
+        const token = localStorage.getItem('token');
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+    };
+
+    const loadReviews = async () => {
         setLoading(true);
+        try {
+            const queryParams = new URLSearchParams({
+                page: currentPage.toString(),
+                limit: '10',
+                status: filter,
+                search: searchTerm
+            });
 
-        // Filter reviews based on filter and search
-        let filtered = [...allReviews];
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/reviews?${queryParams}`, {
+                headers: getAuthHeader()
+            });
 
-        // Apply status filter
-        if (filter === 'pending') {
-            filtered = filtered.filter(r => !r.is_approved);
-        } else if (filter === 'approved') {
-            filtered = filtered.filter(r => r.is_approved && r.is_published);
-        } else if (filter === 'hidden') {
-            filtered = filtered.filter(r => !r.is_published);
+            if (!res.ok) throw new Error('Failed to fetch reviews');
+
+            const data = await res.json();
+            setReviews(data.data);
+            setTotalPages(data.pages);
+        } catch (error) {
+            console.error(error);
+            showToast('Failed to load reviews', 'error');
+            // Fallback empty
+            setReviews([]);
+        } finally {
+            setLoading(false);
         }
-
-        // Apply search filter
-        if (searchTerm) {
-            filtered = filtered.filter(r =>
-                r.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                r.User?.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                r.Trail?.name.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-
-        setReviews(filtered);
-        setTotalPages(1); // Single page for mock data
-        setLoading(false);
     };
 
     useEffect(() => {
         loadReviews();
-    }, [filter, currentPage]);
+    }, [filter, currentPage]); // Remove searchTerm from dep array to search only on enter/click
 
-    const handleApprove = (reviewId: number) => {
-        const updatedReviews = allReviews.map(r =>
-            r.review_id === reviewId ? { ...r, is_approved: true, is_published: true } : r
-        );
-        showToast('Review approved successfully', 'success');
-        loadReviews();
+    const handleApprove = async (reviewId: number) => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/reviews/${reviewId}/approve`, {
+                method: 'PUT',
+                headers: getAuthHeader()
+            });
+            if (!res.ok) throw new Error('Failed to approve');
+            showToast('Review approved successfully', 'success');
+            loadReviews();
+        } catch (error) {
+            showToast('Error approving review', 'error');
+        }
     };
 
-    const handleHide = (reviewId: number) => {
-        const updatedReviews = allReviews.map(r =>
-            r.review_id === reviewId ? { ...r, is_published: false } : r
-        );
-        showToast('Review hidden successfully', 'success');
-        loadReviews();
+    const handleHide = async (reviewId: number) => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/reviews/${reviewId}/hide`, {
+                method: 'PUT',
+                headers: getAuthHeader()
+            });
+            if (!res.ok) throw new Error('Failed to hide');
+            showToast('Review hidden successfully', 'success');
+            loadReviews();
+        } catch (error) {
+            showToast('Error hiding review', 'error');
+        }
     };
 
-    const handleUnhide = (reviewId: number) => {
-        const updatedReviews = allReviews.map(r =>
-            r.review_id === reviewId ? { ...r, is_published: true } : r
-        );
-        showToast('Review unhidden successfully', 'success');
-        loadReviews();
+    const handleUnhide = async (reviewId: number) => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/reviews/${reviewId}/unhide`, {
+                method: 'PUT',
+                headers: getAuthHeader()
+            });
+            if (!res.ok) throw new Error('Failed to unhide');
+            showToast('Review unhidden successfully', 'success');
+            loadReviews();
+        } catch (error) {
+            showToast('Error unhiding review', 'error');
+        }
     };
 
     const handleDeleteClick = (reviewId: number) => {
@@ -346,15 +272,21 @@ const ReviewsModeration: React.FC = () => {
         });
     };
 
-    const handleDeleteConfirm = () => {
+    const handleDeleteConfirm = async () => {
         if (confirmDialog.reviewId) {
-            const index = allReviews.findIndex(r => r.review_id === confirmDialog.reviewId);
-            if (index !== -1) {
-                allReviews.splice(index, 1);
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/admin/reviews/${confirmDialog.reviewId}`, {
+                    method: 'DELETE',
+                    headers: getAuthHeader()
+                });
+                if (!res.ok) throw new Error('Failed to delete');
+                showToast('Review deleted successfully', 'success');
+                loadReviews();
+            } catch (error) {
+                showToast('Error deleting review', 'error');
+            } finally {
+                setConfirmDialog({ isOpen: false, reviewId: null, title: '', message: '' });
             }
-            showToast('Review deleted successfully', 'success');
-            setConfirmDialog({ isOpen: false, reviewId: null, title: '', message: '' });
-            loadReviews();
         }
     };
 
@@ -405,11 +337,11 @@ const ReviewsModeration: React.FC = () => {
                 onCancel={() => setConfirmDialog({ isOpen: false, reviewId: null, title: '', message: '' })}
             />
 
-            {/* View Trail Modal */}
-            <ViewTrailModal
-                isOpen={viewTrailModal.isOpen}
-                trail={viewTrailModal.trail}
-                onClose={() => setViewTrailModal({ isOpen: false, trail: null })}
+            {/* View Review Modal */}
+            <ViewReviewModal
+                isOpen={viewReviewModal.isOpen}
+                review={viewReviewModal.review}
+                onClose={() => setViewReviewModal({ isOpen: false, review: null })}
             />
 
             {/* Header */}
@@ -480,7 +412,7 @@ const ReviewsModeration: React.FC = () => {
                     ) : reviews.length === 0 ? (
                         <div className="text-center py-12">
                             <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                            <p className="text-gray-500">No reviews found</p>
+                            <p className="text-gray-500">No reviews found matching your criteria</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
@@ -490,7 +422,7 @@ const ReviewsModeration: React.FC = () => {
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Reviewer</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Trail</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Rating</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Comment</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Content</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Date</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Actions</th>
@@ -513,19 +445,24 @@ const ReviewsModeration: React.FC = () => {
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <button
-                                                    onClick={() => setViewTrailModal({ isOpen: true, trail: review.Trail })}
-                                                    className="text-left hover:underline"
-                                                >
-                                                    <p className="font-medium text-forest-green hover:text-sage-green">{review.Trail?.name}</p>
-                                                    <p className="text-sm text-gray-500">{review.Trail?.location_province}</p>
-                                                </button>
+                                                <p className="font-medium text-gray-900">{review.Trail?.name}</p>
+                                                <p className="text-sm text-gray-500">{review.Trail?.location_province}</p>
                                             </td>
                                             <td className="px-6 py-4">
                                                 {renderStars(review.overall_rating)}
                                             </td>
-                                            <td className="px-6 py-4 max-w-md">
-                                                <p className="text-gray-700 line-clamp-2">{review.content}</p>
+                                            <td className="px-6 py-4 max-w-xs">
+                                                <button
+                                                    onClick={() => setViewReviewModal({ isOpen: true, review })}
+                                                    className="text-left group"
+                                                >
+                                                    <p className="text-gray-700 line-clamp-2 group-hover:text-forest-green transition-colors">
+                                                        {review.content}
+                                                    </p>
+                                                    <span className="text-xs text-forest-green opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mt-1">
+                                                        <Eye className="w-3 h-3" /> View details
+                                                    </span>
+                                                </button>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-1 text-sm text-gray-600">

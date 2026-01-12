@@ -9,6 +9,26 @@ const authenticateToken = require('../middleware/authMiddleware');
 
 const sequelize = require('../config/database');
 
+// 0. GET /api/trails/stats (Dashboard Stats)
+router.get('/stats', async (req, res) => {
+    try {
+        const totalTrails = await Trail.count();
+
+        const difficultyStats = await Trail.findAll({
+            attributes: ['difficulty', [sequelize.fn('COUNT', sequelize.col('difficulty')), 'count']],
+            group: ['difficulty']
+        });
+
+        res.json({
+            total: totalTrails,
+            difficulty_distribution: difficultyStats
+        });
+    } catch (err) {
+        console.error("Trail Stats Error:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // 1. GET /api/trails: List trails (Pagination, Filtering)
 router.get('/', async (req, res) => {
     try {

@@ -4,7 +4,14 @@ const Favorite = require('../models/Favorite');
 const SavedPlan = require('../models/SavedPlan');
 const Trail = require('../models/Trail'); // Needed to fetch trail details in favorites
 const authenticateToken = require('../middleware/authMiddleware');
-const { deleteUser } = require('../controllers/userController');
+const { deleteUser, getUsers, getUserStats, getGrowthStats } = require('../controllers/userController');
+
+// 0. GET /api/user/stats (Public or Admin only - here public for dashboard demo)
+router.get('/stats', getUserStats);
+router.get('/growth', getGrowthStats);
+
+// 0. GET /api/user (List users)
+router.get('/', getUsers);
 
 // 1. GET /api/user/saved-plans
 router.get('/saved-plans', authenticateToken, async (req, res) => {
