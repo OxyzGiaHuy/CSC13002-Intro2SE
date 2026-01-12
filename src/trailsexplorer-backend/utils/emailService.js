@@ -7,31 +7,14 @@ const sendEmail = async (to, subject, htmlContent) => {
         console.log(`[DEBUG] SMTP Config: Host=smtp.gmail.com, Port=587, User=${process.env.EMAIL_USER ? 'Set' : 'Missing'}`);
 
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587, // Try TLS instead of SSL (465)
-            secure: false, // true for 465, false for other ports
-            requireTLS: true,
+            service: 'gmail',
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
             },
-            connectionTimeout: 30000,
-            greetingTimeout: 30000,
-            socketTimeout: 30000
-        });
-
-        // Verify connection config
-        await new Promise((resolve, reject) => {
-            // verify connection configuration
-            transporter.verify(function (error, success) {
-                if (error) {
-                    console.log('[DEBUG] SMTP Connection Error:', error);
-                    reject(error);
-                } else {
-                    console.log("[DEBUG] Server is ready to take our messages");
-                    resolve(success);
-                }
-            });
+            tls: {
+                rejectUnauthorized: false
+            }
         });
 
         const mailOptions = {
@@ -42,6 +25,8 @@ const sendEmail = async (to, subject, htmlContent) => {
         };
 
         const info = await transporter.sendMail(mailOptions);
+        console.log(`[DEBUG] Email sent: ${info.messageId}`);
+        return true;
         logger.info(`Email sent to ${to}: ${info.messageId}`);
         return true;
     } catch (error) {
