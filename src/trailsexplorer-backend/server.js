@@ -135,7 +135,9 @@ app.use(errorHandler);
 // START SERVER
 // =====================
 // Sync Database
-sequelize.sync() // Reverted from { alter: true } to avoid ENUM casting error on startup
+// Attempt to enable PostGIS extension before syncing models
+sequelize.query("CREATE EXTENSION IF NOT EXISTS postgis;")
+  .then(() => sequelize.sync()) // Reverted from { alter: true } to avoid ENUM casting error on startup
   .then(() => {
     console.log('Database connected successfully');
     app.listen(PORT, () => {
