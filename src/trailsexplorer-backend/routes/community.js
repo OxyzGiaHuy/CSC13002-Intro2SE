@@ -15,7 +15,10 @@ router.get('/posts', async (req, res) => {
         const { page = 1, limit = 10, type, search } = req.query;
         const offset = (page - 1) * limit;
 
-        const whereClause = { is_published: true, visibility: 'PUBLIC' };
+        const whereClause = {
+            is_published: true,
+            is_approved: true
+        };
 
         // Filter by Type
         if (type && type !== 'ALL') {

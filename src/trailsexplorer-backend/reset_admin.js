@@ -14,12 +14,13 @@ async function resetAdminPassword() {
 
         if (!admin) {
             console.log('Admin user not found! Creating new admin user...');
-            // Hook 'beforeCreate' will hash the password. pass plain text.
+            // Set raw password - the beforeCreate hook will hash it automatically
             await User.create({
                 username: 'admin',
                 email: adminEmail,
                 password: newPassword,
                 role: 'ADMIN',
+                full_name: 'System Administrator',
                 is_email_verified: true,
                 is_active: true
             });
@@ -27,12 +28,11 @@ async function resetAdminPassword() {
             return;
         }
 
-        // Fix: Do NOT hash here manually. The User model 'beforeUpdate' hook will hash it automatically.
-        // If we hash here, it gets hashed TWICE (once here, once in hook), causing login failure.
+        // Set raw password - the beforeUpdate hook will hash it automatically
         admin.password = newPassword;
         admin.role = 'ADMIN'; // Ensure role is ADMIN
-        admin.is_email_verified = true;
-        admin.is_active = true;
+        admin.is_email_verified = true; // Ensure email is verified
+        admin.is_active = true; // Ensure account is active
         await admin.save();
 
         console.log(`\n✅ Password for ${adminEmail} has been reset to: ${newPassword}\n`);
