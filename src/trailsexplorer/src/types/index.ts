@@ -15,6 +15,18 @@ export interface Trail {
   isFavorited?: boolean; // Added for favorite feature
   lat: number;
   lng: number;
+  start_point?: {
+      type: string;
+      coordinates: number[]; // [Longitude, Latitude]
+  };
+  end_point?: {
+      type: string;
+      coordinates: number[];
+  };
+  start_lat?: number; // Trail starting point latitude
+  start_lng?: number; // Trail starting point longitude
+  end_lat?: number;   // Trail ending point latitude
+  end_lng?: number;   // Trail ending point longitude
 }
 
 export interface Review {

@@ -2,7 +2,7 @@ import type { Trail } from '../types/index';
 // MOCK_TRAILS imported for fallback/types but not used for main fetch if API works
 import { MOCK_TRAILS } from '../data/constants';
 
-const API_URL = '/api';
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 /**
  * Service layer for trail-related operations
@@ -31,7 +31,7 @@ const mapBackendTrailToFrontend = (backendTrail: any): Trail => {
         lat = backendTrail.start_point.coordinates[1];
     }
 
-    return {
+    const frontendTrail: Trail = {
         id: backendTrail.trail_id,
         name: backendTrail.name,
         location: `${backendTrail.location_district || ''}, ${backendTrail.location_province || backendTrail.location_region || ''}`.replace(/^, /, ''),
@@ -52,7 +52,26 @@ const mapBackendTrailToFrontend = (backendTrail: any): Trail => {
         isFavorited: false, // User specific
         lat: lat,
         lng: lng,
+        // Map new navigation coordinates
+        start_lat: backendTrail.start_lat,
+        start_lng: backendTrail.start_lng,
+        end_lat: backendTrail.end_lat,
+        end_lng: backendTrail.end_lng,
     };
+
+    // Polyfill: If backend data is missing start/end coords, try to borrow from MOCK_TRAILS
+    // This is useful for demos where valid coordinate data might not be fully seeded in DB yet
+    if (!frontendTrail.start_lat || !frontendTrail.start_lng || !frontendTrail.end_lat || !frontendTrail.end_lng) {
+        const mockMatch = MOCK_TRAILS.find(m => m.id === frontendTrail.id);
+        if (mockMatch) {
+            if (!frontendTrail.start_lat) frontendTrail.start_lat = mockMatch.start_lat;
+            if (!frontendTrail.start_lng) frontendTrail.start_lng = mockMatch.start_lng;
+            if (!frontendTrail.end_lat) frontendTrail.end_lat = mockMatch.end_lat;
+            if (!frontendTrail.end_lng) frontendTrail.end_lng = mockMatch.end_lng;
+        }
+    }
+
+    return frontendTrail;
 };
 
 /**

@@ -143,24 +143,15 @@ router.get('/:id', async (req, res) => {
         const trail = await Trail.findByPk(req.params.id, {
             attributes: {
                 include: [
-                    [
-                        sequelize.literal(`(
-                            SELECT CAST(AVG(overall_rating) AS DECIMAL(3,1))
-                            FROM trail_reviews AS review
-                            WHERE
-                                review.trail_id = "Trail"."trail_id"
-                        )`),
-                        'avg_rating'
-                    ],
-                    [
-                        sequelize.literal(`(
-                            SELECT COUNT(*)
-                            FROM trail_reviews AS review
-                            WHERE
-                                review.trail_id = "Trail"."trail_id"
-                        )`),
-                        'num_reviews'
-                    ]
+                    // 1. Rating & Reviews count
+                    [sequelize.literal(`(SELECT CAST(AVG(overall_rating) AS DECIMAL(3,1)) FROM trail_reviews AS review WHERE review.trail_id = "Trail"."trail_id")`), 'avg_rating'],
+                    [sequelize.literal(`(SELECT COUNT(*) FROM trail_reviews AS review WHERE review.trail_id = "Trail"."trail_id")`), 'num_reviews'],
+                    
+                    // 2. TÍNH TOÁN TỌA ĐỘ TRỰC TIẾP BẰNG SQL (Đặt tên biến rõ ràng)
+                    [sequelize.fn('ST_Y', sequelize.cast(sequelize.col('start_point'), 'geometry')), 'geo_start_lat'], 
+                    [sequelize.fn('ST_X', sequelize.cast(sequelize.col('start_point'), 'geometry')), 'geo_start_lng'],
+                    [sequelize.fn('ST_Y', sequelize.cast(sequelize.col('end_point'), 'geometry')), 'geo_end_lat'],
+                    [sequelize.fn('ST_X', sequelize.cast(sequelize.col('end_point'), 'geometry')), 'geo_end_lng']
                 ]
             },
             include: [
@@ -170,26 +161,53 @@ router.get('/:id', async (req, res) => {
                     required: false,
                     include: [{ model: User, attributes: ['username', 'avatar_url'] }],
                     order: [['created_at', 'DESC']],
-                    limit: 5 // Initial reviews
+                    limit: 5
                 },
-                {
-                    model: TrailImage,
-                    as: 'images',
-                    required: false
-                }
+                { model: TrailImage, as: 'images', required: false }
             ]
         });
 
         if (!trail) return res.status(404).json({ message: "Trail not found" });
 
-        const t = trail.toJSON();
-        // ensure image_url is at top level if needed, or frontend can use images array
-        t.image_url = t.images && t.images.length > 0 ? t.images[0].image_url : null;
-        t.avg_rating = parseFloat(t.avg_rating) || 0;
-        t.num_reviews = parseInt(t.num_reviews) || 0;
+        // --- BẮT ĐẦU XỬ LÝ DỮ LIỆU THỦ CÔNG ---
+        
+        // Lấy dữ liệu thô (Raw) từ Sequelize. 
+        // dataValues chứa tất cả mọi thứ: từ column thật đến column tính toán (geo_start_lat...)
+        const raw = trail.dataValues;
 
-        res.json(t);
+        // Hàm helper để ép kiểu số an toàn
+        const parseCoord = (val) => {
+            if (val === null || val === undefined) return null;
+            const num = parseFloat(val);
+            return isNaN(num) ? null : num;
+        };
+
+        // Tạo object response thủ công để đảm bảo không bị toJSON() lọc mất
+        const responseData = {
+            ...trail.toJSON(), // Copy các trường cơ bản
+            
+            // Ghi đè tọa độ bằng giá trị lấy từ SQL Alias
+            start_lat: parseCoord(raw.geo_start_lat),
+            start_lng: parseCoord(raw.geo_start_lng),
+            end_lat:   parseCoord(raw.geo_end_lat),
+            end_lng:   parseCoord(raw.geo_end_lng),
+            
+            // Format lại các trường khác
+            image_url: raw.images && raw.images.length > 0 ? raw.images[0].image_url : null,
+            avg_rating: parseFloat(raw.avg_rating) || 0,
+            num_reviews: parseInt(raw.num_reviews) || 0
+        };
+
+        // --- DEBUG LOG SERVER ---
+        // Xem Server log (Terminal chạy node) để biết kết quả
+        console.log(`[DEBUG API] Trail ID: ${req.params.id}`);
+        console.log(`- Raw SQL values: Lat=${raw.geo_start_lat}, Lng=${raw.geo_start_lng}`);
+        console.log(`- Final Response: Lat=${responseData.start_lat}, Lng=${responseData.start_lng}`);
+
+        res.json(responseData);
+
     } catch (err) {
+        console.error("API Error:", err);
         res.status(500).json({ error: err.message });
     }
 });
