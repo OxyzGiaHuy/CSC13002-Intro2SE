@@ -4,19 +4,20 @@ const logger = require('../config/logger');
 const sendEmail = async (to, subject, htmlContent) => {
     try {
         console.log(`[DEBUG] Preparing to send email to: ${to}`);
-        console.log(`[DEBUG] SMTP Config: Host=smtp.gmail.com, Port=465, User=${process.env.EMAIL_USER ? 'Set' : 'Missing'}`);
+        console.log(`[DEBUG] SMTP Config: Host=smtp.gmail.com, Port=587, User=${process.env.EMAIL_USER ? 'Set' : 'Missing'}`);
 
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
-            port: 465, // SSL
-            secure: true,
+            port: 587, // Try TLS instead of SSL (465)
+            secure: false, // true for 465, false for other ports
+            requireTLS: true,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
             },
-            connectionTimeout: 20000, // Tăng lên 20s
-            greetingTimeout: 20000,
-            socketTimeout: 20000
+            connectionTimeout: 30000,
+            greetingTimeout: 30000,
+            socketTimeout: 30000
         });
 
         // Verify connection config
