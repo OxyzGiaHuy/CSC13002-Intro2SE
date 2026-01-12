@@ -134,7 +134,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
             </div>
 
             {/* Hover Action Bar */}
-            <div className="bg-gradient-to-r from-[#0EA5E9] to-[#06B6D4] text-white py-3 text-center text-sm font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <div className="bg-gradient-to-r from-[#1A5D1A] to-[#4E9F3D] text-white py-3 text-center text-sm font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                 {T.common.viewDetails}
             </div>
         </div>

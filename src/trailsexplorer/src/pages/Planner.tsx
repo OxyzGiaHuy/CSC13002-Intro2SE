@@ -71,10 +71,10 @@ const Planner: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] via-white to-[#F0F9FF] pb-8">
+        <div className="min-h-screen bg-gradient-to-br from-[#F1F5E8] via-white to-[#F1F5E8] pb-8">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl md:text-5xl font-bold text-[#0EA5E9] mb-4">{T.planner.title}</h2>
+                    <h2 className="text-4xl md:text-5xl font-bold text-[#1A5D1A] mb-4">{T.planner.title}</h2>
                     <p className="text-[#0F172A]/60 text-lg">{T.home.subtitle}</p>
                 </div>
                 {error && (
@@ -84,20 +84,20 @@ const Planner: React.FC = () => {
                 )}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Input Section */}
-                    <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border-2 border-[#F0F9FF] h-fit">
-                        <h3 className="text-2xl font-bold text-[#0EA5E9] mb-6">{T.planner.createPlan}</h3>
+                    <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg border-2 border-[#F1F5E8] h-fit">
+                        <h3 className="text-2xl font-bold text-[#1A5D1A] mb-6">{T.planner.createPlan}</h3>
                         <div className="space-y-5">
                             <div>
                                 <label className="block text-sm font-bold text-[#0F172A] mb-2">{T.planner.destination}</label>
-                                <input type="text" value={location} onChange={e => setLocation(e.target.value)} className="w-full px-4 py-3 border-2 border-[#F0F9FF] rounded-lg focus:border-[#0EA5E9] focus:ring-2 focus:ring-[#E0F2FE] outline-none transition-all bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE]" />
+                                <input type="text" value={location} onChange={e => setLocation(e.target.value)} className="w-full px-4 py-3 border-2 border-[#F1F5E8] rounded-lg focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0]" />
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-[#0F172A] mb-2">{T.planner.dates}</label>
-                                <input type="number" value={duration} onChange={e => setDuration(parseInt(e.target.value) || 1)} min="1" className="w-full px-4 py-3 border-2 border-[#F0F9FF] rounded-lg focus:border-[#0EA5E9] focus:ring-2 focus:ring-[#E0F2FE] outline-none transition-all bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE]" />
+                                <input type="number" value={duration} onChange={e => setDuration(parseInt(e.target.value) || 1)} min="1" className="w-full px-4 py-3 border-2 border-[#F1F5E8] rounded-lg focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0]" />
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-[#0F172A] mb-2">{T.planner.difficulty}</label>
-                                <select value={difficulty} onChange={e => setDifficulty(e.target.value)} className="w-full px-4 py-3 border-2 border-[#F0F9FF] rounded-lg focus:border-[#0EA5E9] focus:ring-2 focus:ring-[#E0F2FE] outline-none transition-all bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE]">
+                                <select value={difficulty} onChange={e => setDifficulty(e.target.value)} className="w-full px-4 py-3 border-2 border-[#F1F5E8] rounded-lg focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0]">
                                     <option>Easy</option>
                                     <option>Moderate</option>
                                     <option>Hard</option>
@@ -105,9 +105,9 @@ const Planner: React.FC = () => {
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-[#0F172A] mb-2">{T.planner.activities}</label>
-                                <textarea value={interests} onChange={e => setInterests(e.target.value)} rows={3} className="w-full px-4 py-3 border-2 border-[#F0F9FF] rounded-lg focus:border-[#0EA5E9] focus:ring-2 focus:ring-[#E0F2FE] outline-none transition-all bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE] resize-none"></textarea>
+                                <textarea value={interests} onChange={e => setInterests(e.target.value)} rows={3} className="w-full px-4 py-3 border-2 border-[#F1F5E8] rounded-lg focus:border-[#1A5D1A] focus:ring-2 focus:ring-[#E8F0E0] outline-none transition-all bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0] resize-none"></textarea>
                             </div>
-                            <button onClick={handleGeneratePlan} disabled={isLoading} className="w-full bg-gradient-to-r from-[#0EA5E9] to-[#06B6D4] text-white py-3 rounded-lg hover:shadow-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide">
+                            <button onClick={handleGeneratePlan} disabled={isLoading} className="w-full bg-gradient-to-r from-[#1A5D1A] to-[#4E9F3D] text-white py-3 rounded-lg hover:shadow-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wide">
                                 {isLoading ? `${T.common.loading}...` : T.planner.suggestions}
                             </button>
                         </div>
@@ -115,18 +115,18 @@ const Planner: React.FC = () => {
 
                     <div className="lg:col-span-2 space-y-8">
                         {/* Plan Display */}
-                        <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-[#F0F9FF]">
+                        <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-[#F1F5E8]">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-2xl font-bold text-[#0EA5E9]">{T.planner.viewItinerary}</h3>
-                                {plan && <span className="text-xs bg-[#E0F2FE] text-[#0EA5E9] px-3 py-1 rounded-full font-bold">✓ {T.common.success}</span>}
+                                <h3 className="text-2xl font-bold text-[#1A5D1A]">{T.planner.viewItinerary}</h3>
+                                {plan && <span className="text-xs bg-[#E8F0E0] text-[#1A5D1A] px-3 py-1 rounded-full font-bold">✓ {T.common.success}</span>}
                             </div>
 
                             {isLoading && <div className="text-center py-12"><p className="text-[#0F172A]/60 animate-pulse font-medium">{T.common.loading}...</p></div>}
 
                             {!isLoading && !plan && !error && (
                                 <div className="flex flex-col items-center justify-center py-16 text-center space-y-6">
-                                    <div className="p-4 bg-[#F0F9FF] rounded-full">
-                                        <MapIcon className="w-12 h-12 text-[#0EA5E9]" />
+                                    <div className="p-4 bg-[#F1F5E8] rounded-full">
+                                        <MapIcon className="w-12 h-12 text-[#1A5D1A]" />
                                     </div>
                                     <div className="max-w-md space-y-2">
                                         <h4 className="text-xl font-bold text-[#0F172A]">{T.planner.ready || 'Ready to Plan?'}</h4>
@@ -136,15 +136,15 @@ const Planner: React.FC = () => {
                                     </div>
                                     <div className="grid grid-cols-3 gap-4 w-full max-w-sm pt-4">
                                         <div className="flex flex-col items-center gap-2">
-                                            <div className="p-2 bg-[#E0F2FE] text-[#0EA5E9] rounded-lg"><MapIcon className="w-5 h-5" /></div>
+                                            <div className="p-2 bg-[#E8F0E0] text-[#1A5D1A] rounded-lg"><MapIcon className="w-5 h-5" /></div>
                                             <span className="text-xs text-[#0F172A]/60 font-medium">{T.planner.day || 'Daily'}</span>
                                         </div>
                                         <div className="flex flex-col items-center gap-2">
-                                            <div className="p-2 bg-[#E0F2FE] text-[#0EA5E9] rounded-lg"><Tent className="w-5 h-5" /></div>
+                                            <div className="p-2 bg-[#E8F0E0] text-[#1A5D1A] rounded-lg"><Tent className="w-5 h-5" /></div>
                                             <span className="text-xs text-[#0F172A]/60 font-medium">{T.profile.camping || 'Camps'}</span>
                                         </div>
                                         <div className="flex flex-col items-center gap-2">
-                                            <div className="p-2 bg-[#E0F2FE] text-[#0EA5E9] rounded-lg"><Backpack className="w-5 h-5" /></div>
+                                            <div className="p-2 bg-[#E8F0E0] text-[#1A5D1A] rounded-lg"><Backpack className="w-5 h-5" /></div>
                                             <span className="text-xs text-[#0F172A]/60 font-medium">{T.planner.meals || 'Pack'}</span>
                                         </div>
                                     </div>
@@ -154,20 +154,20 @@ const Planner: React.FC = () => {
                             {plan && (
                                 <div className="space-y-6">
                                     {/* Refine Input (Top or Bottom? Let's put top for visibility) */}
-                                    <div className="bg-[#F0F9FF] p-4 rounded-lg border-2 border-[#0EA5E9]/30 mb-6">
-                                        <h4 className="font-bold text-sm text-[#0EA5E9] mb-3">{T.planner.editPlan || 'Want to adjust this plan?'}</h4>
+                                    <div className="bg-[#F1F5E8] p-4 rounded-lg border-2 border-[#1A5D1A]/30 mb-6">
+                                        <h4 className="font-bold text-sm text-[#1A5D1A] mb-3">{T.planner.editPlan || 'Want to adjust this plan?'}</h4>
                                         <div className="flex gap-2">
                                             <input
                                                 type="text"
                                                 placeholder={T.planner.suggestions || 'Add suggestions...'}
                                                 value={refineInstruction}
                                                 onChange={(e) => setRefineInstruction(e.target.value)}
-                                                className="flex-1 px-4 py-2 border-2 border-[#0EA5E9]/20 rounded-lg text-sm focus:border-[#0EA5E9] focus:ring-1 focus:ring-[#0EA5E9] outline-none transition-all"
+                                                className="flex-1 px-4 py-2 border-2 border-[#1A5D1A]/20 rounded-lg text-sm focus:border-[#1A5D1A] focus:ring-1 focus:ring-[#1A5D1A] outline-none transition-all"
                                             />
                                             <button
                                                 onClick={handleRefinePlan}
                                                 disabled={isRefining}
-                                                className="bg-[#0EA5E9] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#0284C7] font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                className="bg-[#1A5D1A] text-white px-4 py-2 rounded-lg text-sm hover:bg-[#4E9F3D] font-bold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                             >
                                                 {isRefining ? `${T.common.loading}...` : T.planner.editPlan}
                                             </button>
@@ -176,28 +176,28 @@ const Planner: React.FC = () => {
 
                                     <div className="space-y-4">
                                         {plan.plan.map(day => (
-                                            <div key={day.day} className="border-2 border-[#F0F9FF] p-5 rounded-lg hover:shadow-lg transition-shadow hover:border-[#0EA5E9]/30">
-                                                <h4 className="font-bold text-lg text-[#0EA5E9]">{T.planner.day} {day.day}: {day.title}</h4>
+                                            <div key={day.day} className="border-2 border-[#F1F5E8] p-5 rounded-lg hover:shadow-lg transition-shadow hover:border-[#1A5D1A]/30">
+                                                <h4 className="font-bold text-lg text-[#1A5D1A]">{T.planner.day} {day.day}: {day.title}</h4>
                                                 <div className="flex gap-4 text-sm text-[#0F172A]/60 mt-2 mb-3">
                                                     <span>📍 {day.distance_km} {T.planner.km || 'km'}</span>
                                                     <span>🏕️ {day.camping_suggestion || T.planner.meals}</span>
                                                 </div>
-                                                <p className="text-[#0F172A] italic border-l-4 border-[#0EA5E9] pl-3 py-1 bg-[#F0F9FF]/30">{day.route}</p>
+                                                <p className="text-[#0F172A] italic border-l-4 border-[#1A5D1A] pl-3 py-1 bg-[#F1F5E8]/30">{day.route}</p>
 
                                                 <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div>
-                                                        <h5 className="font-bold text-sm text-[#0EA5E9] mb-2">✨ {T.trailDetail.highlights || 'Highlights'}:</h5>
+                                                        <h5 className="font-bold text-sm text-[#1A5D1A] mb-2">✨ {T.trailDetail.highlights || 'Highlights'}:</h5>
                                                         <ul className="space-y-1">
-                                                            {day.highlights.map((h, i) => <li key={i} className="text-sm text-[#0F172A]/70 flex items-start gap-2"><span className="text-[#0EA5E9] font-bold mt-0.5">•</span> {h}</li>)}
+                                                            {day.highlights.map((h, i) => <li key={i} className="text-sm text-[#0F172A]/70 flex items-start gap-2"><span className="text-[#1A5D1A] font-bold mt-0.5">•</span> {h}</li>)}
                                                         </ul>
                                                     </div>
                                                     {day.smart_suggestions && day.smart_suggestions.length > 0 && (
                                                         <div>
-                                                            <h5 className="font-bold text-sm text-[#0EA5E9] mb-2">💡 {T.common.tips || 'Tips'}:</h5>
+                                                            <h5 className="font-bold text-sm text-[#1A5D1A] mb-2">💡 {T.common.tips || 'Tips'}:</h5>
                                                             <ul className="space-y-1">
                                                                 {day.smart_suggestions.map((s, i) => (
-                                                                    <li key={i} className="bg-[#F0F9FF] p-2 rounded text-sm text-[#0F172A]">
-                                                                        <span className="font-bold text-xs uppercase tracking-wide text-[#0EA5E9]">{s.type}</span>: {s.name}
+                                                                    <li key={i} className="bg-[#F1F5E8] p-2 rounded text-sm text-[#0F172A]">
+                                                                        <span className="font-bold text-xs uppercase tracking-wide text-[#1A5D1A]">{s.type}</span>: {s.name}
                                                                     </li>
                                                                 ))}
                                                             </ul>
@@ -213,17 +213,17 @@ const Planner: React.FC = () => {
 
                         {/* Integrated Checklist Display */}
                         {plan && plan.checklist && (
-                            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-[#F0F9FF]">
-                                <h3 className="text-2xl font-bold text-[#0EA5E9] mb-6">🎒 {T.planner.packing || 'Packing Checklist'}</h3>
+                            <div className="bg-white p-6 rounded-xl shadow-lg border-2 border-[#F1F5E8]">
+                                <h3 className="text-2xl font-bold text-[#1A5D1A] mb-6">🎒 {T.planner.packing || 'Packing Checklist'}</h3>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {plan.checklist.map((itemText, index) => (
-                                        <div key={index} className="flex items-start p-3 hover:bg-[#F0F9FF]/50 rounded-lg transition-colors">
+                                        <div key={index} className="flex items-start p-3 hover:bg-[#F1F5E8]/50 rounded-lg transition-colors">
                                             <input
                                                 type="checkbox"
                                                 id={`check-${index}`}
                                                 checked={!!checkedItems[itemText]}
                                                 onChange={() => toggleChecklistItem(itemText)}
-                                                className="mt-1 h-4 w-4 rounded border-2 border-[#0EA5E9] text-[#0EA5E9] focus:ring-[#0EA5E9] cursor-pointer accent-[#0EA5E9]"
+                                                className="mt-1 h-4 w-4 rounded border-2 border-[#1A5D1A] text-[#1A5D1A] focus:ring-[#1A5D1A] cursor-pointer accent-[#1A5D1A]"
                                             />
                                             <label htmlFor={`check-${index}`} className={`ml-3 text-sm cursor-pointer ${checkedItems[itemText] ? 'line-through text-[#0F172A]/40' : 'text-[#0F172A]'}`}>
                                                 {itemText}

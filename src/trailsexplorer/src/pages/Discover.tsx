@@ -23,32 +23,32 @@ const Discover: React.FC<DiscoverProps> = ({ trails, onSelectTrail, onToggleFavo
         .filter(trail => difficultyFilter === 'all' || trail.difficulty.toLowerCase() === difficultyFilter);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] via-white to-[#F0F9FF]">
+        <div className="min-h-screen bg-gradient-to-br from-[#F1F5E8] via-white to-[#F1F5E8]">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl md:text-5xl font-bold text-[#0EA5E9] mb-4">{T.discover.filters}</h2>
+                    <h2 className="text-4xl md:text-5xl font-bold text-[#1A5D1A] mb-4">{T.discover.filters}</h2>
                     <p className="text-[#0F172A]/60 text-lg">{T.home.subtitle}</p>
                 </div>
 
                 {/* Premium Search & Filter Bar */}
                 <div className="max-w-4xl mx-auto mb-12">
-                    <div className="flex flex-col md:flex-row gap-4 bg-white p-3 rounded-2xl shadow-xl shadow-[#0EA5E9]/10 border-2 border-[#F0F9FF]">
+                    <div className="flex flex-col md:flex-row gap-4 bg-white p-3 rounded-2xl shadow-xl shadow-[#1A5D1A]/10 border-2 border-[#F1F5E8]">
                         <div className="relative flex-grow">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#0EA5E9]/40" />
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1A5D1A]/40" />
                             <input
                                 type="text"
                                 placeholder={T.home.searchPlaceholder}
-                                className="w-full pl-12 pr-4 py-3 bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE] border-none rounded-xl focus:ring-2 focus:ring-[#0EA5E9] outline-none transition-all placeholder:text-[#0F172A]/40 text-[#0F172A] font-medium"
+                                className="w-full pl-12 pr-4 py-3 bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0] border-none rounded-xl focus:ring-2 focus:ring-[#1A5D1A] outline-none transition-all placeholder:text-[#0F172A]/40 text-[#0F172A] font-medium"
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
 
                         <div className="relative md:w-64">
                             <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-                                <Filter className="w-4 h-4 text-[#0EA5E9]/40" />
+                                <Filter className="w-4 h-4 text-[#1A5D1A]/40" />
                             </div>
                             <select
-                                className="w-full pl-10 pr-10 py-3 bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE] border-none rounded-xl focus:ring-2 focus:ring-[#0EA5E9] outline-none transition-all appearance-none text-[#0F172A] font-bold cursor-pointer"
+                                className="w-full pl-10 pr-10 py-3 bg-gradient-to-r from-[#F1F5E8] to-[#E8F0E0] border-none rounded-xl focus:ring-2 focus:ring-[#1A5D1A] outline-none transition-all appearance-none text-[#0F172A] font-bold cursor-pointer"
                                 onChange={(e) => setDifficultyFilter(e.target.value)}
                             >
                                 <option value="all">{T.discover.all}</option>
@@ -56,13 +56,13 @@ const Discover: React.FC<DiscoverProps> = ({ trails, onSelectTrail, onToggleFavo
                                 <option value="moderate">{T.discover.moderate}</option>
                                 <option value="hard">{T.discover.hard}</option>
                             </select>
-                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#0EA5E9]/40 pointer-events-none" />
+                            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1A5D1A]/40 pointer-events-none" />
                         </div>
                     </div>
 
                     {searchTerm || difficultyFilter !== 'all' ? (
                         <p className="mt-4 text-sm text-[#0F172A]/60 text-center">
-                            {T.discover.noResults} <span className="font-bold text-[#0EA5E9]">{filteredTrails.length}</span> {filteredTrails.length === 1 ? 'trail' : T.discover.noResults}
+                            {T.discover.noResults} <span className="font-bold text-[#1A5D1A]">{filteredTrails.length}</span> {filteredTrails.length === 1 ? 'trail' : T.discover.noResults}
                         </p>
                     ) : null}
                 </div>

@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 const sequelize = require('./config/database');
 
@@ -14,24 +13,28 @@ async function resetAdminPassword() {
 
         if (!admin) {
             console.log('Admin user not found! Creating new admin user...');
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            // Set raw password - the beforeCreate hook will hash it automatically
             await User.create({
                 username: 'admin',
                 email: adminEmail,
-                password: hashedPassword,
-                role: 'ADMIN'
+                password: newPassword,
+                role: 'ADMIN',
+                full_name: 'System Administrator',
+                is_email_verified: true,
+                is_active: true
             });
-            console.log(`\n✅ Admin user created with email: ${adminEmail} and password: ${newPassword}\n`);
+            console.log("\n✅ Admin user created with email: ${adminEmail} and password: ${newPassword}\n");
             return;
         }
 
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        admin.password = hashedPassword;
+        // Set raw password - the beforeUpdate hook will hash it automatically
+        admin.password = newPassword;
         admin.role = 'ADMIN'; // Ensure role is ADMIN
+        admin.is_email_verified = true; // Ensure email is verified
+        admin.is_active = true; // Ensure account is active
         await admin.save();
 
-        console.log(`\n✅ Password for ${adminEmail} has been reset to: ${newPassword}\n`);
+        console.log("\n✅ Password for ${adminEmail} has been reset to: ${newPassword}\n");
 
     } catch (err) {
         console.error('Error:', err);

@@ -2,6 +2,8 @@ import React from 'react';
 import { Users, Mountain, FileText, AlertTriangle, TrendingUp, Activity, Clock, MapPin, Heart, Trophy, Cloud, Sun, Droplets, Wind, Compass, Navigation, Flag } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useAuth } from '../../context/AuthContext';
+import { getAdminStats, getUserGrowthData } from '../../services/adminService';
 
 interface StatCardProps {
     title: string;
@@ -63,9 +65,19 @@ interface PopularTrail {
 }
 
 const Dashboard: React.FC = () => {
+    const { user } = useAuth();
+    const isAdmin = user?.role === 'admin';
+    
     // Stats with trekking theme
-    // Stats with trekking theme
-    const [stats, setStats] = React.useState([
+    const [stats, setStats] = React.useState<Array<{
+        title: string;
+        value: string | number;
+        icon: React.ReactNode;
+        color: string;
+        bgColor: string;
+        trend: string;
+        trendDirection: 'up' | 'down';
+    }>>([
         {
             title: 'Active Trekkers',
             value: '1,234',
@@ -73,7 +85,7 @@ const Dashboard: React.FC = () => {
             color: 'text-forest-green',
             bgColor: 'bg-green-600',
             trend: '+12%',
-            trendDirection: 'up' as const
+            trendDirection: 'up'
         },
         {
             title: 'Total Trails',
@@ -82,7 +94,7 @@ const Dashboard: React.FC = () => {
             color: 'text-sage-green',
             bgColor: 'bg-green-500',
             trend: '+8%',
-            trendDirection: 'up' as const
+            trendDirection: 'up'
         },
         {
             title: 'Active Groups',
@@ -91,7 +103,7 @@ const Dashboard: React.FC = () => {
             color: 'text-amber-600',
             bgColor: 'bg-amber-500',
             trend: '+24%',
-            trendDirection: 'up' as const
+            trendDirection: 'up'
         },
         {
             title: 'Safety Reports',
@@ -100,32 +112,53 @@ const Dashboard: React.FC = () => {
             color: 'text-red-600',
             bgColor: 'bg-red-500',
             trend: '-18%',
-            trendDirection: 'down' as const
+            trendDirection: 'down'
         },
     ]);
 
-    React.useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                // Fetch Trails Count
-                const trailRes = await fetch('/api/trails?limit=1');
-                const trailData = await trailRes.json();
+    const [userGrowthData, setUserGrowthData] = React.useState<Array<{ day: string; users: number; groups: number }>>([
+        { day: 'Mon', users: 120, groups: 40 },
+        { day: 'Tue', users: 150, groups: 50 },
+        { day: 'Wed', users: 180, groups: 60 },
+        { day: 'Thu', users: 210, groups: 70 },
+        { day: 'Fri', users: 250, groups: 85 },
+        { day: 'Sat', users: 290, groups: 100 },
+        { day: 'Sun', users: 310, groups: 120 },
+    ]);
 
-                if (trailData && trailData.total !== undefined) {
-                    setStats(prev => prev.map(s =>
-                        s.title === 'Total Trails' ? { ...s, value: trailData.total } : s
-                    ));
+    React.useEffect(() => {
+        const fetchAdminData = async () => {
+            if (!isAdmin) return;
+
+            try {
+                // Fetch admin stats
+                const adminStats = await getAdminStats();
+                if (adminStats) {
+                    const { stats: statsData } = adminStats;
+                    setStats(prev => [
+                        { ...prev[0], value: statsData.activeTrekkers },
+                        { ...prev[1], value: statsData.totalTrails },
+                        { ...prev[2], value: statsData.activeGroups },
+                        { ...prev[3], value: statsData.safetyReports },
+                    ]);
+                }
+
+                // Fetch user growth data
+                const growthData = await getUserGrowthData(7);
+                if (growthData && growthData.length > 0) {
+                    setUserGrowthData(growthData);
                 }
             } catch (err) {
-                console.error("Failed to fetch dashboard stats", err);
-                // Keep default/mock values on error
+                console.error('[Dashboard] Error fetching admin data:', err);
+                // Keep fallback data on error
                 setStats(prev => prev.map(s =>
                     s.title === 'Total Trails' ? { ...s, value: '56' } : s
                 ));
             }
         };
-        fetchStats();
-    }, []);
+
+        fetchAdminData();
+    }, [isAdmin]);
 
     // Recent activities specific to trekking
     const recentActivities: ActivityItem[] = [
@@ -179,16 +212,16 @@ const Dashboard: React.FC = () => {
         { id: 4, name: 'Cat Ba Peak', difficulty: 'Moderate', completions: 378, rating: 4.5, location: 'Cat Ba, Hải Phòng' },
     ];
 
-    // Chart data - User growth over last 7 days
-    const userGrowthData = [
-        { day: 'Mon', users: 980, groups: 65 },
-        { day: 'Tue', users: 1050, groups: 72 },
-        { day: 'Wed', users: 1120, groups: 78 },
-        { day: 'Thu', users: 1080, groups: 75 },
-        { day: 'Fri', users: 1150, groups: 82 },
-        { day: 'Sat', users: 1200, groups: 87 },
-        { day: 'Sun', users: 1234, groups: 89 },
-    ];
+    // Chart data - User growth over last 7 days (will be replaced by state)
+    // const userGrowthData = [
+    //     { day: 'Mon', users: 980, groups: 65 },
+    //     { day: 'Tue', users: 1050, groups: 72 },
+    //     { day: 'Wed', users: 1120, groups: 78 },
+    //     { day: 'Thu', users: 1080, groups: 75 },
+    //     { day: 'Fri', users: 1150, groups: 82 },
+    //     { day: 'Sat', users: 1200, groups: 87 },
+    //     { day: 'Sun', users: 1234, groups: 89 },
+    // ];
 
     // Trail difficulty distribution
     const difficultyData = [
@@ -353,7 +386,7 @@ const Dashboard: React.FC = () => {
                                     className="flex items-center gap-4 p-4 hover:bg-green-50/50 rounded-xl transition-all duration-300 group cursor-pointer border border-transparent hover:border-green-200"
                                 >
                                     <div className="flex-shrink-0">
-                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white font-bold">
+                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-[#4E9F3D] flex items-center justify-center text-white font-bold">
                                             #{trail.id}
                                         </div>
                                     </div>
@@ -430,7 +463,7 @@ const Dashboard: React.FC = () => {
             {/* Weather Overview & Quick Actions */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 {/* Weather Cards */}
-                <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-blue-50 to-blue-100/50">
+                <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-green-50 to-green-100/50">
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-2">
                             <Sun className="w-8 h-8 text-amber-500" />
@@ -452,7 +485,7 @@ const Dashboard: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-blue-100 to-blue-200/50">
+                <Card className="border-none shadow-lg hover:shadow-xl transition-shadow duration-300 bg-gradient-to-br from-blue-100 to-green-100/50">
                     <CardContent className="p-6">
                         <div className="flex items-center justify-between mb-2">
                             <Droplets className="w-8 h-8 text-blue-600" />

@@ -67,7 +67,7 @@
 
 /* Gradient Text */
 .gradient-text {
-  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  background: linear-gradient(135deg, #4E9F3D 0%, #66BB6A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -90,10 +90,10 @@
 
 @keyframes avatarGlow {
   0%, 100% {
-    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.3));
+    filter: drop-shadow(0 0 8px rgba(78, 159, 61, 0.3));
   }
   50% {
-    filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.6));
+    filter: drop-shadow(0 0 16px rgba(78, 159, 61, 0.6));
   }
 }
 

@@ -77,13 +77,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             // Backend returns: { success: true, message: '...', data: { user_id, username, full_name, email, role, token } }
             const { token, user_id, username, full_name, email: userEmail, role } = response.data;
 
+            // Determine if this is the admin account
+            const isAdminAccount = (role || '').toUpperCase() === 'ADMIN';
+
             // Map backend data to frontend User type
             const userData: User = {
-                ...MOCK_USER, // fallback for UI fields not yet in DB
+                ...(isAdminAccount ? MOCK_USER : {
+                    // For non-admin users, start with empty/default values
+                    name: full_name || username,
+                    avatarUrl: `https://i.pravatar.cc/100?u=${userEmail}`,
+                    totalKm: 0,
+                    avgAltitude: 0,
+                    avgTimeHr: 0,
+                    tripHistory: [],
+                    preferences: {
+                        difficulty: [],
+                        scenery: []
+                    }
+                }),
                 id: user_id?.toString(),
                 name: full_name || username, // Display full_name in UI
                 email: userEmail,
-                role: (role || 'user').toLowerCase() as 'admin' | 'user'
+                role: (role || 'user').toLowerCase() as 'admin' | 'user',
+                bio: '',
+                phone: '',
+                home_city: '',
+                home_country: ''
             };
 
             localStorage.setItem('token', token);
@@ -110,10 +129,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 throw new Error(err.message || 'Registration failed');
             }
 
-            // Success: Check email for verification link
+            // Success: Initialize new user with empty/default values
             const data = await res.json();
+            
+            // Create new user with initial/default values - NEW USERS START EMPTY
+            const newUser: User = {
+                id: data.data?.user_id?.toString() || Date.now().toString(),
+                name: name,
+                email: email,
+                role: 'user' as const,
+                totalKm: 0,
+                avgAltitude: 0,
+                avgTimeHr: 0,
+                tripHistory: [],
+                preferences: {
+                    difficulty: [],
+                    scenery: []
+                },
+                avatarUrl: `https://i.pravatar.cc/100?u=${email}`,
+                bio: '',
+                phone: '',
+                home_city: '',
+                home_country: ''
+            };
+            
+            // Don't auto-login, just show success message
             alert('Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.');
-            console.log('[Auth] Registration response:', data);
+            console.log('[Auth] Registration successful, user:', newUser);
 
         } catch (error) {
             console.error('[Auth] Register error:', error);
