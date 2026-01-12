@@ -6,19 +6,14 @@ const sendEmail = async (to, subject, htmlContent) => {
         console.log(`[DEBUG] Preparing to send email to: ${to}`);
         console.log(`[DEBUG] SMTP Config: Host=smtp.gmail.com, Port=587, User=${process.env.EMAIL_USER ? 'Set' : 'Missing'}`);
 
-        // Cấu hình tối ưu cho Render: Port 587 + Force IPv4
+        // Cấu hình đơn giản nhất cho Gmail
+        // Lưu ý: Nếu Render Free Tier chặn kết nối SMTP (Timeout), hãy sử dụng Link Xác Thực trong log server.
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false, // false cho port 587
+            service: 'gmail',
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
-            },
-            tls: {
-                rejectUnauthorized: false // Bỏ qua lỗi SSL nếu có proxy
-            },
-            family: 4 // QUAN TRỌNG: Chỉ dùng IPv4 để tránh lỗi timeout do IPv6 trên Render
+            }
         });
 
         const mailOptions = {
