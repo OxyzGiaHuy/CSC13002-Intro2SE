@@ -11,22 +11,33 @@ const isProduction = process.env.NODE_ENV === 'production';
 console.log(`Kết nối Sequelize tới: ${process.env.DB_HOST}`);
 console.log(`Chế độ SSL: ${isProduction ? 'BẬT' : 'TẮT (Dev Mode)'}`);
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASS,
-  {
-    host: process.env.DB_HOST,
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     logging: false,
-    dialectOptions: isProduction ? {
-      // Chỉ bật SSL nếu là Production (AWS)
+    dialectOptions: {
       ssl: {
         require: true,
         rejectUnauthorized: false
       }
-    } : {} // Nếu là Dev (Local) thì để trống -> Không dùng SSL
-  }
-);
+    }
+  })
+  : new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASS,
+    {
+      host: process.env.DB_HOST,
+      dialect: 'postgres',
+      logging: false,
+      dialectOptions: isProduction ? {
+        // Chỉ bật SSL nếu là Production (AWS)
+        ssl: {
+          require: true,
+          rejectUnauthorized: false
+        }
+      } : {} // Nếu là Dev (Local) thì để trống -> Không dùng SSL
+    }
+  );
 
 module.exports = sequelize;

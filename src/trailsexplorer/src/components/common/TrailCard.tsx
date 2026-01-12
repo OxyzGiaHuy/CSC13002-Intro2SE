@@ -6,7 +6,7 @@ import { Zap, Activity, Flame, Star, Clock, Route } from 'lucide-react';
 interface TrailCardProps {
     trail: Trail;
     onSelect: () => void;
-    onToggleFavorite: (id: number | string) => void;
+    onToggleFavorite: (id: number) => void;
 }
 
 const formatDistance = (km: number) => {

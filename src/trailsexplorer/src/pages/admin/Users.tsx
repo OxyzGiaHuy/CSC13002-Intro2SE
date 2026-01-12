@@ -108,7 +108,7 @@ const Users: React.FC = () => {
     // Filter users based on search and filters
     const filteredUsers = users.filter(user => {
         const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            user.email.toLowerCase().includes(searchTerm.toLowerCase());
+            user.email?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesRole = filterRole === 'all' || user.role === filterRole;
         const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
         return matchesSearch && matchesRole && matchesStatus;
@@ -232,7 +232,7 @@ const Users: React.FC = () => {
                                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                                 <XAxis type="number" stroke="#6b7280" />
                                 <YAxis dataKey="name" type="category" stroke="#6b7280" width={80} />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                                     formatter={(value) => [`${value} km`, 'Distance']}
                                 />
@@ -256,7 +256,7 @@ const Users: React.FC = () => {
                                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                                 <XAxis dataKey="range" stroke="#6b7280" />
                                 <YAxis stroke="#6b7280" />
-                                <Tooltip 
+                                <Tooltip
                                     contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
                                     formatter={(value) => [`${value} users`, 'Count']}
                                 />
@@ -338,10 +338,10 @@ const Users: React.FC = () => {
                                     <tr key={user.id} className="hover:bg-green-50/30 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <img 
-                                                    src={user.avatarUrl} 
-                                                    alt={user.name} 
-                                                    className="w-12 h-12 rounded-full bg-gray-200 ring-2 ring-gray-100" 
+                                                <img
+                                                    src={user.avatarUrl}
+                                                    alt={user.name}
+                                                    className="w-12 h-12 rounded-full bg-gray-200 ring-2 ring-gray-100"
                                                 />
                                                 <div>
                                                     <p className="font-semibold text-gray-900">{user.name}</p>
@@ -373,24 +373,21 @@ const Users: React.FC = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
-                                                user.role === 'admin' 
-                                                    ? 'bg-purple-100 text-purple-800 border border-purple-200' 
+                                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${user.role === 'admin'
+                                                    ? 'bg-purple-100 text-purple-800 border border-purple-200'
                                                     : 'bg-green-100 text-green-800 border border-green-200'
-                                            }`}>
+                                                }`}>
                                                 {user.role === 'admin' ? <Shield className="w-3 h-3" /> : <UserCheck className="w-3 h-3" />}
                                                 {user.role}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                                                user.status === 'active' 
-                                                    ? 'bg-green-100 text-green-800 border border-green-200' 
+                                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${user.status === 'active'
+                                                    ? 'bg-green-100 text-green-800 border border-green-200'
                                                     : 'bg-red-100 text-red-800 border border-red-200'
-                                            }`}>
-                                                <div className={`w-2 h-2 rounded-full mr-2 ${
-                                                    user.status === 'active' ? 'bg-green-600' : 'bg-red-600'
-                                                }`}></div>
+                                                }`}>
+                                                <div className={`w-2 h-2 rounded-full mr-2 ${user.status === 'active' ? 'bg-green-600' : 'bg-red-600'
+                                                    }`}></div>
                                                 {user.status}
                                             </span>
                                         </td>
@@ -399,11 +396,10 @@ const Users: React.FC = () => {
                                                 {user.role !== 'admin' && (
                                                     <button
                                                         onClick={() => user.id && toggleStatus(user.id)}
-                                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all shadow-sm hover:shadow ${
-                                                            user.status === 'active'
+                                                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all shadow-sm hover:shadow ${user.status === 'active'
                                                                 ? 'bg-red-100 text-red-700 hover:bg-red-200 border border-red-200'
                                                                 : 'bg-green-100 text-green-700 hover:bg-green-200 border border-green-200'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {user.status === 'active' ? 'Suspend' : 'Activate'}
                                                     </button>

@@ -3,6 +3,7 @@ const router = express.Router();
 const CommunityPost = require('../models/CommunityPost');
 const User = require('../models/User');
 const PostLike = require('../models/PostLike');
+const Comment = require('../models/Comment');
 const Notification = require('../models/Notification');
 const authenticateToken = require('../middleware/authMiddleware');
 
@@ -69,10 +70,25 @@ router.get('/posts', async (req, res) => {
 // 2. POST /api/community/posts: Create Post
 router.post('/posts', authenticateToken, async (req, res) => {
     try {
+        const fs = require('fs');
+        const path = require('path');
         const { title, content, content_type, media_urls, trail_id } = req.body;
 
+        console.log("DEBUG: Create Post User:", req.user);
+        const userId = req.user.id || req.user.userId;
+
+        // Log request body to file
+        const logPath = path.join(__dirname, '../backend_errors.log');
+        if (!fs.existsSync(path.dirname(logPath))) fs.mkdirSync(path.dirname(logPath), { recursive: true });
+
+        fs.appendFileSync(logPath, `\n[${new Date().toISOString()}] Request Body: ${JSON.stringify(req.body)}\nUser: ${userId}\n`);
+
+        if (!userId) {
+            return res.status(400).json({ error: "User ID missing from token" });
+        }
+
         const newPost = await CommunityPost.create({
-            user_id: req.user.id,
+            user_id: userId,
             title,
             content,
             content_type: content_type || 'TEXT',
@@ -82,8 +98,11 @@ router.post('/posts', authenticateToken, async (req, res) => {
 
         res.status(201).json(newPost);
     } catch (err) {
-        console.error("Create Post Error:", err); // Log full error
-        res.status(500).json({ error: err.message, details: err.errors }); // Return details
+        console.error("Create Post Error:", err);
+        const logPath = require('path').join(__dirname, '../backend_errors.log'); // Ensure path is defined
+        require('fs').appendFileSync(logPath, `[${new Date().toISOString()}] ERROR: ${err.message}\nStack: ${err.stack}\n`);
+
+        res.status(500).json({ error: err.message, details: err.errors });
     }
 });
 
@@ -99,6 +118,63 @@ router.delete('/posts/:id', authenticateToken, async (req, res) => {
 
         await post.destroy();
         res.json({ message: "Post deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 5. GET /api/community/posts/:id/comments
+router.get('/posts/:id/comments', authenticateToken, async (req, res) => {
+    try {
+        const comments = await Comment.findAll({
+            where: { post_id: req.params.id },
+            include: [
+                { model: User, attributes: ['username', 'avatar_url'] }
+            ],
+            order: [['created_at', 'ASC']]
+        });
+        res.json(comments);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 6. POST /api/community/posts/:id/comments
+router.post('/posts/:id/comments', authenticateToken, async (req, res) => {
+    try {
+        const { content } = req.body;
+        const postId = req.params.id;
+        const userId = req.user.id || req.user.userId;
+
+        const post = await CommunityPost.findByPk(postId);
+        if (!post) return res.status(404).json({ message: "Post not found" });
+
+        const comment = await Comment.create({
+            post_id: postId,
+            user_id: userId,
+            content
+        });
+
+        // Increment comment count
+        post.comment_count = (post.comment_count || 0) + 1;
+        await post.save();
+
+        // Create notification for post owner
+        if (post.user_id !== userId) {
+            await Notification.create({
+                user_id: post.user_id,
+                type: 'COMMENT',
+                title: 'New Comment',
+                message: `Someone commented on your post: "${content.substring(0, 20)}..."`,
+                data: { post_id: postId, comment_id: comment.comment_id }
+            });
+        }
+
+        const commentWithUser = await Comment.findByPk(comment.comment_id, {
+            include: [{ model: User, attributes: ['username', 'avatar_url'] }]
+        });
+
+        res.status(201).json(commentWithUser);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

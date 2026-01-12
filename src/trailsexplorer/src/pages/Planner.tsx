@@ -57,12 +57,20 @@ const Planner: React.FC = () => {
     // Helper to toggle checklist item (local state management for mapped checklist)
     // Note: This only affects local view, ideally should update backend if tracking progress
     const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+    const [customChecklist, setCustomChecklist] = useState<string[]>([]);
+    const [newItemText, setNewItemText] = useState('');
 
     const toggleChecklistItem = (text: string) => {
         setCheckedItems(prev => ({
             ...prev,
             [text]: !prev[text]
         }));
+    };
+
+    const handleAddItem = () => {
+        if (!newItemText.trim()) return;
+        setCustomChecklist(prev => [...prev, newItemText.trim()]);
+        setNewItemText('');
     };
 
     return (
@@ -170,7 +178,7 @@ const Planner: React.FC = () => {
                                         <div key={day.day} className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
                                             <h4 className="font-bold text-lg text-sage-green">Day {day.day}: {day.title}</h4>
                                             <div className="flex gap-4 text-sm text-gray-600 mt-1 mb-2">
-                                                <span>📍 {day.distance_km} km</span>
+                                                <span className="whitespace-nowrap">📍 {day.distance_km} km</span>
                                                 <span>🏕️ {day.camping_suggestion || 'No specific campsite'}</span>
                                             </div>
                                             <p className="text-gray-700 italic border-l-4 border-sage-green pl-2">{day.route}</p>
@@ -207,8 +215,21 @@ const Planner: React.FC = () => {
                         <div className="bg-white p-6 rounded-lg shadow-lg">
                             <h3 className="text-xl font-bold font-display text-forest-green mb-4">🎒 Smart Packing Checklist</h3>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                {plan.checklist.map((itemText, index) => (
-                                    <div key={index} className="flex items-start p-2 hover:bg-gray-50 rounded">
+                                <div className="flex gap-2 mb-4 col-span-full">
+                                    <input
+                                        type="text"
+                                        value={newItemText}
+                                        onChange={(e) => setNewItemText(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
+                                        placeholder="Add custom item..."
+                                        className="flex-1 p-2 border border-gray-300 rounded-lg text-sm"
+                                    />
+                                    <button onClick={handleAddItem} className="bg-sage-green text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-forest-green transition-colors">
+                                        Add
+                                    </button>
+                                </div>
+                                {[...plan.checklist, ...customChecklist].map((itemText, index) => (
+                                    <div key={index} className="flex items-start p-2 hover:bg-gray-50 rounded transition-colors group">
                                         <input
                                             type="checkbox"
                                             id={`check-${index}`}
@@ -216,7 +237,7 @@ const Planner: React.FC = () => {
                                             onChange={() => toggleChecklistItem(itemText)}
                                             className="mt-1 h-4 w-4 rounded border-gray-300 text-sage-green focus:ring-sage-green cursor-pointer"
                                         />
-                                        <label htmlFor={`check-${index}`} className={`ml-3 text-sm text-gray-900 cursor-pointer ${checkedItems[itemText] ? 'line-through text-gray-400' : ''}`}>
+                                        <label htmlFor={`check-${index}`} className={`ml-3 text-sm text-gray-900 cursor-pointer flex-1 select-none ${checkedItems[itemText] ? 'line-through text-gray-400' : ''}`}>
                                             {itemText}
                                         </label>
                                     </div>

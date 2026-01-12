@@ -14,21 +14,25 @@ async function resetAdminPassword() {
 
         if (!admin) {
             console.log('Admin user not found! Creating new admin user...');
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            // Hook 'beforeCreate' will hash the password. pass plain text.
             await User.create({
                 username: 'admin',
                 email: adminEmail,
-                password: hashedPassword,
-                role: 'ADMIN'
+                password: newPassword,
+                role: 'ADMIN',
+                is_email_verified: true,
+                is_active: true
             });
             console.log(`\n✅ Admin user created with email: ${adminEmail} and password: ${newPassword}\n`);
             return;
         }
 
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        admin.password = hashedPassword;
+        // Fix: Do NOT hash here manually. The User model 'beforeUpdate' hook will hash it automatically.
+        // If we hash here, it gets hashed TWICE (once here, once in hook), causing login failure.
+        admin.password = newPassword;
         admin.role = 'ADMIN'; // Ensure role is ADMIN
+        admin.is_email_verified = true;
+        admin.is_active = true;
         await admin.save();
 
         console.log(`\n✅ Password for ${adminEmail} has been reset to: ${newPassword}\n`);

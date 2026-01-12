@@ -38,6 +38,7 @@ const CommunityPost = require('./models/CommunityPost');
 const Favorite = require('./models/Favorite');
 const SavedPlan = require('./models/SavedPlan');
 const UserChallenge = require('./models/UserChallenge');
+const Comment = require('./models/Comment');
 
 // =====================
 // ASSOCIATIONS
@@ -47,7 +48,14 @@ Challenge.belongsToMany(User, { through: UserChallenge, foreignKey: 'challenge_i
 User.hasMany(UserChallenge, { foreignKey: 'user_id' });
 Challenge.hasMany(UserChallenge, { foreignKey: 'challenge_id' });
 UserChallenge.belongsTo(User, { foreignKey: 'user_id' });
+UserChallenge.belongsTo(User, { foreignKey: 'user_id' });
 UserChallenge.belongsTo(Challenge, { foreignKey: 'challenge_id' });
+
+// Comments
+Comment.belongsTo(User, { foreignKey: 'user_id' });
+User.hasMany(Comment, { foreignKey: 'user_id' });
+Comment.belongsTo(CommunityPost, { foreignKey: 'post_id' });
+CommunityPost.hasMany(Comment, { foreignKey: 'post_id' });
 
 // Routes
 const authRoutes = require('./routes/auth');
@@ -126,16 +134,14 @@ app.use(errorHandler);
 // =====================
 // START SERVER
 // =====================
-sequelize
-  .sync()
+// Sync Database
+sequelize.sync() // Reverted from { alter: true } to avoid ENUM casting error on startup
   .then(() => {
     console.log('Database connected successfully');
     app.listen(PORT, () => {
       console.log(`Server is running on: http://localhost:${PORT}`);
     });
   })
-  .catch(err => {
-    console.error('Lỗi kết nối Sequelize:', err);
-  });
+  .catch(err => console.error('Lỗi kết nối Sequelize:', err));
 
 module.exports = app;

@@ -185,6 +185,9 @@ export const MOCK_CHALLENGES: Challenge[] = [
   { challenge_id: 1, name: "Monthly Altitude Gain", description: "Climb the most elevation this month.", progress: 3400, target_value: 5000, unit: "m", challenge_type: 'ELEVATION', start_date: '2026-01-01', end_date: '2026-01-31' },
   { challenge_id: 2, name: "Trail Conqueror", description: "Complete 5 different trails in 3 months.", progress: 2, target_value: 5, unit: "trails", challenge_type: 'TRAIL_COUNT', start_date: '2026-01-01', end_date: '2026-03-31' },
   { challenge_id: 3, name: "100km Challenge", description: "Trek 100km in a single month.", progress: 78, target_value: 100, unit: "km", challenge_type: 'DISTANCE', start_date: '2026-01-01', end_date: '2026-01-31' },
+  { challenge_id: 4, name: "Early Bird Trekker", description: "Start 3 treks before 6 AM.", progress: 1, target_value: 3, unit: "treks", challenge_type: 'TRAIL_COUNT', start_date: '2026-02-01', end_date: '2026-02-28' },
+  { challenge_id: 5, name: "Photo Hunter", description: "Take 50 photos on trails.", progress: 32, target_value: 50, unit: "photos", challenge_type: 'OTHER', start_date: '2026-01-15', end_date: '2026-02-15' },
+  { challenge_id: 6, name: "Rainforest Survivor", description: "Complete a trek in rainy conditions.", progress: 0, target_value: 1, unit: "trek", challenge_type: 'TRAIL_COUNT', start_date: '2026-03-01', end_date: '2026-03-31' },
 ];
 
 export const MOCK_SOCIAL_FEED: SocialPost[] = [
