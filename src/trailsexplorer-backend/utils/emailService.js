@@ -4,11 +4,14 @@ const logger = require('../config/logger');
 const sendEmail = async (to, subject, htmlContent) => {
     try {
         const transporter = nodemailer.createTransport({
-            service: process.env.EMAIL_SERVICE, // 'gmail'
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true, // use SSL
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
-            }
+            },
+            connectionTimeout: 10000 // 10 seconds
         });
 
         const mailOptions = {

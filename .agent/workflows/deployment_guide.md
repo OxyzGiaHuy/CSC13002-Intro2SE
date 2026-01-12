@@ -58,5 +58,32 @@ Vercel is optimized for frontend frameworks and offers a seamless free tier.
     *   **Verify the Request URL** starts with your Render backend URL (e.g., `https://trailsexplorer-api.onrender.com/...`), NOT `localhost`.
 4.  Test the AI features to ensure the Backend can talk to Gemini.
 
+## 5. System Email & Admin Setup (Optional but Recommended)
+
+### A. Setup Gmail for System Notifications
+If you want the app to send registration or notification emails (using `trailsexplorer.system@gmail.com`):
+
+1.  **Enable 2-Step Verification** on your Google Account.
+2.  Go to **Google Account Settings > Security**.
+3.  Search for **App Passwords**.
+4.  Create a new app password (e.g., call it "TrailsExplorer").
+5.  Copy the **16-character code**.
+6.  **In Render Dashboard:**
+    *   Add `EMAIL_SERVICE`: `gmail`
+    *   Add `EMAIL_USER`: `trailsexplorer.system@gmail.com`
+    *   Add `EMAIL_PASS`: `[Your 16-character App Password]` (No spaces)
+
+### B. Promote a User to Admin
+By default, everyone who registers is a `USER`. To make yourself an `ADMIN`:
+
+1.  Register an account on your deployed app using your email.
+2.  Go to **Neon Console > SQL Editor**.
+3.  Run the following query:
+    ```sql
+    UPDATE users SET role = 'ADMIN' WHERE email = 'trailsexplorer.system@gmail.com';
+    ```
+4.  Log out and log back in on the app to see the Admin dashboard.
+
+
 ---
 **Note:** Render free instances spin down after 15 mins of inactivity. The first request might take 30-50s to wake it up. This is normal for the free tier.

@@ -48,11 +48,10 @@ exports.registerUser = async (req, res, next) => {
             // Tạo đường dẫn xác thực
             // Lưu ý: Nếu có Frontend thì trỏ về Frontend. 
             // Hiện tại test Backend thì trỏ thẳng vào API Backend để click là chạy luôn.
-            const baseUrl = process.env.CLIENT_URL || (process.env.NODE_ENV === 'production'
-                ? 'http://localhost:8000'
-                : 'http://localhost:5000');
-
-            const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${verificationToken}`;
+            // Link xác thực PHẢI trỏ trực tiếp về Backend (nơi xử lý API)
+            // Render cung cấp sẵn biến RENDER_EXTERNAL_URL
+            const backendUrl = process.env.RENDER_EXTERNAL_URL || 'http://localhost:5000';
+            const verificationUrl = `${backendUrl}/api/auth/verify-email?token=${verificationToken}`;
 
             // LOG CHO DEV DỄ TEST
             console.log('====================================================');
