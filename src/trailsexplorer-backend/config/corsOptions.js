@@ -2,16 +2,19 @@ const corsOptions = {
     origin: (origin, callback) => {
         // Cho phép các domain trong whitelist hoặc không có origin (như Postman/Server-to-Server)
         const whitelist = [
-            'http://localhost:3000', // Frontend React
-            'http://localhost:3001', // Frontend React (fallback port)
-            'http://localhost:5173', // Vite React (nếu dùng Vite)
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:5173',
             'http://127.0.0.1:3000',
-            process.env.CLIENT_URL // Production Frontend URL
-        ];
+            process.env.CLIENT_URL
+        ].filter(Boolean).map(url => url.replace(/\/$/, '')); // Remove trailing slashes
 
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
+        const requestOrigin = origin ? origin.replace(/\/$/, '') : null;
+
+        if (!requestOrigin || whitelist.includes(requestOrigin)) {
             callback(null, true);
         } else {
+            console.log('CORS blocked origin:', origin);
             callback(new Error('Not allowed by CORS'));
         }
     },
