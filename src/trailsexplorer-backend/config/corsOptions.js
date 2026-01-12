@@ -6,6 +6,7 @@ const corsOptions = {
             'http://localhost:3001',
             'http://localhost:5173',
             'http://127.0.0.1:3000',
+            'https://trailsexplorer.vercel.app', // Explicitly allow the deployed frontend
             process.env.CLIENT_URL
         ].filter(Boolean).map(url => url.replace(/\/$/, '')); // Remove trailing slashes
 
