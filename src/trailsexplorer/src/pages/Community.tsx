@@ -144,7 +144,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
     const [challenges, setChallenges] = useState<Challenge[]>([]);
     const [notifications, setNotifications] = useState<any[]>([]);
     const [showNotifications, setShowNotifications] = useState(false);
-    const { user } = useAuth();
+    const { user, refreshGroups } = useAuth();
 
     // Post Detail Modal State
     const [selectedPost, setSelectedPost] = useState<SocialPost | null>(null);
@@ -418,6 +418,12 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
         try {
             await joinGroup(group.group_id);
             setJoinedGroups(prev => new Set(prev).add(group.group_id));
+
+            // Sync with global AuthContext
+            if (refreshGroups) {
+                await refreshGroups();
+            }
+
             alert(`Joined ${group.name} successfully!`);
             // Refresh groups to update member count
             const updatedGroups = await getGroups();

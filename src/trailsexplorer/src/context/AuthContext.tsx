@@ -13,6 +13,10 @@ interface AuthContextType {
     logout: () => void;
     register: (name: string, email: string, password?: string) => Promise<void>;
     updateProfile: (updates: Partial<User>) => void;
+    language: string;
+    setLanguage: (lang: string) => void;
+    joinedGroups: any[];
+    refreshGroups: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,6 +40,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [token, setToken] = useState<string | null>(localStorage.getItem('token')); // Initialize from local storage
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token')); // Initialize from existence of token
+    const [language, setLanguage] = useState<string>(localStorage.getItem('language') || 'en');
+    const [joinedGroups, setJoinedGroups] = useState<any[]>([]);
+
+    const refreshGroups = async () => {
+        if (!localStorage.getItem('token')) return;
+        try {
+            const { getMyGroups } = await import('../services/communityService');
+            const groups = await getMyGroups();
+            setJoinedGroups(Array.isArray(groups) ? groups : []);
+        } catch (error) {
+            console.error('[Auth] Failed to refresh groups:', error);
+        }
+    };
+
+    useEffect(() => {
+        localStorage.setItem('language', language);
+    }, [language]);
 
     // Check for existing token on mount (validation)
     useEffect(() => {
@@ -46,6 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 setUser(JSON.parse(savedUser));
                 setToken(savedToken);
                 setIsAuthenticated(true);
+                refreshGroups();
             } catch (e) {
                 console.error("Failed to parse saved user", e);
                 localStorage.removeItem('token');
@@ -90,6 +112,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(userData);
             setToken(newToken); // Update state
             setIsAuthenticated(true);
+            refreshGroups();
         } catch (error) {
             console.error('[Auth] Login error:', error);
             throw error;
@@ -138,10 +161,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(null);
         setToken(null); // Clear state
         setIsAuthenticated(false);
+        setJoinedGroups([]);
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout, register, updateProfile }}>
+        <AuthContext.Provider value={{ user, token, isAuthenticated, login, logout, register, updateProfile, language, setLanguage, joinedGroups, refreshGroups }}>
             {children}
         </AuthContext.Provider>
     );

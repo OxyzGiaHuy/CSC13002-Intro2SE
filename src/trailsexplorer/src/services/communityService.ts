@@ -89,6 +89,13 @@ export const getGroups = async () => {
     return response.data;
 };
 
+export const getMyGroups = async () => {
+    const response = await axios.get(`${API_URL}/groups/my`, {
+        headers: getAuthHeader()
+    });
+    return response.data;
+};
+
 export const createGroup = async (groupData: any) => {
     const response = await axios.post(`${API_URL}/groups`, groupData, {
         headers: getAuthHeader()

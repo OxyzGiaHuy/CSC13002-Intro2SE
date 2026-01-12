@@ -6,7 +6,29 @@ const User = require('../models/User');
 const GroupMessage = require('../models/GroupMessage');
 const authenticateToken = require('../middleware/authMiddleware');
 
-// 1. GET /api/groups: List groups
+// 1. GET /api/groups/my: Get groups joined by the user
+router.get('/my', authenticateToken, async (req, res) => {
+    try {
+        const memberships = await GroupMember.findAll({
+            where: { user_id: req.user.id },
+            attributes: ['group_id']
+        });
+        const groupIds = memberships.map(m => m.group_id);
+
+        const groups = await Group.findAll({
+            where: { group_id: groupIds },
+            include: [
+                { model: User, as: 'owner', attributes: ['user_id', 'username', 'avatar_url'] },
+                { model: User, as: 'members', attributes: ['user_id', 'username', 'avatar_url'], through: { attributes: [] } }
+            ]
+        });
+        res.json(groups);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 2. GET /api/groups: List groups
 router.get('/', async (req, res) => {
     try {
         const groups = await Group.findAll({
