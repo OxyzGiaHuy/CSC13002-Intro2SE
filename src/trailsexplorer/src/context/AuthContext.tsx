@@ -12,6 +12,8 @@ interface AuthContextType {
     logout: () => void;
     register: (name: string, email: string, password?: string) => Promise<void>;
     updateProfile: (updates: Partial<User>) => void;
+    language: string;
+    setLanguage: (lang: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,6 +36,13 @@ const API_URL = '/api';
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [language, setLanguageState] = useState<string>(() => {
+        try {
+            return localStorage.getItem('lang') || (navigator.language?.startsWith('vi') ? 'vi' : 'en');
+        } catch (e) {
+            return 'en';
+        }
+    });
 
     // Check for existing token on mount
     useEffect(() => {
@@ -123,16 +132,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // TODO: Call backend PUT /api/user/profile
     };
 
+    const setLanguage = (lang: string) => {
+        try {
+            localStorage.setItem('lang', lang);
+        } catch (e) {}
+        setLanguageState(lang);
+    };
+
     const logout = () => {
         console.log('[Auth] logout');
+        // Clear all user-related localStorage data (both current and legacy key formats)
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('market_cart');
+        localStorage.removeItem('favorites');
+        localStorage.removeItem('savedPlans');
+        // Clear old format keys with trails_explorer prefix
+        // localStorage.removeItem('trails_explorer_token');
+        // localStorage.removeItem('trails_explorer_user');
+        // localStorage.removeItem('trails_explorer_view');
+        // Keep language preference as it's a user preference, not user data
+        // localStorage.removeItem('lang');
+        
+        // Clear state
         setUser(null);
         setIsAuthenticated(false);
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, login, logout, register, updateProfile }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, login, logout, register, updateProfile, language, setLanguage }}>
             {children}
         </AuthContext.Provider>
     );

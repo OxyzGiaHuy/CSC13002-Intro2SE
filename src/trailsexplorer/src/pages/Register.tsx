@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTranslations } from '../data/i18n';
 import Logo from '../../components/Logo';
 import logoImage from '../../assets/logo.png';
 import type { AuthView } from '../types/view';
@@ -11,6 +12,8 @@ const RegisterPage: React.FC<{ setAuthView: (v: AuthView) => void }> = ({ setAut
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const auth = useAuth();
+    const lang = auth?.language || 'en';
+    const T = useTranslations(lang);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -19,7 +22,7 @@ const RegisterPage: React.FC<{ setAuthView: (v: AuthView) => void }> = ({ setAut
 
         try {
             if (!name.trim() || !email.trim() || !password.trim()) {
-                throw new Error('Vui lòng điền đầy đủ thông tin');
+                throw new Error(T.profile.error.nameEmpty || 'Please fill in all fields');
             }
             
             await auth.register(name, email, password);
@@ -31,70 +34,76 @@ const RegisterPage: React.FC<{ setAuthView: (v: AuthView) => void }> = ({ setAut
             setTimeout(() => setAuthView('login'), 2000);
         } catch (err: any) {
             console.error(err);
-            setError(err.message || 'Đăng ký thất bại');
+            setError(err.message || T.common.error);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-xl relative">
+        <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border-2 border-[#F0F9FF] relative">
             <div className="flex items-center justify-center mb-6">
                 <Logo imageSrc={logoImage} size="lg" showText={true} />
             </div>
-            <h2 className="text-2xl font-bold text-center text-forest-green mb-6">Create Your Account</h2>
+            <h2 className="text-3xl font-bold text-center text-[#0EA5E9] mb-2">{T.nav.register}</h2>
+            <p className="text-center text-[#0F172A]/60 mb-6 text-sm">{T.auth.signupWelcome || 'Join Trails Explorer today'}</p>
             
             {error && (
-                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                <div className="mb-4 p-3 bg-red-50 border-2 border-red-200 text-red-700 rounded-lg text-sm font-medium">
                     {error}
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Full Name</label>
+                    <label className="block text-sm font-bold text-[#0F172A] mb-2">{T.common.welcome}</label>
                     <input 
                         type="text" 
                         value={name} 
                         onChange={e => setName(e.target.value)} 
                         required 
                         disabled={loading}
-                        className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" 
+                        className="w-full px-4 py-3 border-2 border-[#F0F9FF] rounded-lg focus:border-[#0EA5E9] focus:ring-2 focus:ring-[#E0F2FE] outline-none transition-all bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE] disabled:opacity-50" 
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Email Address</label>
+                    <label className="block text-sm font-bold text-[#0F172A] mb-2">{T.auth.email || 'Email Address'}</label>
                     <input 
                         type="email" 
                         value={email} 
                         onChange={e => setEmail(e.target.value)} 
                         required 
                         disabled={loading}
-                        className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" 
+                        className="w-full px-4 py-3 border-2 border-[#F0F9FF] rounded-lg focus:border-[#0EA5E9] focus:ring-2 focus:ring-[#E0F2FE] outline-none transition-all bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE] disabled:opacity-50" 
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Password</label>
+                    <label className="block text-sm font-bold text-[#0F172A] mb-2">{T.auth.password || 'Password'}</label>
                     <input 
                         type="password" 
                         value={password} 
                         onChange={e => setPassword(e.target.value)} 
                         required 
                         disabled={loading}
-                        className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm disabled:bg-gray-100" 
+                        className="w-full px-4 py-3 border-2 border-[#F0F9FF] rounded-lg focus:border-[#0EA5E9] focus:ring-2 focus:ring-[#E0F2FE] outline-none transition-all bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE] disabled:opacity-50" 
                     />
                 </div>
                 <button 
                     type="submit" 
                     disabled={loading}
-                    className="w-full bg-sage-green text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-gradient-to-r from-[#0EA5E9] to-[#06B6D4] text-white py-3 rounded-lg hover:shadow-lg font-bold transition-all uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {loading ? 'Creating Account...' : 'Create Account'}
+                    {loading ? `${T.common.loading}...` : T.nav.register}
                 </button>
             </form>
-            <p className="mt-6 text-center text-sm text-gray-600">
-                Already have an account?{' '}
-                <button onClick={() => setAuthView('login')} className="font-medium text-sage-green hover:underline">Log in</button>
+            <p className="mt-6 text-center text-sm text-[#0F172A]/60">
+                {T.auth.alreadyHave || 'Already have an account?'}{' '}
+                <button 
+                    onClick={() => setAuthView('login')} 
+                    className="font-bold text-[#0EA5E9] hover:text-[#0284C7] transition-colors"
+                >
+                    {T.nav.login}
+                </button>
             </p>
         </div>
     );

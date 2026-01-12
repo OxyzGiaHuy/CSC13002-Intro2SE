@@ -11,6 +11,8 @@ import {
 } from '../data/constants';
 import { MOCK_WEATHER } from '../data/constants';
 import { Zap, Activity, Flame, Star, Map as LucideMap } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useTranslations } from '../data/i18n';
 
 export interface TrailDetailProps {
     trailId: number;
@@ -21,6 +23,9 @@ export interface TrailDetailProps {
 }
 
 const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onToggleFavorite, onSelectMap }) => {
+    const auth = useAuth();
+    const lang = auth?.language || 'en';
+    const T = useTranslations(lang);
     // Initial trail from props (might have partial data)
     const initialTrail = trails.find(t => t.id === trailId);
     const [trail, setTrail] = React.useState<Trail | undefined>(initialTrail);
@@ -37,26 +42,26 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
         fetchDetail();
     }, [trailId]);
 
-    if (!trail) return <div className="p-8 text-center text-gray-500">Trail not found.</div>;
+    if (!trail) return <div className="p-8 text-center text-[#0F172A]/60">{T.discover.noResults}</div>;
 
     const getDifficultyStyles = (difficulty: string) => {
         switch (difficulty.toLowerCase()) {
             case 'easy':
                 return {
-                    badge: 'bg-emerald-900/40 text-emerald-300 border-emerald-500/30',
-                    icon: <Zap className="w-4 h-4 text-emerald-400 fill-emerald-400" />,
-                    text: 'text-emerald-500'
+                    badge: 'bg-[#E0F2FE] text-[#0EA5E9] border-[#0EA5E9]',
+                    icon: <Zap className="w-4 h-4 text-[#0EA5E9] fill-[#0EA5E9]" />,
+                    text: 'text-[#0EA5E9]'
                 };
             case 'hard':
                 return {
-                    badge: 'bg-rose-900/40 text-rose-300 border-rose-500/30',
-                    icon: <Flame className="w-4 h-4 text-rose-400 fill-rose-400" />,
-                    text: 'text-rose-500'
+                    badge: 'bg-red-50 text-red-600 border-red-200',
+                    icon: <Flame className="w-4 h-4 text-red-500 fill-red-500" />,
+                    text: 'text-red-500'
                 };
             default:
                 return {
-                    badge: 'bg-amber-900/40 text-amber-300 border-amber-500/30',
-                    icon: <Activity className="w-4 h-4 text-amber-400" />,
+                    badge: 'bg-amber-50 text-amber-600 border-amber-200',
+                    icon: <Activity className="w-4 h-4 text-amber-500" />,
                     text: 'text-amber-500'
                 };
         }
@@ -75,7 +80,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-16">
+        <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] via-white to-[#F0F9FF] pb-16">
             {/* Immersive Hero Section */}
             <div className="relative h-[60vh] w-full">
                 <img src={trail.imageUrl} alt={trail.name} className="w-full h-full object-cover" />
@@ -83,8 +88,8 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
 
                 {/* Navbar Placeholder/Back Button */}
                 <div className="absolute top-0 left-0 p-6 z-10">
-                    <button onClick={onBack} className="flex items-center gap-2 text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-full transition-all backdrop-blur-sm">
-                        <ArrowLeftIcon className="w-5 h-5" /> Back
+                    <button onClick={onBack} className="flex items-center gap-2 text-white/90 hover:text-white hover:bg-white/10 px-4 py-2 rounded-full transition-all backdrop-blur-sm font-medium">
+                        <ArrowLeftIcon className="w-5 h-5" /> {T.common.back || 'Back'}
                     </button>
                 </div>
 
@@ -94,13 +99,13 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                         <div className="max-w-4xl">
                             <div className={`inline-flex items-center gap-2 px-4 py-2 mb-4 text-xs font-bold tracking-widest uppercase backdrop-blur-md rounded-full border shadow-2xl ${diffStyles.badge}`}>
                                 {diffStyles.icon}
-                                <span>{trail.difficulty} Level</span>
+                                <span>{trail.difficulty} {T.trailDetail.difficulty || 'Level'}</span>
                             </div>
                             <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-2 leading-tight">
                                 {trail.name}
                             </h1>
                             <p className="text-lg md:text-xl text-gray-200 flex items-center gap-2">
-                                <MapIcon className="w-5 h-5 text-sage-green" /> {trail.location}
+                                <MapIcon className="w-5 h-5 text-[#0EA5E9]" /> {trail.location}
                             </p>
                         </div>
                     </div>
@@ -112,7 +117,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                     className="absolute bottom-[-28px] right-8 md:right-16 bg-white rounded-full p-4 shadow-2xl hover:scale-110 transition-transform z-20"
                     aria-label={trail.isFavorited ? "Remove from favorites" : "Add to favorites"}
                 >
-                    <HeartIcon className={`w-8 h-8 ${trail.isFavorited ? 'text-red-500 fill-current' : 'text-gray-400'}`} filled={trail.isFavorited} />
+                    <HeartIcon className={`w-8 h-8 ${trail.isFavorited ? 'text-red-500 fill-current' : 'text-[#0F172A]/40'}`} filled={trail.isFavorited} />
                 </button>
             </div>
 
@@ -123,34 +128,34 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                     <div className="lg:col-span-2 space-y-10">
                         {/* Key Stats Grid */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
-                                <span className="text-xs text-gray-400 uppercase font-black tracking-widest mb-2">Distance</span>
-                                <span className="text-2xl font-display font-bold text-forest-green">{trail.length_km} <span className="text-sm align-middle text-gray-400 font-sans font-normal">km</span></span>
+                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F0F9FF] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
+                                <span className="text-xs text-[#0EA5E9] uppercase font-bold tracking-widest mb-2">{T.trailDetail.distance || 'Distance'}</span>
+                                <span className="text-2xl font-bold text-[#0EA5E9]">{trail.length_km} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">km</span></span>
                             </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
-                                <span className="text-xs text-gray-400 uppercase font-black tracking-widest mb-2">Duration</span>
-                                <span className="text-2xl font-display font-bold text-earth-brown">{trail.duration_hr} <span className="text-sm align-middle text-gray-400 font-sans font-normal">hr</span></span>
+                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F0F9FF] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
+                                <span className="text-xs text-[#0EA5E9] uppercase font-bold tracking-widest mb-2">{T.trailDetail.duration || 'Duration'}</span>
+                                <span className="text-2xl font-bold text-[#0EA5E9]">{trail.duration_hr} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">hr</span></span>
                             </div>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center">
-                                <span className="text-xs text-gray-400 uppercase font-black tracking-widest mb-2">Rating</span>
+                            <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F0F9FF] flex flex-col items-center justify-center text-center hover:shadow-xl transition-shadow">
+                                <span className="text-xs text-[#0EA5E9] uppercase font-bold tracking-widest mb-2">{T.trailDetail.rating || 'Rating'}</span>
                                 <div className="flex items-center gap-1.5">
                                     <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                                    <span className="text-2xl font-display font-bold text-gray-900">{trail.rating > 0 ? trail.rating.toFixed(1) : (4.5).toFixed(1)} <span className="text-sm align-middle text-gray-400 font-sans font-normal">/5</span></span>
+                                    <span className="text-2xl font-bold text-[#0EA5E9]">{trail.rating > 0 ? trail.rating.toFixed(1) : (4.5).toFixed(1)} <span className="text-sm align-middle text-[#0F172A]/60 font-normal">/5</span></span>
                                 </div>
                             </div>
                             <button
                                 onClick={() => onSelectMap(trail.id)}
-                                className="bg-forest-green hover:bg-green-900 text-white p-6 rounded-2xl shadow-xl shadow-green-900/20 flex flex-col items-center justify-center transition-all transform hover:scale-[1.02] active:scale-95"
+                                className="bg-gradient-to-r from-[#0EA5E9] to-[#06B6D4] hover:shadow-lg text-white p-6 rounded-2xl shadow-xl flex flex-col items-center justify-center transition-all transform hover:scale-[1.02] active:scale-95 font-bold"
                             >
                                 <LucideMap className="w-6 h-6 mb-2" />
-                                <span className="font-black text-xs uppercase tracking-widest">View Map</span>
+                                <span className="text-xs uppercase tracking-widest">{T.trailDetail.map || 'Map'}</span>
                             </button>
                         </div>
 
                         {/* Description */}
                         <div>
-                            <h2 className="text-2xl font-display font-bold text-gray-900 mb-4">About the Trail</h2>
-                            <p className="text-gray-600 leading-relaxed text-lg">
+                            <h2 className="text-2xl font-bold text-[#0EA5E9] mb-4">{T.trailDetail.description || 'About the Trail'}</h2>
+                            <p className="text-[#0F172A]/70 leading-relaxed text-lg">
                                 {trail.description}
                             </p>
                         </div>
@@ -169,7 +174,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
 
                         {/* Reviews */}
                         <div>
-                            <h3 className="text-2xl font-display font-bold text-gray-900 mb-6">Community Reviews ({trail.reviews.length})</h3>
+                            <h3 className="text-2xl font-display font-bold text-gray-900 mb-6">{T.trailDetail.communityReviews} ({trail.reviews.length})</h3>
                             <div className="space-y-6">
                                 {trail.reviews.map((r, idx) => (
                                     <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -207,7 +212,7 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                         {/* Weather Card */}
                         <div className="bg-blue-50/50 p-6 rounded-3xl border border-blue-100">
                             <h3 className="text-xl font-display font-bold text-blue-900 mb-4 flex items-center gap-2">
-                                <SunIcon className="w-5 h-5" /> Weather Forecast
+                                <SunIcon className="w-5 h-5" /> {T.trailDetail.weatherForecast}
                             </h3>
                             <div className="space-y-3">
                                 {MOCK_WEATHER.map(w => (
@@ -228,13 +233,13 @@ const TrailDetail: React.FC<TrailDetailProps> = ({ trailId, onBack, trails, onTo
                         {/* CTA Box */}
                         <div className="bg-earth-brown/5 p-6 rounded-3xl border border-earth-brown/10">
                             <h3 className="text-xl font-display font-bold text-earth-brown mb-2">Ready to go?</h3>
-                            <p className="text-sm text-gray-600 mb-4">Make sure you have all your gear ready. Check our AI planner for a custom packing list.</p>
+                            <p className="text-sm text-gray-600 mb-4">{T.trailDetail.packingMessage}</p>
                             <button
                                 onClick={() => {
                                     alert(`Generating AI Packing List for ${trail.name}...\n\n(This feature will be fully integrated with the Planner soon!)`);
                                 }}
                                 className="w-full py-3 bg-earth-brown text-white font-bold rounded-xl hover:bg-earth-brown/90 transition-colors shadow-lg shadow-orange-900/10">
-                                Generate Packing List
+                                {T.trailDetail.generatePackingList}
                             </button>
                         </div>
                     </div>

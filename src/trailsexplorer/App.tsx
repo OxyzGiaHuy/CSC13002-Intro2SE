@@ -30,6 +30,7 @@ import Users from './src/pages/admin/Users'; // Admin Users
 import LoginPage from './src/pages/Login';
 import RegisterPage from './src/pages/Register';
 import { useAuth } from './src/context/AuthContext';
+import { useTranslations } from './src/data/i18n';
 import Home from './src/pages/Home';
 import Discover from './src/pages/Discover';
 import TrailDetail from './src/pages/TrailDetail';
@@ -177,6 +178,8 @@ const App: React.FC = () => {
     const [isLoadingTrails, setIsLoadingTrails] = useState(true);
     const [authView, setAuthView] = useState<AuthView>('login');
     const { user, isAuthenticated } = useAuth();
+    const lang = user?.language || 'en';
+    const T = useTranslations(lang);
     const prevAuth = useRef(isAuthenticated);
 
     useEffect(() => {
@@ -192,6 +195,14 @@ const App: React.FC = () => {
                 setView('home');
             }
         }
+        
+        // Detect logout event (transition from true to false)
+        if (prevAuth.current && !isAuthenticated) {
+            console.log('User just logged out');
+            setView('home');
+            setAuthView('login');
+        }
+        
         prevAuth.current = isAuthenticated;
     }, [user, isAuthenticated]);
 
@@ -341,12 +352,12 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-cream flex flex-col">
+        <div className="min-h-screen bg-[#F0F9FF] flex flex-col">
             <Header setView={setView} currentView={view} userRole={user?.role} />
             <main className="flex-grow">{renderContent()}</main>
-            <footer className="bg-forest-green text-cream mt-8 py-4">
+            <footer className="bg-gradient-to-r from-[#0EA5E9] to-[#06B6D4] text-white mt-8 py-6 shadow-lg">
                 <div className="container mx-auto text-center text-sm">
-                    <p>&copy; {new Date().getFullYear()} TrailsExplorer. Adventure Awaits.</p>
+                    <p className="font-medium">&copy; {new Date().getFullYear()} TrailsExplorer. {T.footer.copyright}</p>
                 </div>
             </footer>
         </div>

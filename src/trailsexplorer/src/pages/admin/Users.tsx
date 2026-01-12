@@ -108,7 +108,7 @@ const Users: React.FC = () => {
     // Filter users based on search and filters
     const filteredUsers = users.filter(user => {
         const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            user.email.toLowerCase().includes(searchTerm.toLowerCase());
+                            (user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
         const matchesRole = filterRole === 'all' || user.role === filterRole;
         const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
         return matchesSearch && matchesRole && matchesStatus;

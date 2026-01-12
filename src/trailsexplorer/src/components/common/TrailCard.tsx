@@ -2,6 +2,8 @@ import * as React from 'react';
 import type { Trail } from '../../types/index';
 import { HeartIcon } from '../../data/constants';
 import { Zap, Activity, Flame, Star, Clock, Route } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useTranslations } from '../../data/i18n';
 
 interface TrailCardProps {
     trail: Trail;
@@ -14,6 +16,10 @@ const formatDistance = (km: number) => {
 };
 
 const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite }: TrailCardProps) => {
+    const auth = useAuth();
+    const lang = auth?.language || 'en';
+    const T = useTranslations(lang);
+    
     const getDifficultyStyles = (difficulty: string) => {
         switch (difficulty.toLowerCase()) {
             case 'easy':
@@ -128,8 +134,8 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
             </div>
 
             {/* Hover Action Bar */}
-            <div className="bg-forest-green text-white py-3 text-center text-sm font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                View Details
+            <div className="bg-gradient-to-r from-[#0EA5E9] to-[#06B6D4] text-white py-3 text-center text-sm font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                {T.common.viewDetails}
             </div>
         </div>
     );

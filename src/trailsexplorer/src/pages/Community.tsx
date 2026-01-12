@@ -7,6 +7,8 @@ import { ArrowRight, MessageSquare, Heart, Share2, Users, ShoppingBag, Trophy, I
 import { MOCK_GUIDEBOOK_ARTICLES } from '../data/constants';
 import { GuidebookArticle } from '../types/index';
 import ReactMarkdown from 'react-markdown';
+import { useAuth } from '../context/AuthContext';
+import { useTranslations } from '../data/i18n';
 
 export interface CommunityProps {
     setView: (view: View) => void;
@@ -21,7 +23,7 @@ const Modal: React.FC<{ onClose: () => void; children: React.ReactNode }> = ({ o
 
     if (typeof document === 'undefined') return null;
     return ReactDOM.createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm" onClick={onClose}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
             <div onClick={e => e.stopPropagation()} className="relative">
                 {children}
             </div>
@@ -90,6 +92,10 @@ const SIMULATED_USERS = [
 ];
 
 export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => {
+    const auth = useAuth();
+    const lang = auth?.language || 'en';
+    const T = useTranslations(lang);
+    
     const [view, setView] = useState<'FEED' | 'MARKET' | 'GROUPS' | 'CHALLENGES' | 'GUIDEBOOK'>('FEED');
     const [posts, setPosts] = useState<SocialPost[]>([]);
     const [marketItems, setMarketItems] = useState<MarketplaceItem[]>([]);
@@ -462,40 +468,41 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
     }, [marketCategory, condition, debouncedPriceRange, debouncedSearchQuery]);
 
     return (
-        <div className="container mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-screen">
-            <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
-                {/* Main Content Area */}
-                <div className="xl:col-span-3">
-                    {view === 'FEED' && (
-                        <>
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8 max-w-2xl mx-auto">
-                                <div className="flex gap-4 mb-4">
-                                    <img src="https://ui-avatars.com/api/?name=You&background=random" className="w-10 h-10 rounded-full flex-shrink-0" alt="Your avatar" />
-                                    <div className="flex-1">
-                                        <div className="flex gap-2 mb-2">
-                                            <button onClick={() => insertFormat('bold')} className="p-1 hover:bg-gray-100 rounded text-gray-500"><Bold size={16} /></button>
-                                            <button onClick={() => insertFormat('italic')} className="p-1 hover:bg-gray-100 rounded text-gray-500"><Italic size={16} /></button>
-                                            <button onClick={() => insertFormat('link')} className="p-1 hover:bg-gray-100 rounded text-gray-500"><LinkIcon size={16} /></button>
-                                            <button onClick={() => insertFormat('list')} className="p-1 hover:bg-gray-100 rounded text-gray-500"><List size={16} /></button>
+        <div className="min-h-screen bg-gradient-to-br from-[#F0F9FF] via-white to-[#F0F9FF] pb-8">
+            <div className="container mx-auto p-4 sm:p-6 lg:p-8">
+                <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+                    {/* Main Content Area */}
+                    <div className="xl:col-span-3">
+                        {view === 'FEED' && (
+                            <>
+                                <div className="bg-white p-6 rounded-2xl shadow-lg border-2 border-[#F0F9FF] mb-8 max-w-2xl mx-auto">
+                                    <div className="flex gap-4 mb-4">
+                                        <img src="https://ui-avatars.com/api/?name=You&background=random" className="w-10 h-10 rounded-full flex-shrink-0" alt="Your avatar" />
+                                        <div className="flex-1">
+                                            <div className="flex gap-2 mb-2">
+                                                <button onClick={() => insertFormat('bold')} className="p-1 hover:bg-[#F0F9FF] rounded text-[#0EA5E9]"><Bold size={16} /></button>
+                                                <button onClick={() => insertFormat('italic')} className="p-1 hover:bg-[#F0F9FF] rounded text-[#0EA5E9]"><Italic size={16} /></button>
+                                                <button onClick={() => insertFormat('link')} className="p-1 hover:bg-[#F0F9FF] rounded text-[#0EA5E9]"><LinkIcon size={16} /></button>
+                                                <button onClick={() => insertFormat('list')} className="p-1 hover:bg-[#F0F9FF] rounded text-[#0EA5E9]"><List size={16} /></button>
+                                            </div>
+                                            <textarea
+                                                ref={textareaRef}
+                                                value={newPostText}
+                                                onChange={e => setNewPostText(e.target.value)}
+                                                placeholder={T.community.shareAdventure}
+                                                className="w-full p-4 bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE] rounded-xl border-2 border-[#F0F9FF] focus:border-[#0EA5E9] focus:ring-2 focus:ring-[#E0F2FE] outline-none resize-none min-h-[100px] transition-all"
+                                            />
                                         </div>
-                                        <textarea
-                                            ref={textareaRef}
-                                            value={newPostText}
-                                            onChange={e => setNewPostText(e.target.value)}
-                                            placeholder="Share your adventure..."
-                                            className="w-full p-4 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-sage-green resize-none min-h-[100px]"
-                                        />
                                     </div>
-                                </div>
-                                {newPostImage && (
-                                    <div className="relative mb-4 ml-14 group">
-                                        <img src={newPostImage} alt="preview" className="w-full max-h-60 object-cover rounded-lg" />
-                                        <button onClick={() => setNewPostImage(null)} className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full">✕</button>
-                                    </div>
-                                )}
-                                <div className="flex justify-between items-center ml-14">
-                                    <label className="cursor-pointer text-gray-500 hover:text-sage-green flex items-center gap-2 text-sm">
-                                        <ImageIcon size={18} />
+                                    {newPostImage && (
+                                        <div className="relative mb-4 ml-14 group">
+                                            <img src={newPostImage} alt="preview" className="w-full max-h-60 object-cover rounded-lg" />
+                                            <button onClick={() => setNewPostImage(null)} className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full">✕</button>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-between items-center ml-14">
+                                        <label className="cursor-pointer text-[#0EA5E9] hover:text-[#0284C7] flex items-center gap-2 text-sm font-medium">
+                                            <ImageIcon size={18} />
                                         <input type="file" accept="image/*" onChange={handleNewPostImageChange} className="hidden" />
                                         <span>Add Photo</span>
                                     </label>
@@ -504,11 +511,11 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                             </div>
 
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-2xl font-display font-bold text-forest-green flex items-center gap-2"><Activity /> Activity Feed</h3>
+                                <h3 className="text-2xl font-display font-bold text-forest-green flex items-center gap-2"><Activity /> {T.community.activityFeed}</h3>
                                 <div className="flex gap-3 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
                                     <div className="relative">
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                        <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm" />
+                                        <input type="text" placeholder={T.community.searchPosts} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm" />
                                     </div>
                                     <select value={filterType} onChange={e => setFilterType(e.target.value)} className="bg-gray-50 border-none rounded-xl text-sm px-4">
                                         <option value="ALL">All Content</option>
@@ -716,24 +723,24 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
 
                 {/* Sidebar */}
                 <div className="space-y-6 xl:sticky xl:top-24 h-fit">
-                    <div className="bg-white rounded-[2rem] shadow-xl shadow-forest-green/5 border border-gray-100/50 overflow-hidden">
-                        <div className="p-8 border-b border-gray-50/50 relative overflow-hidden group/header">
-                            <h3 className="text-[11px] font-black text-forest-green/40 uppercase tracking-[0.25em] mb-1">Explorer Central</h3>
-                            <p className="text-lg font-display font-bold text-forest-green">Community Hub</p>
-                            <div className="h-1 w-8 bg-sage-green mt-3 rounded-full group-hover:w-16 transition-all"></div>
+                    <div className="bg-white rounded-[2rem] shadow-xl shadow-[#0EA5E9]/10 border border-[#F0F9FF]/50 overflow-hidden">
+                        <div className="p-8 border-b border-[#F0F9FF]/50 relative overflow-hidden group/header bg-gradient-to-r from-[#F0F9FF] to-[#E0F2FE]">
+                            <h3 className="text-[11px] font-black text-[#0EA5E9]/40 uppercase tracking-[0.25em] mb-1">{T.community.explorerCentral}</h3>
+                            <p className="text-lg font-display font-bold text-[#0EA5E9]">{T.community.hub}</p>
+                            <div className="h-1 w-8 bg-[#0EA5E9] mt-3 rounded-full group-hover:w-16 transition-all"></div>
                         </div>
                         <div className="p-4 space-y-2">
                             {[
-                                { id: 'FEED', label: 'Activity Feed', icon: Activity, color: 'text-sage-green', bg: 'bg-sage-green/10', count: 'New' },
-                                { id: 'MARKET', label: 'Gear Market', icon: ShoppingBag, color: 'text-earth-brown', bg: 'bg-earth-brown/10', count: 'Hot' },
-                                { id: 'GROUPS', label: 'Groups', icon: Users, color: 'text-forest-green', bg: 'bg-forest-green/10', count: groups.length },
-                                { id: 'CHALLENGES', label: '2026 Quests', icon: Trophy, color: 'text-orange-500', bg: 'bg-orange-50', count: 'Active' },
-                                { id: 'GUIDEBOOK', label: 'Guidebook', icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-50', count: 'New' },
+                                { id: 'FEED', label: T.community.activityFeed, icon: Activity, color: 'text-[#0EA5E9]', bg: 'bg-[#F0F9FF]', count: 'New' },
+                                { id: 'MARKET', label: T.community.gearMarket, icon: ShoppingBag, color: 'text-[#10B981]', bg: 'bg-[#E0FDF4]', count: 'Hot' },
+                                { id: 'GROUPS', label: T.community.groups, icon: Users, color: 'text-[#0EA5E9]', bg: 'bg-[#F0F9FF]', count: groups.length },
+                                { id: 'CHALLENGES', label: T.community.challenges, icon: Trophy, color: 'text-[#F59E0B]', bg: 'bg-[#FEF3C7]', count: 'Active' },
+                                { id: 'GUIDEBOOK', label: T.community.guidebook, icon: BookOpen, color: 'text-[#06B6D4]', bg: 'bg-[#ECFDF5]', count: 'New' },
                             ].map(tab => (
                                 <button
                                     key={tab.id}
                                     onClick={() => { setView(tab.id as any); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                    className={`group relative flex items-center justify-between px-5 py-4 rounded-2xl text-sm font-bold transition-all w-full ${view === tab.id ? 'bg-forest-green text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50 hover:text-forest-green'}`}
+                                    className={`group relative flex items-center justify-between px-5 py-4 rounded-2xl text-sm font-bold transition-all w-full ${view === tab.id ? 'bg-gradient-to-r from-[#0EA5E9] to-[#06B6D4] text-white shadow-lg' : 'text-gray-500 hover:bg-gray-50 hover:text-[#0EA5E9]'}`}
                                 >
                                     <div className="flex items-center gap-4 relative z-10">
                                         <div className={`p-2.5 rounded-xl transition-all ${view === tab.id ? 'bg-white/20' : tab.bg}`}>
@@ -763,31 +770,31 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
             {showSellModal && (
                 <Modal onClose={() => setShowSellModal(false)}>
                     <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-2xl">
-                        <h3 className="text-2xl font-bold mb-6 text-forest-green">List Item for Sale</h3>
+                        <h3 className="text-2xl font-bold mb-6 text-[#0EA5E9]">{T.community.listItem}</h3>
                         <form onSubmit={handleSellSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Item Title</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-1">{T.community.itemTitle}</label>
                                 <input value={sellForm.name} onChange={e => setSellForm(s => ({ ...s, name: e.target.value }))} className="w-full p-3 bg-gray-50 border rounded-xl outline-none" required />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div><label className="block text-sm font-bold text-gray-700 mb-1">Price (VND)</label><input value={sellForm.price} type="number" onChange={e => setSellForm(s => ({ ...s, price: e.target.value }))} className="w-full p-3 bg-gray-50 border rounded-xl" required /></div>
+                                <div><label className="block text-sm font-bold text-gray-700 mb-1">{T.community.price}</label><input value={sellForm.price} type="number" onChange={e => setSellForm(s => ({ ...s, price: e.target.value }))} className="w-full p-3 bg-gray-50 border rounded-xl" required /></div>
                                 <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1">Condition</label>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">{T.community.condition}</label>
                                     <select value={sellForm.condition} onChange={e => setSellForm(s => ({ ...s, condition: e.target.value }))} className="w-full p-3 bg-gray-50 border rounded-xl">
                                         <option value="NEW">New</option><option value="LIKE_NEW">Like New</option><option value="GOOD">Good</option><option value="FAIR">Fair</option><option value="POOR">Poor</option>
                                     </select>
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1">Photo</label>
-                                <div className="border-2 border-dashed rounded-xl p-4 text-center hover:border-sage-green transition-colors cursor-pointer relative bg-gray-50">
+                                <label className="block text-sm font-bold text-gray-700 mb-1">{T.community.photo}</label>
+                                <div className="border-2 border-dashed rounded-xl p-4 text-center hover:border-[#0EA5E9] transition-colors cursor-pointer relative bg-gray-50">
                                     <input type="file" accept="image/*" onChange={handleSellImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
-                                    {sellForm.imagePreview ? <img src={sellForm.imagePreview} className="mx-auto h-32 object-contain rounded" /> : <div className="text-gray-400"><ImageIcon className="mx-auto mb-2" /><span className="text-sm">Upload Photo</span></div>}
+                                    {sellForm.imagePreview ? <img src={sellForm.imagePreview} className="mx-auto h-32 object-contain rounded" /> : <div className="text-gray-400"><ImageIcon className="mx-auto mb-2" /><span className="text-sm">{T.community.uploadPhoto}</span></div>}
                                 </div>
                             </div>
                             <div className="flex justify-end gap-3 pt-4">
-                                <button type="button" onClick={() => setShowSellModal(false)} className="px-5 py-2.5 text-gray-600">Cancel</button>
-                                <button type="submit" className="px-5 py-2.5 bg-sage-green text-white font-bold rounded-xl shadow-lg">List Item</button>
+                                <button type="button" onClick={() => setShowSellModal(false)} className="px-5 py-2.5 text-gray-600">{T.common.cancel}</button>
+                                <button type="submit" className="px-5 py-2.5 bg-gradient-to-r from-[#0EA5E9] to-[#06B6D4] text-white font-bold rounded-xl shadow-lg">{T.community.listItem}</button>
                             </div>
                         </form>
                     </div>
@@ -940,7 +947,8 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                     </Modal>
                 )
             }
-        </div >
+            </div>
+        </div>
     );
 };
 

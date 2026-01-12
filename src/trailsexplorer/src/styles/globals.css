@@ -1,0 +1,135 @@
+/* Global Brand Colors and Theme */
+:root {
+  /* Primary Brand Colors - Modern & Beautiful */
+  --color-primary-bg: #F0F9FF;      /* Sky Blue 50 - Light & Clean */
+  --color-primary-text: #0F172A;    /* Slate 900 - Dark & Readable */
+  
+  /* Primary Colors */
+  --color-primary: #0EA5E9;         /* Sky Blue 400 - Bright & Modern */
+  --color-primary-dark: #0284C7;    /* Sky Blue 600 - Deep */
+  
+  /* Secondary & Accent */
+  --color-secondary: #10B981;       /* Emerald 500 - Fresh & Vibrant */
+  --color-accent: #06B6D4;          /* Cyan 500 - Light & Airy */
+  
+  /* Status Colors */
+  --color-success: #10B981;         /* Green */
+  --color-warning: #F59E0B;         /* Amber */
+  --color-error: #EF4444;           /* Red */
+  --color-info: #0EA5E9;            /* Blue */
+  
+  /* Neutral Colors */
+  --color-dark: #1F2937;            /* Gray 800 */
+  --color-light: #F9FAFB;           /* Gray 50 */
+  --color-gray: #6B7280;            /* Gray 500 */
+}
+
+/* Apply brand colors globally */
+html, body {
+  background-color: var(--color-primary-bg);
+  color: var(--color-primary-text);
+}
+
+/* Button Brand Style */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(14, 165, 233, 0.25);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-accent);
+}
+
+/* Text Utilities */
+.text-brand-primary {
+  color: var(--color-primary-text);
+}
+
+.text-brand-accent {
+  color: var(--color-accent);
+}
+
+.bg-brand-primary {
+  background-color: var(--color-primary-bg);
+}
+
+.bg-brand-light {
+  background-color: rgba(216, 249, 209, 0.3);
+}
+
+/* Border Colors */
+.border-brand {
+  border-color: var(--color-primary-text);
+}
+
+.border-brand-accent {
+  border-color: var(--color-accent);
+}
+
+/* Card Styles */
+.card-brand {
+  background-color: white;
+  border: 2px solid var(--color-primary-bg);
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(38, 6, 168, 0.08);
+  transition: all 0.3s ease;
+}
+
+.card-brand:hover {
+  box-shadow: 0 8px 16px rgba(38, 6, 168, 0.12);
+  border-color: var(--color-accent);
+}
+
+/* Gradient Utilities */
+.gradient-brand {
+  background: linear-gradient(135deg, #D8F9D1 0%, rgba(216, 249, 209, 0.6) 100%);
+}
+
+.gradient-brand-dark {
+  background: linear-gradient(135deg, #2606A8 0%, #0E7490 100%);
+}
+
+/* Animation for smooth transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Disable transition for transform and opacity to avoid jitter */
+.no-transition {
+  transition: none !important;
+}
+
+/* Language Toggle - Fixed Width to prevent jitter */
+.lang-toggle {
+  width: auto;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.lang-toggle > div {
+  flex: 0 0 1.5rem;
+  text-align: center;
+}
+
+.lang-toggle label {
+  flex: 0 0 auto;
+}

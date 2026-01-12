@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './src/context/AuthContext';
+import './src/styles/globals.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
