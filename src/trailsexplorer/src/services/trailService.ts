@@ -2,7 +2,7 @@ import type { Trail } from '../types/index';
 // MOCK_TRAILS imported for fallback/types but not used for main fetch if API works
 import { MOCK_TRAILS } from '../data/constants';
 
-const API_URL = '/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 /**
  * Service layer for trail-related operations

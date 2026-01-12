@@ -48,9 +48,9 @@ exports.registerUser = async (req, res, next) => {
             // Tạo đường dẫn xác thực
             // Lưu ý: Nếu có Frontend thì trỏ về Frontend. 
             // Hiện tại test Backend thì trỏ thẳng vào API Backend để click là chạy luôn.
-            const baseUrl = process.env.NODE_ENV === 'production'
-                ? 'http://localhost:8000' // Hoặc domain thật nếu có
-                : 'http://localhost:5000';
+            const baseUrl = process.env.CLIENT_URL || (process.env.NODE_ENV === 'production'
+                ? 'http://localhost:8000'
+                : 'http://localhost:5000');
 
             const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${verificationToken}`;
 
@@ -85,6 +85,7 @@ exports.registerUser = async (req, res, next) => {
                                 <!-- HEADER -->
                                 <tr>
                                     <td align="center" bgcolor="#2E7D32" style="padding: 40px 0 30px 0;">
+                                        <img src="https://i.ibb.co/vzB7pLp/logo.png" alt="TrailsExplorer Logo" width="80" height="80" style="display: block; margin-bottom: 20px; border-radius: 50%;">
                                         <h1 style="color: #ffffff; font-size: 28px; font-weight: bold; margin: 0;">
                                             TrailsExplorer
                                         </h1>

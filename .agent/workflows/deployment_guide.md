@@ -45,8 +45,8 @@ Vercel is optimized for frontend frameworks and offers a seamless free tier.
 4.  **Framework Preset:** Vite
 5.  **Root Directory:** Click "Edit" and select `src/trailsexplorer` (your frontend folder).
 6.  **Environment Variables:**
-    *   `VITE_API_BASE_URL`: The URL of your deployed Render backend (e.g., `https://trailsexplorer-api.onrender.com`).
-        *   *Note: In your code, ensure you use this var. You might need to update `AuthContext.tsx` or `geminiService.ts` to use `import.meta.env.VITE_API_BASE_URL` instead of hardcoded localhost.*
+    *   `VITE_API_URL`: The URL of your deployed Render backend with `/api` suffix (e.g., `https://trailsexplorer-api.onrender.com/api`).
+        *   *Note: Ensure you include the `/api` at the end.*
 7.  Click **Deploy**.
 
 ## 4. Final Verification
