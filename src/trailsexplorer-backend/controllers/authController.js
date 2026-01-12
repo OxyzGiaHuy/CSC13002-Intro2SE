@@ -9,6 +9,9 @@ const logger = require('../config/logger');
 // @access  Public
 exports.registerUser = async (req, res, next) => {
     try {
+        console.log('[DEBUG] Register endpoint hit!');
+        console.log('[DEBUG] Body:', JSON.stringify(req.body, null, 2));
+
         const { full_name, email, password } = req.body;
 
         // 1. Validate dữ liệu đầu vào
