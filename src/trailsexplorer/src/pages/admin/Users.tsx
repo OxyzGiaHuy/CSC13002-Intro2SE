@@ -93,11 +93,33 @@ const Users: React.FC = () => {
     const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all');
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+    const [error, setError] = useState<string | null>(null);
+
+    // Use environment variable or fallback to localhost:5000
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     React.useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/user`);
+                // Debug log
+                console.log('Fetching users from:', `${API_URL}/api/user`);
+
+                const res = await fetch(`${API_URL}/api/user`);
+
+                // Check if response is JSON (to avoid parsing HTML error pages)
+                const contentType = res.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    const text = await res.text();
+                    console.error('Received non-JSON response:', text.substring(0, 500)); // Log first 500 chars
+                    throw new Error(`Server returned non-JSON response: ${text.substring(0, 50)}... (Status: ${res.status})`);
+                }
+
+                if (!res.ok) {
+                    throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+                }
+
                 const data = await res.json();
+                console.log('User data received:', data);
 
                 // Transform backend data to match frontend interface
                 const mappedUsers = data.map((u: any) => ({
@@ -107,18 +129,20 @@ const Users: React.FC = () => {
                     role: u.role === 'ADMIN' ? 'admin' : 'user',
                     status: u.is_active ? 'active' : 'inactive',
                     avatarUrl: u.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.username}`,
-                    totalKm: Math.floor(Math.random() * 500), // Random for demo as DB doesn't have this yet
-                    avgAltitude: Math.floor(Math.random() * 2000),
-                    avgTimeHr: Math.floor(Math.random() * 50),
+                    totalKm: u.totalKm || 0,
+                    avgAltitude: u.avgAltitude || 0,
+                    avgTimeHr: u.avgTimeHr || 0,
                     tripHistory: [],
                     preferences: { difficulty: [], scenery: [] }
                 }));
 
                 setUsers(mappedUsers);
-            } catch (err) {
+                setError(null);
+            } catch (err: any) {
                 console.error("Failed to fetch users", err);
-                // Fallback to mock data if API fails to avoid empty screen
-                setUsers(MOCK_USERS_LIST);
+                setError(err.message || 'Failed to load users');
+                // Do NOT fallback to mock data so we can see the error
+                // setUsers(MOCK_USERS_LIST);
             }
         };
         fetchUsers();
@@ -159,7 +183,7 @@ const Users: React.FC = () => {
         .filter(u => u.role !== 'admin')
         .sort((a, b) => b.totalKm - a.totalKm)
         .slice(0, 5)
-        .map(u => ({ name: u.name.split(' ')[0], km: u.totalKm }));
+        .map(u => ({ name: u.name.split(' ').slice(-1)[0], km: u.totalKm }));
 
     // User activity distribution
     const activityData = [
@@ -169,6 +193,7 @@ const Users: React.FC = () => {
         { range: '500km+', count: users.filter(u => u.totalKm >= 500).length },
     ];
 
+    // Status pie chart data
     // Status pie chart data
     const statusData = [
         { name: 'Active', value: stats.active, color: '#10b981' },
@@ -183,8 +208,15 @@ const Users: React.FC = () => {
                     <h2 className="text-3xl font-bold text-forest-green">User Management</h2>
                     <p className="text-gray-600 mt-1">Manage trekker accounts and track community activity</p>
                 </div>
-
             </div>
+
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong className="font-bold">Error loading users: </strong>
+                    <span className="block sm:inline">{error}</span>
+                    <span className="block text-sm mt-1">API URL: {API_URL}/api/user</span>
+                </div>
+            )}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -243,12 +275,12 @@ const Users: React.FC = () => {
                         </div>
                     </CardContent>
                 </Card>
-            </div>
+            </div >
 
             {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            < div className="grid grid-cols-1 lg:grid-cols-2 gap-6" >
                 {/* Top Trekkers */}
-                <Card className="border-none shadow-lg">
+                < Card className="border-none shadow-lg" >
                     <CardHeader className="border-b bg-gradient-to-r from-white to-green-50/30">
                         <CardTitle className="flex items-center gap-2 text-forest-green">
                             <Award className="w-5 h-5" />
@@ -269,10 +301,10 @@ const Users: React.FC = () => {
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
-                </Card>
+                </Card >
 
                 {/* Activity Distribution */}
-                <Card className="border-none shadow-lg">
+                < Card className="border-none shadow-lg" >
                     <CardHeader className="border-b bg-gradient-to-r from-white to-green-50/30">
                         <CardTitle className="flex items-center gap-2 text-forest-green">
                             <BarChart3 className="w-5 h-5" />
@@ -293,11 +325,11 @@ const Users: React.FC = () => {
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
-                </Card>
-            </div>
+                </Card >
+            </div >
 
             {/* Search and Filters */}
-            <Card className="border-none shadow-lg">
+            < Card className="border-none shadow-lg" >
                 <CardContent className="p-6">
                     <div className="flex flex-col sm:flex-row gap-4">
                         {/* Search */}
@@ -341,10 +373,10 @@ const Users: React.FC = () => {
                         </div>
                     </div>
                 </CardContent>
-            </Card>
+            </Card >
 
             {/* Users Table */}
-            <Card className="border-none shadow-lg">
+            < Card className="border-none shadow-lg" >
                 <CardHeader className="border-b bg-gradient-to-r from-white to-green-50/30">
                     <CardTitle className="text-forest-green">
                         Users ({filteredUsers.length})
@@ -454,8 +486,8 @@ const Users: React.FC = () => {
                         </div>
                     )}
                 </CardContent>
-            </Card>
-        </div>
+            </Card >
+        </div >
     );
 };
 

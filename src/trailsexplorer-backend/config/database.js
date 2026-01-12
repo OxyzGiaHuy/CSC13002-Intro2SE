@@ -8,7 +8,8 @@ if (!process.env.DB_HOST) {
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-console.log(`Kết nối Sequelize tới: ${process.env.DB_HOST}`);
+const connectionTarget = process.env.DATABASE_URL ? 'Neon DB (via DATABASE_URL)' : process.env.DB_HOST;
+console.log(`Kết nối Sequelize tới: ${connectionTarget}`);
 console.log(`Chế độ SSL: ${isProduction ? 'BẬT' : 'TẮT (Dev Mode)'}`);
 
 const sequelize = (() => {

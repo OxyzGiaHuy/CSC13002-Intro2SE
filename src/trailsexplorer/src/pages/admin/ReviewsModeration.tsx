@@ -88,12 +88,15 @@ const ViewReviewModal: React.FC<ViewReviewModalProps> = ({ isOpen, review, onClo
                     {/* User & Trail Info */}
                     <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
                         <img
-                            src={review.User?.avatar_url || 'https://i.pravatar.cc/150'}
+                            src={review.User?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${review.User?.username}`}
                             alt={review.User?.username}
                             className="w-16 h-16 rounded-full"
                         />
                         <div>
-                            <p className="font-bold text-lg">{review.User?.full_name}</p>
+                            <p className="font-bold text-lg flex items-center gap-2">
+                                {review.User?.full_name}
+                                <span className="text-gray-500 font-normal text-base">(@{review.User?.username})</span>
+                            </p>
                             <p className="text-gray-600">{review.User?.email}</p>
                             <div className="mt-2 text-sm text-gray-500">
                                 Reviewed <span className="font-semibold text-forest-green">{review.Trail?.name}</span>
@@ -400,7 +403,7 @@ const ReviewsModeration: React.FC = () => {
             <Card className="border-none shadow-lg">
                 <CardHeader className="border-b bg-gradient-to-r from-white to-green-50/30">
                     <CardTitle className="text-forest-green">
-                        Reviews ({reviews.length})
+                        Reviews
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -419,10 +422,9 @@ const ReviewsModeration: React.FC = () => {
                             <table className="w-full text-left">
                                 <thead className="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Reviewer</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Trail</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Rating</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Content</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 w-[25%]">Reviewer</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 w-[20%]">Trail</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 w-[15%]">Review Preview</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Date</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Actions</th>
@@ -434,12 +436,14 @@ const ReviewsModeration: React.FC = () => {
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <img
-                                                        src={review.User?.avatar_url || 'https://i.pravatar.cc/150'}
+                                                        src={review.User?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${review.User?.username}`}
                                                         alt={review.User?.username}
                                                         className="w-10 h-10 rounded-full bg-gray-200"
                                                     />
                                                     <div>
-                                                        <p className="font-semibold text-gray-900">{review.User?.full_name || review.User?.username}</p>
+                                                        <div className="font-semibold text-gray-900">
+                                                            {review.User?.full_name}
+                                                        </div>
                                                         <p className="text-sm text-gray-500">{review.User?.email}</p>
                                                     </div>
                                                 </div>
@@ -449,20 +453,7 @@ const ReviewsModeration: React.FC = () => {
                                                 <p className="text-sm text-gray-500">{review.Trail?.location_province}</p>
                                             </td>
                                             <td className="px-6 py-4">
-                                                {renderStars(review.overall_rating)}
-                                            </td>
-                                            <td className="px-6 py-4 max-w-xs">
-                                                <button
-                                                    onClick={() => setViewReviewModal({ isOpen: true, review })}
-                                                    className="text-left group"
-                                                >
-                                                    <p className="text-gray-700 line-clamp-2 group-hover:text-forest-green transition-colors">
-                                                        {review.content}
-                                                    </p>
-                                                    <span className="text-xs text-forest-green opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 mt-1">
-                                                        <Eye className="w-3 h-3" /> View details
-                                                    </span>
-                                                </button>
+                                                <p className="text-gray-700 line-clamp-2">{review.content}</p>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-1 text-sm text-gray-600">
@@ -475,6 +466,13 @@ const ReviewsModeration: React.FC = () => {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
+                                                    <button
+                                                        onClick={() => setViewReviewModal({ isOpen: true, review })}
+                                                        className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all"
+                                                        title="View Details"
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                    </button>
                                                     {!review.is_approved && (
                                                         <button
                                                             onClick={() => handleApprove(review.review_id)}

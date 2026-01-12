@@ -39,7 +39,29 @@ exports.getUsers = async (req, res, next) => {
             attributes: { exclude: ['password'] }, // Không trả về password
             order: [['created_at', 'DESC']]
         });
-        res.json(users);
+
+        // Format data for frontend dashboard
+        const formattedUsers = users.map(user => {
+            const totalKm = parseFloat(user.total_distance_km) || 0;
+            const totalElevation = parseFloat(user.total_elevation_gain) || 0;
+            const totalTrips = user.total_trips_completed || 0;
+
+            // Calculate average altitude (avoid division by zero)
+            const avgAltitude = totalTrips > 0 ? Math.round(totalElevation / totalTrips) : 0;
+
+            // Avg time is not yet tracked in DB, so return 0
+            const avgTimeHr = 0;
+
+            // Return plain object with added fields
+            return {
+                ...user.toJSON(),
+                totalKm,
+                avgAltitude,
+                avgTimeHr
+            };
+        });
+
+        res.json(formattedUsers);
     } catch (error) {
         next(error);
     }

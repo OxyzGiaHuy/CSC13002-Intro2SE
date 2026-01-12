@@ -6,7 +6,7 @@
 
 
 -- Tạm thời disable triggers để insert nhanh
-SET session_replication_role = 'replica';
+-- SET session_replication_role = 'replica';
 
 -- ==========================================
 -- 0. DỮ LIỆU DANH MỤC (TRAIL CATEGORIES)
@@ -1730,7 +1730,7 @@ REFRESH MATERIALIZED VIEW mv_admin_dashboard_stats;
 -- KẾT THÚC - RE-ENABLE TRIGGERS
 -- ==========================================
 
-SET session_replication_role = 'origin';
+-- SET session_replication_role = 'origin';
 
 -- ==========================================
 -- KIỂM TRA DỮ LIỆU

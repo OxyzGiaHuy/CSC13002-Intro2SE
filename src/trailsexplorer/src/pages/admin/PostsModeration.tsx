@@ -26,6 +26,8 @@ interface Post {
     is_published: boolean;
     report_count: number;
     like_count: number;
+    comment_count: number; // Added
+    share_count: number;   // Added
     User: User;
     Trail?: Trail;
 }
@@ -92,12 +94,14 @@ const ViewPostModal: React.FC<ViewPostModalProps> = ({ isOpen, post, onClose }) 
                 <div className="space-y-4">
                     <div className="flex items-center gap-3 pb-4 border-b">
                         <img
-                            src={post.User?.avatar_url || 'https://i.pravatar.cc/150'}
+                            src={post.User?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.User?.username}`}
                             alt={post.User?.username}
                             className="w-12 h-12 rounded-full"
                         />
                         <div>
-                            <p className="font-semibold text-gray-900">{post.User?.full_name || post.User?.username}</p>
+                            <p className="font-semibold text-gray-900">
+                                {post.User?.full_name} <span className="text-gray-500 font-normal">(@{post.User?.username})</span>
+                            </p>
                             <p className="text-sm text-gray-500">{new Date(post.created_at).toLocaleString()}</p>
                         </div>
                     </div>
@@ -117,6 +121,8 @@ const ViewPostModal: React.FC<ViewPostModalProps> = ({ isOpen, post, onClose }) 
 
                     <div className="flex gap-6 pt-4 border-t text-sm text-gray-600">
                         <span>{post.like_count} likes</span>
+                        <span>{post.comment_count} comments</span>
+                        <span>{post.share_count} shares</span>
                         <span className={post.report_count > 0 ? 'text-red-600 font-medium' : ''}>
                             {post.report_count} reports
                         </span>
@@ -355,7 +361,7 @@ const PostsModeration: React.FC = () => {
             <Card className="border-none shadow-lg">
                 <CardHeader className="border-b bg-gradient-to-r from-white to-green-50/30">
                     <CardTitle className="text-forest-green">
-                        Posts ({posts.length})
+                        Posts
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -374,10 +380,9 @@ const PostsModeration: React.FC = () => {
                             <table className="w-full text-left">
                                 <thead className="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Author</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Title</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Content Preview</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700">Reports</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 w-[25%]">Author</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 w-[20%]">Title</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-700 w-[15%]">Post Preview</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Date</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Status</th>
                                         <th className="px-6 py-4 text-sm font-semibold text-gray-700">Actions</th>
@@ -389,12 +394,14 @@ const PostsModeration: React.FC = () => {
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <img
-                                                        src={post.User?.avatar_url || 'https://i.pravatar.cc/150'}
+                                                        src={post.User?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.User?.username}`}
                                                         alt={post.User?.username}
                                                         className="w-10 h-10 rounded-full bg-gray-200"
                                                     />
                                                     <div>
-                                                        <p className="font-semibold text-gray-900">{post.User?.full_name || post.User?.username}</p>
+                                                        <div className="font-semibold text-gray-900">
+                                                            {post.User?.full_name}
+                                                        </div>
                                                         <p className="text-sm text-gray-500">{post.User?.email}</p>
                                                     </div>
                                                 </div>
@@ -403,16 +410,8 @@ const PostsModeration: React.FC = () => {
                                                 <p className="font-medium text-gray-900">{post.title || 'Untitled'}</p>
                                                 <p className="text-sm text-gray-500">{post.content_type}</p>
                                             </td>
-                                            <td className="px-6 py-4 max-w-md">
-                                                <p className="text-gray-700 line-clamp-2">{post.content}</p>
-                                            </td>
                                             <td className="px-6 py-4">
-                                                <div className="flex items-center gap-1">
-                                                    {post.report_count > 0 && <AlertTriangle className="w-4 h-4 text-red-600" />}
-                                                    <span className={post.report_count > 0 ? 'text-red-600 font-semibold' : 'text-gray-600'}>
-                                                        {post.report_count}
-                                                    </span>
-                                                </div>
+                                                <p className="text-gray-700 line-clamp-2">{post.content}</p>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-1 text-sm text-gray-600">
@@ -428,7 +427,7 @@ const PostsModeration: React.FC = () => {
                                                     <button
                                                         onClick={() => handleViewPost(post)}
                                                         className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-all"
-                                                        title="View Full Post"
+                                                        title="View Details"
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </button>

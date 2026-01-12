@@ -44,7 +44,9 @@ const mapBackendTrailToFrontend = (backendTrail: any): Trail => {
         imageUrl: backendTrail.image_url || 'https://picsum.photos/800/600', // Fallback
         reviews: backendTrail.Reviews ? backendTrail.Reviews.map((r: any) => ({
             full_name: r.User ? (r.User.full_name || r.User.username || 'Anonymous') : 'Anonymous',
-            avatarUrl: r.User ? r.User.avatar_url : 'https://i.pravatar.cc/150',
+            username: r.User ? r.User.username : 'anonymous',
+            // Use consistent deterministic avatar logic here
+            avatarUrl: r.User?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${r.User?.username || 'anonymous'}`,
             rating: r.overall_rating,
             comment: r.content
         })) : [],
