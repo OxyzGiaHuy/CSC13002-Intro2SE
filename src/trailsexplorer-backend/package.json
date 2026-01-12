@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "db:seed": "node seeds/seedDatabase.js"
+    "db:seed": "node seeds/seedDatabase.js",
+    "db:setup": "npm run db:seed && node setup_scripts/seed_users.js && node setup_scripts/seed_groups.js && node setup_scripts/distribute_stats.js && node setup_scripts/rename_users.js && node setup_scripts/reset_pending_stats.js"
   },
   "keywords": [],
   "author": "",
