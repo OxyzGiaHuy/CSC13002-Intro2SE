@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { View } from '../../types/view';
 import Logo from '../../../components/Logo';
-import logoImage from '../assets/logo.png';
+import logoImage from '../../../assets/logo.png';
 import { MenuIcon, XIcon } from '../../data/constants';
 
 export interface HeaderProps {
