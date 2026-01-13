@@ -8,6 +8,7 @@ import { MOCK_GUIDEBOOK_ARTICLES } from '../data/constants';
 import { GuidebookArticle } from '../types/index';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../context/AuthContext';
+import { useTranslations } from '../data/i18n';
 
 export interface CommunityProps {
     setView: (view: View) => void;
@@ -137,6 +138,8 @@ const ChevronRight = ({ className }: { className?: string }) => (
 );
 
 export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => {
+    const { language, user, refreshGroups } = useAuth();
+    const T = useTranslations(language || 'en');
     const [view, setView] = useState<'FEED' | 'MARKET' | 'GROUPS' | 'CHALLENGES' | 'GUIDEBOOK' | 'LEADERBOARD'>('FEED');
     const [posts, setPosts] = useState<SocialPost[]>([]);
     const [marketItems, setMarketItems] = useState<MarketplaceItem[]>([]);
@@ -144,7 +147,6 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
     const [challenges, setChallenges] = useState<Challenge[]>([]);
     const [notifications, setNotifications] = useState<any[]>([]);
     const [showNotifications, setShowNotifications] = useState(false);
-    const { user, refreshGroups } = useAuth();
 
     // Post Detail Modal State
     const [selectedPost, setSelectedPost] = useState<SocialPost | null>(null);
@@ -662,7 +664,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                             ref={textareaRef}
                                             value={newPostText}
                                             onChange={e => setNewPostText(e.target.value)}
-                                            placeholder="Share your adventure..."
+                                            placeholder={T.community.shareAdventure}
                                             className="w-full p-4 bg-gray-50 rounded-xl border-none focus:ring-2 focus:ring-sage-green resize-none min-h-[100px]"
                                         />
                                     </div>
@@ -674,21 +676,21 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                     </div>
                                 )}
                                 <div className="flex justify-between items-center ml-14">
-                                    <label className="cursor-pointer text-gray-500 hover:text-sage-green flex items-center gap-2 text-sm">
+                                    <label className="cursor-pointer text-gray-400 hover:text-sage-green flex items-center gap-2 text-sm">
                                         <ImageIcon size={18} />
                                         <input type="file" accept="image/*" onChange={handleNewPostImageChange} className="hidden" />
-                                        <span>Add Photo</span>
+                                        <span>{T.community.photo}</span>
                                     </label>
-                                    <button onClick={handlePost} disabled={!newPostText.trim()} className="px-6 py-2 bg-sage-green text-white rounded-full font-bold">Post</button>
+                                    <button onClick={handlePost} disabled={!newPostText.trim()} className="px-6 py-2 bg-sage-green text-white rounded-full font-bold">{T.community.createPost}</button>
                                 </div>
                             </div>
 
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-2xl font-display font-bold text-forest-green flex items-center gap-2"><Activity /> Activity Feed</h3>
+                                <h3 className="text-2xl font-display font-bold text-forest-green flex items-center gap-2"><Activity /> {T.community.activityFeed}</h3>
                                 <div className="flex gap-3 bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
                                     <div className="relative">
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                        <input type="text" placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm" />
+                                        <input type="text" placeholder={T.community.searchPosts} value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-9 pr-4 py-2 bg-gray-50 border-none rounded-xl text-sm" />
                                     </div>
                                     <select value={filterType} onChange={e => setFilterType(e.target.value)} className="bg-gray-50 border-none rounded-xl text-sm px-4">
                                         <option value="ALL">All Content</option>
@@ -782,8 +784,8 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                     {view === 'MARKET' && (
                         <div>
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-2xl font-display font-bold text-forest-green flex items-center gap-2"><ShoppingBag /> Gear Marketplace</h3>
-                                <button onClick={() => setShowSellModal(true)} className="px-4 py-2 bg-sage-green text-white rounded-xl text-sm font-bold flex items-center gap-2">+ Sell Gear</button>
+                                <h3 className="text-2xl font-display font-bold text-forest-green flex items-center gap-2"><ShoppingBag /> {T.community.gearMarket}</h3>
+                                <button onClick={() => setShowSellModal(true)} className="px-4 py-2 bg-sage-green text-white rounded-xl text-sm font-bold flex items-center gap-2">+ {T.community.listItem}</button>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {marketItems.filter(item => item.images && item.images.length > 0).map(item => (
@@ -796,7 +798,7 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                         <div className="p-5">
                                             <h4 className="font-bold text-gray-900 mb-1 line-clamp-1">{item.title}</h4>
                                             <p className="text-[10px] text-gray-400 mb-4 font-bold uppercase">{item.category}</p>
-                                            <button onClick={() => handleAddToCart(item)} className="w-full py-3 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-sage-green hover:text-white transition-all">Add to Bag</button>
+                                            <button onClick={() => handleAddToCart(item)} className="w-full py-3 bg-gray-50 text-gray-700 rounded-xl text-sm font-bold hover:bg-sage-green hover:text-white transition-all">{T.community.comment || 'Add to Bag'}</button>
                                         </div>
                                     </div>
                                 ))}
@@ -814,7 +816,12 @@ export const Community: React.FC<CommunityProps> = ({ setView: setAppView }) => 
                                         <div key={group.group_id}
                                             onClick={() => isJoined ? handleOpenChat(group) : null}
                                             className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex gap-4 hover:shadow-xl transition-all border-l-4 border-l-sage-green cursor-pointer">
-                                            <img src={group.avatar_url} className="w-16 h-16 rounded-xl object-cover" alt={group.name} />
+                                            <img
+                                                src={group.avatar_url || 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=80'}
+                                                className="w-16 h-16 rounded-xl object-cover"
+                                                alt={group.name}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=80'; }}
+                                            />
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-bold text-gray-900 mb-1 truncate">{group.name}</h4>
                                                 <p className="text-sm text-gray-500 line-clamp-2 mb-3">{group.description}</p>

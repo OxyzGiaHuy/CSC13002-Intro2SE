@@ -3,14 +3,15 @@ interface Translations {
   nav: { home: string; discover: string; planner: string; community: string; profile: string; logout: string; login: string; register: string; admin: string; language: string };
   home: { title: string; subtitle: string; searchPlaceholder: string; featured: string; recent: string; explore: string; viewMore: string; noTrails: string; difficulty: string; distance: string; duration: string };
   discover: { title: string; all: string; filters: string; difficulty: string; distance: string; rating: string; season: string; location: string; easy: string; medium: string; hard: string; moderate: string; advanced: string; expert: string; spring: string; summer: string; autumn: string; winter: string; noResults: string; loading: string };
-  planner: { title: string; createPlan: string; destination: string; startDate: string; endDate: string; dates: string; days: string; duration: string; activities: string; budget: string; groupSize: string; difficulty: string; all: string; suggestions: string; ready: string; fillDetails: string; tips: string; packing: string; km: string; savePlan: string; cancel: string; deletePlan: string; editPlan: string; viewItinerary: string; day: string; route: string; highlights: string; camping: string; meals: string; elevation: string };
-  trailDetail: { title: string; difficulty: string; distance: string; elevation: string; duration: string; rating: string; reviews: string; communityReviews: string; photos: string; map: string; description: string; highlights: string; bestSeason: string; accessibility: string; warnings: string; weatherForecast: string; packingList: string; generatePackingList: string; packingMessage: string; addReview: string; favorite: string; share: string; startHike: string; planTrip: string; relatedTrails: string; noReviews: string; writeReview: string; reviewText: string; submit: string };
+  planner: { title: string; createPlan: string; destination: string; location: string; interests: string; generating: string; itinerary: string; startDate: string; endDate: string; dates: string; days: string; duration: string; activities: string; budget: string; groupSize: string; difficulty: string; all: string; suggestions: string; ready: string; fillDetails: string; tips: string; packing: string; km: string; savePlan: string; cancel: string; deletePlan: string; editPlan: string; viewItinerary: string; day: string; route: string; highlights: string; camping: string; meals: string; elevation: string };
+  trailDetail: { title: string; difficulty: string; distance: string; elevation: string; duration: string; rating: string; reviews: string; communityReviews: string; photos: string; map: string; description: string; highlights: string; bestSeason: string; accessibility: string; warnings: string; weatherForecast: string; packingList: string; generatePackingList: string; packingMessage: string; addReview: string; favorite: string; share: string; startHike: string; planTrip: string; relatedTrails: string; noReviews: string; writeReview: string; reviewText: string; submit: string; nearbyStays: string; forecastNote: string; terrainView: string; resetView: string; flyoverMode: string; distRemaining: string; wrongWay: string; deviationMsg: string; simulateReturn: string; simulateDeviate: string; };
   profile: { title: string; editProfile: string; saveChanges: string; cancel: string; logout: string; settings: string; language: string; back: string; updateYourInfo: string; profilePhoto: string; changePhoto: string; nameLabel: string; bioLabel: string; bioPlaceholder: string; phoneLabel: string; locationLabel: string; city: string; country: string; avatarLabel: string; uploadAvatar: string; chooseFile: string; noFileChosen: string; stats: { kmTrekked: string; avgAltitude: string; avgTime: string; tripsCompleted: string }; myGroups: string; newGroupName: string; create: string; groupEnter: string; tripHistory: string; noTrips: string; exploreLater: string; completed: string; savedPlans: string; noPlans: string; viewDetails: string; createPlan: string; favorites: string; noFavorites: string; addFavorites: string; days: string; createdOn: string; route: string; highlights: string; camping: string; close: string; saved: string; error: { nameEmpty: string; imageRequired: string } };
   community: { title: string; hub: string; explorerCentral: string; posts: string; groups: string; members: string; createPost: string; newGroup: string; myGroups: string; joinGroup: string; leaveGroup: string; like: string; comment: string; share: string; noComments: string; addComment: string; noGroups: string; activityFeed: string; shareAdventure: string; searchPosts: string; gearMarket: string; challenges: string; guidebook: string; listItem: string; itemTitle: string; price: string; condition: string; photo: string; uploadPhoto: string };
   auth: { loginWelcome: string; email: string; password: string; noAccount: string; createAccount: string; forgotPassword: string; login: string; signup: string; signupWelcome: string; confirmPassword: string; alreadyHave: string };
   common: { loading: string; error: string; success: string; welcome: string; search: string; filter: string; sort: string; edit: string; delete: string; save: string; cancel: string; close: string; submit: string; back: string; next: string; previous: string; yes: string; no: string; confirm: string; confirmDelete: string; viewDetails: string; tips: string };
   pages: { home: string; discover: string; planner: string; community: string; profile: string; trailDetail: string };
   footer: { copyright: string; tagline: string };
+  trails: Record<number, { name: string; location: string; description: string }>;
 }
 
 // English translations
@@ -66,6 +67,10 @@ const en: Translations = {
     title: 'Trip Planner',
     createPlan: 'Create New Plan',
     destination: 'Destination',
+    location: 'Location',
+    interests: 'Interests',
+    generating: 'Generating Plan...',
+    itinerary: 'Your Itinerary',
     startDate: 'Start Date',
     endDate: 'End Date',
     dates: 'Dates',
@@ -124,6 +129,16 @@ const en: Translations = {
     writeReview: 'Write a Review',
     reviewText: 'Your Review',
     submit: 'Submit Review',
+    nearbyStays: 'Nearby Stays',
+    forecastNote: '*Forecast based on historical averages',
+    terrainView: '3D Terrain View',
+    resetView: 'Reset View',
+    flyoverMode: 'Flyover Mode',
+    distRemaining: 'Dist. Remaining',
+    wrongWay: 'Wrong Way!',
+    deviationMsg: 'You have deviated 50m from the trail.',
+    simulateReturn: 'Return to Trail (Simulate)',
+    simulateDeviate: 'Simulate Off-Trail Deviation',
   },
   profile: {
     title: 'My Profile',
@@ -261,6 +276,28 @@ const en: Translations = {
     copyright: 'Adventure Awaits',
     tagline: 'Explore the world, one trail at a time',
   },
+  trails: {
+    1: { name: 'Fansipan Summit', location: 'Sapa, Lao Cai', description: 'Known as the "Roof of Indochina," Fansipan stands tall at 3,143 meters. A challenging trek through lush rainforests and bamboo groves, offering breathtaking panoramic views of the cloud-covered peaks.' },
+    2: { name: 'Da Lat Pine Forest', location: 'Da Lat, Lam Dong', description: 'A serene hike through the misty pine forests of Da Lat. Enjoy the cool air, scenic lakes, and the peaceful atmosphere of the highlands known as the "City of Eternal Spring".' },
+    3: { name: 'Cuc Phuong National Park', location: 'Ninh Binh', description: 'Vietnam\'s oldest national park features dense lush tropical rainforests, ancient trees, and diverse wildlife. The trek offers a chance to see langurs and seasonal butterfly flocks.' },
+    4: { name: 'Bach Ma National Park', location: 'Thua Thien Hue', description: 'Discover spectacular waterfalls like Do Quyen and diverse flora in this biodiverse park. The summit offers commanding views of the coast, lagoons, and mountains.' },
+    5: { name: 'Cat Ba National Park', location: 'Cat Ba, Hai Phong', description: 'Hike through limestone karsts and tropical jungles on Cat Ba Island. The trail to Ngu Lam peak offers sweeping views of the island and Halong Bay.' },
+    6: { name: 'Ninh Thuan Coastal Trail', location: 'Ninh Thuan', description: 'A unique trek through the semi-arid landscape of Nui Chua, featuring rocky terrain, dry forests, and pristine beaches with crystal clear waters.' },
+    7: { name: 'Pu Luong Nature Reserve', location: 'Thanh Hoa', description: 'Wander through stunning terraced rice fields and limestone ridges. Visit traditional Thai villages and enjoy the tranquil beauty of the countryside.' },
+    8: { name: 'Ta Nang - Phan Dung', location: 'Lam Dong - Binh Thuan', description: 'The most beautiful trekking route in Vietnam, crossing grassy hills and pine forests, transitioning from highlands to coastal plains.' },
+    9: { name: 'Hai Van Pass', location: 'Da Nang - Hue', description: 'Trek along the "Ocean Cloud Pass" with dramatic coastal views. Explore historic bunkers and enjoy the winding roads surrounded by lush jungle and sea.' },
+    10: { name: 'Ha Long Bay Viewpoint', location: 'Quang Ninh', description: 'A gentle hike offering iconic views of the limestone pillars rising from the emerald waters of Ha Long Bay, a UNESCO World Heritage site.' },
+    11: { name: 'Lang Biang Peak', location: 'Da Lat, Lam Dong', description: 'Conquer the roof of Dalat. The trail passes through pine forests and jungle to reach the peak, offering magnificent views of the Golden Valley and Silver Stream.' },
+    12: { name: 'O Quy Ho Pass', location: 'Lai Chau', description: 'Trek near one of the four great mountain passes of the Northwest. Enjoy dramatic mountain scenery, deep valleys, and the sea of clouds.' },
+    13: { name: 'Tra Su Cajuput Forest', location: 'An Giang', description: 'Explore the flooded cajuput forest of the Mekong Delta. A peaceful walk on raised bamboo bridges surrounded by green duckweed and diverse birdlife.' },
+    14: { name: 'Ba Den Mountain', location: 'Tay Ninh', description: 'The highest peak in the South. A challenging scramble over boulders leads to the summit, offering panoramic views of the plains and reservoirs.' },
+    15: { name: 'Bai Tu Long Bay', location: 'Quang Ninh', description: 'A pristine alternative to Ha Long Bay. Hike on islands with untouched beaches and limestone karsts, enjoying solitude and natural beauty.' },
+    16: { name: 'Bidoup Nui Ba', location: 'Lam Dong', description: 'A journey through time in the ancient mossy forests. Encounter rare broad-leaf pines and diverse orchids in this rich highland ecosystem.' },
+    17: { name: 'Tay Con Linh', location: 'Ha Giang', description: 'The roof of the Northeast. A tough trek through ancient tea forests and bamboo jungles to reach the summit covered in fog.' },
+    18: { name: 'Quan Ba Heaven Gate', location: 'Ha Giang', description: 'Hike up to the Heaven Gate for a stunning view of the Twin Mountains and the Tam Son town nestled in the valley below.' },
+    19: { name: 'Ba Be Lake', location: 'Bac Kan', description: 'Trek around Vietnam\'s largest natural freshwater lake. Experience the tranquil waters, caves, and ethnic minority villages in the national park.' },
+    20: { name: 'Dinh Mountain', location: 'Ba Ria - Vung Tau', description: 'A popular hiking spot near Vung Tau. The trail leads to Buddhist pagodas, cool streams like Suoi Da/Suoi Tien, and offers ocean views.' },
+  },
 };
 
 // Vietnamese translations
@@ -316,6 +353,10 @@ const vi: Translations = {
     title: 'Lên kế hoạch',
     createPlan: 'Tạo kế hoạch mới',
     destination: 'Điểm đến',
+    location: 'Vị trí',
+    interests: 'Sở thích',
+    generating: 'Đang tạo kế hoạch...',
+    itinerary: 'Lịch trình của bạn',
     startDate: 'Ngày bắt đầu',
     endDate: 'Ngày kết thúc',
     dates: 'Ngày',
@@ -374,6 +415,16 @@ const vi: Translations = {
     writeReview: 'Viết đánh giá',
     reviewText: 'Đánh giá của bạn',
     submit: 'Gửi đánh giá',
+    nearbyStays: 'Chỗ nghỉ gần đây',
+    forecastNote: '*Dự báo dựa trên dữ liệu lịch sử',
+    terrainView: 'Chế độ xem 3D',
+    resetView: 'Đặt lại chế độ xem',
+    flyoverMode: 'Chế độ bay qua',
+    distRemaining: 'Khoảng cách còn lại',
+    wrongWay: 'Sai đường rồi!',
+    deviationMsg: 'Bạn đã đi lệch khỏi đường mòn 50m.',
+    simulateReturn: 'Quay lại đường mòn (Mô phỏng)',
+    simulateDeviate: 'Mô phỏng đi lệch đường',
   },
   profile: {
     title: 'Hồ sơ của tôi',
@@ -510,6 +561,28 @@ const vi: Translations = {
   footer: {
     copyright: 'Cuộc Phiêu Lưu Đang Chờ',
     tagline: 'Khám phá thế giới, từng con đường một',
+  },
+  trails: {
+    1: { name: 'Đỉnh Fansipan', location: 'Sa Pa, Lào Cai', description: 'Được mệnh danh là "Nóc nhà Đông Dương", Fansipan cao 3.143 mét. Một hành trình đầy thử thách qua những khu rừng nhiệt đới và rừng trúc xanh mướt, mang lại tầm nhìn toàn cảnh tuyệt đẹp.' },
+    2: { name: 'Rừng Thông Đà Lạt', location: 'Đà Lạt, Lâm Đồng', description: 'Một chuyến đi bộ yên bình qua những rừng thông mờ sương của Đà Lạt. Tận hưởng không khí mát mẻ, những hồ nước thơ mộng và bầu không khí bình yên của thành phố ngàn hoa.' },
+    3: { name: 'Vườn Quốc gia Cúc Phương', location: 'Ninh Bình', description: 'Vườn quốc gia đầu tiên của Việt Nam với thảm thực vật phong phú, cây cổ thụ nghìn năm và động vật hoang dã đa dạng. Cúc Phương đẹp nhất vào mùa bướm.' },
+    4: { name: 'Vườn Quốc gia Bạch Mã', location: 'Thừa Thiên Huế', description: 'Khám phá những thác nước hùng vĩ như Thác Đỗ Quyên và hệ sinh thái đa dạng. Đỉnh Bạch Mã mang lại tầm nhìn bao quát toàn bộ vùng biển và đầm phá.' },
+    5: { name: 'Vườn Quốc gia Cát Bà', location: 'Cát Bà, Hải Phòng', description: 'Đi bộ qua những dãy núi đá vôi và rừng nhiệt đới trên đảo Cát Bà. Đỉnh Ngự Lâm mang lại cái nhìn bao quát về hòn đảo và Vịnh Hạ Long.' },
+    6: { name: 'Cung đường ven biển Ninh Thuận', location: 'Ninh Thuận', description: 'Một hành trình độc đáo qua cảnh quan bán khô hạn của Núi Chúa, với địa hình đá, rừng khô và những bãi biển hoang sơ nước trong vắt.' },
+    7: { name: 'Khu bảo tồn thiên nhiên Pù Luông', location: 'Thanh Hóa', description: 'Băng qua những thửa ruộng bậc thang tuyệt đẹp và những dãy núi đá vôi. Thăm các bản làng người Thái và tận hưởng vẻ đẹp yên bình của vùng nông thôn.' },
+    8: { name: 'Tà Năng - Phan Dũng', location: 'Lâm Đồng - Bình Thuận', description: 'Cung đường trekking đẹp nhất Việt Nam, băng qua những đồi cỏ và rừng thông, chuyển tiếp từ cao nguyên xuống vùng duyên hải.' },
+    9: { name: 'Đèo Hải Vân', location: 'Đà Nẵng - Huế', description: 'Đi bộ dọc theo con đèo ven biển đẹp nhất Việt Nam. Khám phá các di tích lịch sử và tận hưởng cung đường uốn lượn giữa núi rừng và biển cả.' },
+    10: { name: 'Vịnh Hạ Long', location: 'Quảng Ninh', description: 'Tận hưởng tầm nhìn biểu tượng từ những đỉnh núi hướng ra vịnh kỳ quan với hàng nghìn đảo đá vôi nhô lên từ làn nước xanh ngọc bích.' },
+    11: { name: 'Đỉnh Lang Biang', location: 'Đà Lạt, Lâm Đồng', description: 'Chinh phục "nóc nhà Đà Lạt". Con đường đi qua rừng thông và rừng già để lên đỉnh, mang lại tầm nhìn tuyệt đẹp xuống Thung Lũng Vàng và Suối Bạc.' },
+    12: { name: 'Đèo Ô Quy Hồ', location: 'Lai Châu', description: 'Đi bộ gần một trong tứ đại đỉnh đèo của vùng Tây Bắc. Tận hưởng phong cảnh núi non hùng vĩ, những thung lũng sâu và biển mây bồng bềnh.' },
+    13: { name: 'Rừng tràm Trà Sư', location: 'An Giang', description: 'Khám phá rừng tràm ngập nước đặc trưng của miền Tây Nam Bộ. Một chuyến đi bộ yên tĩnh trên những cây cầu tre dài xuyên rừng tràm xanh ngát.' },
+    14: { name: 'Núi Bà Đen', location: 'Tây Ninh', description: 'Ngọn núi cao nhất miền Nam Việt Nam. Một hành trình thử thách qua các tảng đá lớn để lên đỉnh núi, nơi có tượng Phật Bà bằng đồng cao nhất Châu Á.' },
+    15: { name: 'Vịnh Bái Tử Long', location: 'Quảng Ninh', description: 'Một lựa chọn hoang sơ thay cho Vịnh Hạ Long. Đi bộ trên các hòn đảo với bãi biển hoang sơ, tận hưởng sự tĩnh lặng và vẻ đẹp tự nhiên kỳ vĩ.' },
+    16: { name: 'Bidoup Núi Bà', location: 'Lâm Đồng', description: 'Hành trình xuyên qua những khu rừng rêu cổ thụ. Khám phá những cây thông hai lá dẹt quý hiếm và hệ sinh thái đa dạng của vùng cao nguyên.' },
+    17: { name: 'Tây Côn Lĩnh', location: 'Hà Giang', description: 'Mái nhà của Đông Bắc. Cung đường gập ghềnh qua những rừng trà cổ thụ và rừng trúc để chinh phục đỉnh núi chìm trong sương mù.' },
+    18: { name: 'Cổng trời Quản Bạ', location: 'Hà Giang', description: 'Đi bộ lên Cổng trời để ngắm nhìn toàn cảnh Tuyệt Tình Cốc và thị trấn Tam Sơn giữa thung lũng tuyệt đẹp phía dưới.' },
+    19: { name: 'Hồ Ba Bể', location: 'Bắc Kạn', description: 'Đi bộ quanh hồ nước ngọt tự nhiên lớn nhất Việt Nam. Trải nghiệm làn nước trong xanh, các hang động và bản làng dân tộc thiểu số trong vườn quốc gia.' },
+    20: { name: 'Núi Dinh', location: 'Bà Rịa - Vũng Tàu', description: 'Một địa điểm leo núi phổ biến gần Vũng Tàu. Cung đường dẫn đến các ngôi chùa Phật giáo, những dòng suối mát lạnh và tầm nhìn ra biển.' },
   },
 };
 

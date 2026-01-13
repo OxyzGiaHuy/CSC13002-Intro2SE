@@ -50,12 +50,14 @@ router.post('/', authenticateToken, async (req, res) => {
         const { name, description, privacy, image_url } = req.body;
         // Map frontend 'privacy' (PUBLIC/PRIVATE) to group_type
         // Map frontend 'image_url' to avatar_url
+        const DEFAULT_GROUP_IMAGE = 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80';
+
         const newGroup = await Group.create({
             created_by: req.user.id,
             name,
-            description,
+            description: description || `A community for those who love ${name}.`,
             group_type: privacy === 'PRIVATE' ? 'PRIVATE' : 'PUBLIC',
-            avatar_url: image_url
+            avatar_url: image_url || DEFAULT_GROUP_IMAGE
         });
 
         // Add owner as admin member

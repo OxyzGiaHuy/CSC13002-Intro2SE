@@ -4,6 +4,9 @@ import Logo from '../../../components/Logo';
 import logoImage from '../../../assets/logo.png';
 import { MenuIcon, XIcon } from '../../data/constants';
 
+import { useAuth } from '../../context/AuthContext';
+import { useTranslations } from '../../data/i18n';
+
 export interface HeaderProps {
     setView: (view: View) => void;
     currentView: View;
@@ -12,16 +15,19 @@ export interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ setView, currentView, userRole }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { language } = useAuth();
+    const T = useTranslations(language || 'en');
+
     const navItems: { name: string, view: View }[] = [
-        { name: 'Home', view: 'home' },
-        { name: 'Discover', view: 'discover' },
-        { name: 'AI Planner', view: 'planner' },
-        { name: 'Community', view: 'community' },
-        { name: 'Profile', view: 'profile' },
+        { name: T.nav.home, view: 'home' },
+        { name: T.nav.discover, view: 'discover' },
+        { name: T.nav.planner, view: 'planner' },
+        { name: T.nav.community, view: 'community' },
+        { name: T.nav.profile, view: 'profile' },
     ];
 
     if (userRole === 'admin') {
-        navItems.push({ name: 'Dashboard', view: 'admin_dashboard' });
+        navItems.push({ name: T.nav.admin, view: 'admin_dashboard' });
     }
 
     const NavLink: React.FC<{ view: View, name: string }> = ({ view, name }) => {
@@ -52,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ setView, currentView, userRole }) => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="cursor-pointer" onClick={() => setView('home')}>
-                        <Logo imageSrc={logoImage} size="md" showText={true} />
+                        <Logo imageSrc={logoImage} size="md" showText={false} />
                     </div>
                     <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-4">

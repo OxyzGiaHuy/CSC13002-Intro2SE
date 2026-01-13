@@ -17,7 +17,7 @@ export interface ProfileProps {
 }
 
 const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView }) => {
-    const { language, joinedGroups, updateProfile, logout, setLanguage } = useAuth();
+    const { language, joinedGroups, updateProfile, logout, setLanguage, refreshGroups } = useAuth();
     const lang = language || 'en';
     const T = useTranslations(lang);
     const isAdmin = user?.role === 'admin';
@@ -373,7 +373,6 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                             try {
                                                 const { createGroup } = await import('../services/communityService');
                                                 await createGroup({ name: newGroup.trim(), privacy: 'PUBLIC' });
-                                                const { refreshGroups } = useAuth();
                                                 if (refreshGroups) await refreshGroups();
                                                 setNewGroup('');
                                             } catch (err) {
@@ -394,7 +393,12 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                     <div key={i} className="flex items-center justify-between p-4 bg-cream/50 rounded-xl hover:bg-white hover:shadow-md transition-all group border border-green-50 hover:border-sage-green/30 cursor-pointer">
                                         <div className="flex items-center gap-3 min-w-0">
                                             {g.avatar_url ? (
-                                                <img src={g.avatar_url} className="w-10 h-10 rounded-lg object-cover shadow-sm" alt={g.name} />
+                                                <img
+                                                    src={g.avatar_url}
+                                                    className="w-10 h-10 rounded-lg object-cover shadow-sm"
+                                                    alt={g.name}
+                                                    onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=80'; }}
+                                                />
                                             ) : (
                                                 <div className="w-10 h-10 rounded-lg bg-forest-green flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm">
                                                     {g.name?.charAt(0) || '?'}
@@ -448,10 +452,12 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                                     </div>
                                                 </div>
                                                 <div className="p-4">
-                                                    <h4 className="font-extrabold text-gray-900 group-hover:text-forest-green transition-colors line-clamp-1">{actualTrail.name}</h4>
+                                                    <h4 className="font-extrabold text-gray-900 group-hover:text-forest-green transition-colors line-clamp-1">
+                                                        {T.trails[actualTrail.id]?.name || actualTrail.name}
+                                                    </h4>
                                                     <div className="flex items-center justify-between mt-2">
                                                         <p className="text-xs text-gray-500 flex items-center gap-1 font-medium">
-                                                            <MapPin className="w-3 h-3 text-sage-green" /> {actualTrail.location}
+                                                            <MapPin className="w-3 h-3 text-sage-green" /> {T.trails[actualTrail.id]?.location || actualTrail.location}
                                                         </p>
                                                         <ArrowRight className="w-4 h-4 text-forest-green opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                                                     </div>
@@ -528,8 +534,12 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                                         >
                                             <img src={trail.imageUrl} alt={trail.name} className="w-10 h-10 rounded-lg object-cover group-hover:shadow-md transition-shadow flex-shrink-0" />
                                             <div className="min-w-0 flex-grow">
-                                                <p className="font-semibold text-xs text-gray-900 truncate group-hover:text-forest-green">{trail.name}</p>
-                                                <p className="text-xs text-gray-900/50 truncate">{trail.location}</p>
+                                                <p className="font-semibold text-xs text-gray-900 truncate group-hover:text-forest-green">
+                                                    {T.trails[trail.id]?.name || trail.name}
+                                                </p>
+                                                <p className="text-xs text-gray-900/50 truncate">
+                                                    {T.trails[trail.id]?.location || trail.location}
+                                                </p>
                                             </div>
                                             <HeartIcon className="w-4 h-4 text-red-500 flex-shrink-0" filled />
                                         </div>
@@ -554,7 +564,10 @@ const Profile: React.FC<ProfileProps> = ({ user, onSelectTrail, trails, setView 
                         {/* Modal Header */}
                         <div className="p-6 border-b-2 border-green-50 flex justify-between items-start bg-gradient-to-r from-green-50 to-green-100">
                             <div>
-                                <h3 className="text-2xl font-bold text-forest-green">{selectedPlan.location}</h3>
+                                <h3 className="text-2xl font-bold text-forest-green">
+                                    {/* Handle saved plan location title if possible, or just use as is */}
+                                    {selectedPlan.location}
+                                </h3>
                                 <p className="text-sm text-gray-900/60 flex items-center gap-1 mt-1">
                                     <Calendar className="w-4 h-4" /> {selectedPlan.duration} {T.profile.days}
                                 </p>

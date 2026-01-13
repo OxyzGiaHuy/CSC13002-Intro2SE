@@ -2,6 +2,8 @@ import * as React from 'react';
 import type { Trail } from '../../types/index';
 import { HeartIcon } from '../../data/constants';
 import { Zap, Activity, Flame, Star, Clock, Route } from 'lucide-react';
+import { useTranslations } from '../../data/i18n';
+import { useAuth } from '../../context/AuthContext';
 
 interface TrailCardProps {
     trail: Trail;
@@ -14,6 +16,9 @@ const formatDistance = (km: number) => {
 };
 
 const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite }: TrailCardProps) => {
+    const { language } = useAuth();
+    const T = useTranslations(language || 'en');
+
     const getDifficultyStyles = (difficulty: string) => {
         switch (difficulty.toLowerCase()) {
             case 'easy':
@@ -22,7 +27,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                     text: 'text-emerald-700',
                     border: 'border-emerald-200',
                     icon: <Zap className="w-3.5 h-3.5 fill-emerald-500" />,
-                    label: 'EASY'
+                    label: T.discover.easy.toUpperCase()
                 };
             case 'hard':
                 return {
@@ -30,7 +35,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                     text: 'text-rose-700',
                     border: 'border-rose-200',
                     icon: <Flame className="w-3.5 h-3.5 fill-rose-500" />,
-                    label: 'HARD'
+                    label: T.discover.hard.toUpperCase()
                 };
             default: // Moderate
                 return {
@@ -38,7 +43,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                     text: 'text-amber-700',
                     border: 'border-amber-200',
                     icon: <Activity className="w-3.5 h-3.5" />,
-                    label: 'MODERATE'
+                    label: T.discover.moderate.toUpperCase()
                 };
         }
     };
@@ -85,7 +90,9 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
             <div className="p-5 flex-grow flex flex-col">
                 <div className="mb-2">
                     <div className="flex items-center justify-between mb-1">
-                        <p className="text-xs font-semibold text-sage-green uppercase tracking-wider">{trail.location}</p>
+                        <p className="text-xs font-semibold text-sage-green uppercase tracking-wider">
+                            {T.trails[trail.id]?.location || trail.location}
+                        </p>
                         {/* Rating moved here */}
                         <div className="flex items-center gap-1">
                             <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
@@ -94,7 +101,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                         </div>
                     </div>
                     <h3 className="text-xl font-bold font-display text-forest-green line-clamp-2 min-h-[3.5rem] leading-tight group-hover:text-green-800 transition-colors">
-                        {trail.name}
+                        {T.trails[trail.id]?.name || trail.name}
                     </h3>
                 </div>
 
@@ -105,7 +112,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                                 <Route className="w-4 h-4" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[10px] text-gray-400 font-bold tracking-wider leading-none mb-0.5">DISTANCE</span>
+                                <span className="text-[10px] text-gray-400 font-bold tracking-wider leading-none mb-0.5">{T.home.distance.toUpperCase()}</span>
                                 <span className="text-sm font-black text-gray-800">{formatDistance(trail.length_km)}</span>
                             </div>
                         </div>
@@ -118,7 +125,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
                                 <Clock className="w-4 h-4" />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-[10px] text-gray-400 font-bold tracking-wider leading-none mb-0.5">DURATION</span>
+                                <span className="text-[10px] text-gray-400 font-bold tracking-wider leading-none mb-0.5">{T.home.duration.toUpperCase()}</span>
                                 <span className="text-sm font-black text-gray-800">{trail.duration_hr}h</span>
                             </div>
                         </div>
@@ -129,7 +136,7 @@ const TrailCard: React.FC<TrailCardProps> = ({ trail, onSelect, onToggleFavorite
 
             {/* Hover Action Bar */}
             <div className="bg-forest-green text-white py-3 text-center text-sm font-bold transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                View Details
+                {T.home.explore}
             </div>
         </div>
     );

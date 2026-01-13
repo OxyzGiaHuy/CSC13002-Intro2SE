@@ -2,6 +2,8 @@ import React from 'react';
 import type { View } from '../types/view';
 import type { Trail } from '../types/index';
 import TrailCard from '../components/common/TrailCard';
+import { useAuth } from '../context/AuthContext';
+import { useTranslations } from '../data/i18n';
 
 export interface HomeProps {
     setView: (view: View) => void;
@@ -11,6 +13,9 @@ export interface HomeProps {
 }
 
 const Home: React.FC<HomeProps> = ({ setView, trails, onSelectTrail, onToggleFavorite }) => {
+    const { language } = useAuth();
+    const T = useTranslations(language || 'en');
+
     return (
         <div className="min-h-screen">
             {/* Hero Section */}
@@ -30,20 +35,20 @@ const Home: React.FC<HomeProps> = ({ setView, trails, onSelectTrail, onToggleFav
                         Discover the <span className="text-sage-green">Wild</span>
                     </h1>
                     <p className="text-xl md:text-2xl text-gray-100 max-w-2xl mx-auto font-light leading-relaxed">
-                        Your intelligent companion for every step of the journey. Plan, track, and explore with confidence.
+                        {T.home.subtitle}
                     </p>
                     <div className="flex items-center justify-center gap-4 pt-4">
                         <button
                             onClick={() => setView('planner')}
                             className="bg-sage-green text-white font-bold py-4 px-10 rounded-full hover:bg-forest-green transition-all duration-300 transform hover:scale-105 shadow-lg shadow-green-900/20 text-lg"
                         >
-                            Plan My Trip
+                            {T.planner.createPlan}
                         </button>
                         <button
                             onClick={() => setView('discover')}
                             className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-semibold py-4 px-10 rounded-full hover:bg-white/20 transition-all duration-300 text-lg"
                         >
-                            Explore Trails
+                            {T.home.explore}
                         </button>
                     </div>
                 </div>
@@ -53,11 +58,11 @@ const Home: React.FC<HomeProps> = ({ setView, trails, onSelectTrail, onToggleFav
             <div className="container mx-auto px-4 py-16">
                 <div className="flex items-end justify-between mb-10 border-b border-gray-200 pb-4">
                     <div>
-                        <h2 className="text-3xl font-display font-bold text-forest-green">Featured Trails</h2>
-                        <p className="text-gray-500 mt-2">Curated selection of best rated adventures this week</p>
+                        <h2 className="text-3xl font-display font-bold text-forest-green">{T.home.featured}</h2>
+                        <p className="text-gray-500 mt-2">{T.home.subtitle}</p>
                     </div>
                     <button onClick={() => setView('discover')} className="text-sage-green hover:text-forest-green font-semibold hidden md:block">
-                        View All →
+                        {T.home.viewMore} →
                     </button>
                 </div>
 

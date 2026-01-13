@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import type { Trail } from '../types/index';
 import TrailCard from '../components/common/TrailCard';
 import { Search, ChevronDown, Filter } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useTranslations } from '../data/i18n';
 
 export interface DiscoverProps {
     trails: Trail[];
@@ -10,6 +12,8 @@ export interface DiscoverProps {
 }
 
 const Discover: React.FC<DiscoverProps> = ({ trails, onSelectTrail, onToggleFavorite }: DiscoverProps) => {
+    const { language } = useAuth();
+    const T = useTranslations(language || 'en');
     const [searchTerm, setSearchTerm] = useState('');
     const [difficultyFilter, setDifficultyFilter] = useState<string>('all');
 
@@ -28,7 +32,7 @@ const Discover: React.FC<DiscoverProps> = ({ trails, onSelectTrail, onToggleFavo
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Search for a trail..."
+                            placeholder={T.discover.location}
                             className="w-full pl-12 pr-4 py-3 bg-gray-50/50 border-none rounded-xl focus:ring-2 focus:ring-sage-green transition-all placeholder:text-gray-400 text-gray-700"
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -42,10 +46,10 @@ const Discover: React.FC<DiscoverProps> = ({ trails, onSelectTrail, onToggleFavo
                             className="w-full pl-10 pr-10 py-3 bg-gray-50/50 border-none rounded-xl focus:ring-2 focus:ring-sage-green transition-all appearance-none text-gray-700 font-medium cursor-pointer"
                             onChange={(e) => setDifficultyFilter(e.target.value)}
                         >
-                            <option value="all">Every Difficulty</option>
-                            <option value="easy">Easy Level</option>
-                            <option value="moderate">Moderate Level</option>
-                            <option value="hard">Hard Level</option>
+                            <option value="all">{T.discover.all}</option>
+                            <option value="easy">{T.discover.easy}</option>
+                            <option value="moderate">{T.discover.moderate}</option>
+                            <option value="hard">{T.discover.hard}</option>
                         </select>
                         <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                     </div>

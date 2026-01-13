@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { Map as MapIcon, Tent, Backpack } from 'lucide-react';
 import type { ItineraryPlan, ChecklistItem } from '../types/index';
 import { generateTrekkingPlan, refineTrekkingPlan } from '../../services/geminiService';
+import { useAuth } from '../context/AuthContext';
+import { useTranslations } from '../data/i18n';
 
 const Planner: React.FC = () => {
+    const { language } = useAuth();
+    const T = useTranslations(language || 'en');
     const [location, setLocation] = useState('Tà Năng - Phan Dũng');
     const [duration, setDuration] = useState(3);
     const [difficulty, setDifficulty] = useState('Moderate');
@@ -102,30 +106,30 @@ const Planner: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Input Section */}
                 <div className="lg:col-span-1 bg-white p-6 rounded-lg shadow-lg h-fit">
-                    <h3 className="text-xl font-bold font-display text-forest-green mb-4">Plan Your Trip</h3>
+                    <h3 className="text-xl font-bold font-display text-forest-green mb-4">{T.planner.createPlan}</h3>
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Location</label>
+                            <label className="block text-sm font-medium text-gray-700">{T.planner.location}</label>
                             <input type="text" value={location} onChange={e => setLocation(e.target.value)} className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Duration (days)</label>
+                            <label className="block text-sm font-medium text-gray-700">{T.planner.duration} (days)</label>
                             <input type="number" value={duration} onChange={e => setDuration(parseInt(e.target.value) || 1)} min="1" className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm" />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Difficulty</label>
+                            <label className="block text-sm font-medium text-gray-700">{T.planner.difficulty}</label>
                             <select value={difficulty} onChange={e => setDifficulty(e.target.value)} className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm">
-                                <option>Easy</option>
-                                <option>Moderate</option>
-                                <option>Hard</option>
+                                <option value="Easy">{T.discover.easy}</option>
+                                <option value="Moderate">{T.discover.moderate}</option>
+                                <option value="Hard">{T.discover.hard}</option>
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Interests</label>
+                            <label className="block text-sm font-medium text-gray-700">{T.planner.interests}</label>
                             <textarea value={interests} onChange={e => setInterests(e.target.value)} rows={3} className="mt-1 block w-full p-2 border bg-white border-gray-300 rounded-md shadow-sm"></textarea>
                         </div>
                         <button onClick={handleGeneratePlan} disabled={isLoading} className="w-full bg-sage-green text-white py-2 rounded-lg hover:bg-opacity-90 transition-colors disabled:bg-gray-400">
-                            {isLoading ? 'Generating Plan & Checklist...' : 'Generate Plan'}
+                            {isLoading ? T.planner.generating : T.planner.createPlan}
                         </button>
                     </div>
                 </div>
@@ -134,11 +138,11 @@ const Planner: React.FC = () => {
                     {/* Plan Display */}
                     <div className="bg-white p-6 rounded-lg shadow-lg">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-bold font-display text-forest-green">Your Itinerary</h3>
+                            <h3 className="text-xl font-bold font-display text-forest-green">{T.planner.itinerary}</h3>
                             {plan && <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Auto-Saved</span>}
                         </div>
 
-                        {isLoading && <div className="text-center py-8"><p className="text-gray-500 animate-pulse">Designing your perfect adventure...</p></div>}
+                        {isLoading && <div className="text-center py-8"><p className="text-gray-500 animate-pulse">{T.planner.generating}</p></div>}
 
                         {!isLoading && !plan && !error && (
                             <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
